@@ -52,7 +52,7 @@ info:
 servers:
   - url: https://qgenonlinestaging.com/integration-api
     description: Staging server
-  - url: https://qgenonlinestaging.com/integration-api
+  - url: https://qgenonline.com/integration-api
     description: Production server
 components:
   securitySchemes:
