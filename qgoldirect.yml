@@ -19,17 +19,17 @@ info:
     
     Login to qgenonline.com with a user that has credentials to generate API keys. In the **Settings** menu 
     you will find the **Generate API key** sub menu. Click on it and fill in the form.
-    For security reason, we recommend you specify the IP address of your client accessing ourt API. If left 
+    For security reasons, we recommend you specify the IP address of your client accessing our API. If left 
     empty, IP whitelisting is disabled, meaning that all IPs can access the API.
     
     # How to use the API explorer
     
     This page allows you to test the APIs directly without any coding. It's great to test some examples and
-    make sure your keys are woring and the servers are connected. Start bt clicking gthe 
-    **Try it out** button in the Login section. This will allow you to edit the body paramters with your
+    make sure your keys are working and the servers are connected. Start by clicking the 
+    **Try it out** button in the Login section. This will allow you to edit the body parameters with your
     clientID and secret Key as generated from QGen Online page.
     
-    From the response, cut the access_token value (whatever is inside the qutations) and paste it in the 
+    From the response, cut the access_token value (whatever is inside the quotations) and paste it in the 
     **value** field shown when you press the **Authorize** button shown here.
     
     You can then press the **Try it now** buttons on the other endpoints, edit the values of the fields in
@@ -87,7 +87,7 @@ paths:
         - apikey
       security: []
       requestBody:
-        description: Send the clientID and resepctive secret API key as generated in QGenOnline
+        description: Send the clientID and respective secret API key as generated in QGenOnline
         content:
           application/json:
             schema:
@@ -113,10 +113,10 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    description: True if token was generated successfully. False otherwise
+                    description: True if the token was generated successfully. False otherwise
                   data:
                     type: object
-                    description: In casse of an error , this object will be set to 'null'
+                    description: In case of an error, this object will be set to 'null'
                     properties:
                       access_token:
                         type: string
@@ -127,7 +127,7 @@ paths:
                         description: expiry date and time of the token
                   errors:
                     type: object
-                    description: Array of error object types. If the request was successfull, this object will be set to 'null'
+                    description: Array of error object types. If the request was successful, this object will be set to 'null'
                     properties: 
                       code:
                         type: integer
@@ -137,7 +137,7 @@ paths:
                         description: A descriptive message describing the reason for the error
                       type:
                         type: string
-                        description: Error type such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
               example:
                 success: true
                 data:
@@ -161,7 +161,7 @@ paths:
                     description: False in case of a bad request
                   data:
                     type: object
-                    description: In casse of an error , this object will be set to 'null'
+                    description: In case of an error, this object will be set to 'null'
                   errors:
                     type: object
                     description: Array of error object types.
@@ -195,7 +195,7 @@ paths:
                     description: False in case of a bad request
                   data:
                     type: object
-                    description: In casse of an error , this object will be set to 'null'
+                    description: In case of an error, this object will be set to 'null'
                   errors:
                     type: object
                     description: Array of error object types.
@@ -226,9 +226,9 @@ paths:
         Creates a new search by sending search terms, parameters and filters. This endpoint can be used to 
         instantly know if the entity has any potential hits. If there are no hits, the endpoint returns 'No Match' 
         and a 0 value in the totalHits. This allows you to instantly onboard a customer. If this search
-        return 'potential match' plus a value which is higher than 1 in ther totalHits field, you can suspend the 
+        return 'potential match' plus a value which is higher than 1 in the totalHits field, you can suspend the 
         onboarding process until you review the hits on qgenonline.com using the returned ID to filter 
-        the results with.
+        the results.
       security:
         - bearerAuth: []        
       requestBody:
@@ -245,11 +245,11 @@ paths:
                   properties:
                     birth_year:
                       type: integer
-                      description: The year of birth of the person if known. Leave empty if entity is a company
+                      description: The year of birth of the person if known. Leave empty if the entity is a company
                     country_codes: 
                       description: | 
                                       Results are filtered by the entity nationality or 
-                                      country of residence. Array of ISO 3166-1 alpha-2 strings 
+                                      country of residence. An array of ISO 3166-1 alpha-2 strings 
                       type: array
                       items: 
                         type: string
@@ -283,7 +283,7 @@ paths:
                           - adverse-media-general
                 client_ref:
                   type: string
-                  description: Your refeerence for easy link to your records
+                  description: Your reference for easy link to your records
                   maxLength: 255
                 notes:
                   type: string
@@ -301,7 +301,7 @@ paths:
                 tags:
                   description: |
                     An array of three custom tags labelled Tag1, Tag2 and Tag 3, Just insert whatever 
-                    value you want in that sequence to assign the first value to tag 1, the scond value 
+                    the value you want in that sequence to assign the first value to tag 1, the second value 
                     to tag 3 and \the third value in the list to tag 3, Any or all tags  can be left empty 
                   type: array
                   items:
@@ -351,14 +351,14 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    description: True if token was generated successfully. False otherwise
+                    description: True if the token was generated successfully. False otherwise
                   data:
                     type: object
-                    description: In casse of an error , this object will be set to 'null'
+                    description: In case of an error, this object will be set to 'null'
                     properties:
                       ID:
                         type: string
-                        description: The unique search ID generated automatically
+                        description: The unique search ID is generated automatically
                       totalHits: 
                         type: integer
                         description: total number of hits
@@ -367,7 +367,7 @@ paths:
                         description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
                   errors:
                     type: object
-                    description: Array of error object types. If the request was successfull, this object will be set to 'null'
+                    description: Array of error object types. If the request was successful, this object will be set to 'null'
                     properties: 
                       code:
                         type: integer
@@ -377,7 +377,7 @@ paths:
                         description: A descriptive message describing the reason for the error
                       type:
                         type: string
-                        description: Error type such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
               example:
                 success: true
                 data:
@@ -401,13 +401,13 @@ paths:
                     properties:
                       ID:
                         type: string
-                        description: The unique search ID generated automatically
+                        description: The unique search ID is generated automatically
                       totalHits: 
                         type: integer
                         description: total number of hits
                       matchStatus:
                         type: string
-                        description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
+                        description: Set to "potential_match" if totalHits value is more than 0. Set to "No_Match" if totalHits is 0
                   errors:
                     type: object
                     properties: 
@@ -444,13 +444,13 @@ paths:
                     properties:
                       ID:
                         type: string
-                        description: The unique search ID generated automatically
+                        description: The unique search ID is generated automatically
                       totalHits: 
                         type: integer
                         description: total number of hits
                       matchStatus:
                         type: string
-                        description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
+                        description: Set to "potential_match" if totalHits value is more than 0. Set to "No_Match" if totalHits is 0
                   errors:
                     type: object
                     properties: 
@@ -480,8 +480,8 @@ paths:
         - aml
       summary: Monitor
       description: |
-        Switch 'ON' or 'OFF' the onitoring on a specific search. By default all 
-        searches are automatically being monitored. This means that you should run this
+        Switch 'ON' or 'OFF' the monitoring on a specific search. By default, all 
+        searches are automatically monitored. This means that you should run this
         endpoint to switch off a search from continuous monitoring.
       security:
         - bearerAuth: [] 
@@ -511,10 +511,10 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    description: true if successful, false if unsuccesful
+                    description: true if successful, false if unsuccessful
                   data:
                     type: string
-                    description: content of the response 
+                    description: the content of the response 
                   errors:
                     type: object
                     properties:
@@ -539,10 +539,10 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    description: true if successful, false if unsuccesful
+                    description: true if successful, false if unsuccessful
                   data:
                     type: string
-                    description: content of the response 
+                    description: the content of the response 
                   errors:
                     type: object
                     properties:
@@ -576,7 +576,7 @@ paths:
                     properties:
                       ID:
                         type: string
-                        description: The unique search ID generated automatically
+                        description: The unique search ID is generated automatically
                       totalHits: 
                         type: integer
                         description: total number of hits
