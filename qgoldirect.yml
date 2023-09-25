@@ -8,7 +8,7 @@ info:
     
     Requests should be directed to the appropriate API URL 
     - Staging: https://qgenonlinestaging.com/integration-api/
-    - Production: TBD
+    - Production: https://qgenonline.com/integration-api/
     
     All API requests must be made over HTTPS as HTTP is not supported. 
     See the authentication section for information on correctly authenticating calls 
@@ -54,14 +54,39 @@ servers:
     description: Staging server
   - url: https://qgenonline.com/integration-api
     description: Production server
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
-
+      description: |
+        ## Security Scheme: JWT Bearer Token
+        
+        This API uses JWT (JSON Web Token) for authentication and authorization.
+        
+        ### Generating a Token
+        
+        After successful login through the `/v1/public/login` endpoint, a JWT token is returned in the response. This token must be included in the `Authorization` header for all other secure endpoints.
+        
+        ### Storing the Token
+        
+        **Important:** It's crucial to securely store the JWT token on the client-side to prevent unauthorized access. We recommend encrypting the token and storing it in a secure storage solution. 
+        
+        ### Transmitting the Token
+        
+        **All API requests must be made over HTTPS.** Tokens should never be transmitted over a non-secure connection.
+        
+        ### Token Expiry
+        
+        Tokens are short-lived and should be regenerated before expiry. The expiry time is included in the login response.
+        
+        ### Sample Header
+        
+        ```http
+        Authorization: Bearer YOUR_JWT_TOKEN_HERE
+        ```
 tags:
   - name: authentication
   - name: aml
