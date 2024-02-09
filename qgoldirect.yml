@@ -262,16 +262,16 @@ paths:
             schema:
               type: object
               properties:
-                search_term:
+                searchTerm:
                   type: string
                   description: The name of the entity. Can be a person or a company
                 filters:
                   type: object
                   properties:
-                    birth_year:
+                    birthYear:
                       type: integer
                       description: The year of birth of the person if known. Leave empty if the entity is a company
-                    country_codes: 
+                    countryCodes: 
                       description: | 
                                       Results are filtered by the entity nationality or 
                                       country of residence. An array of ISO 3166-1 alpha-2 strings 
@@ -306,7 +306,7 @@ paths:
                           - adverse-media-fraud
                           - adverse-media-narcotics
                           - adverse-media-general
-                client_ref:
+                clientRef:
                   type: string
                   description: Your reference for easy link to your records
                   maxLength: 255
@@ -519,7 +519,7 @@ paths:
                 id: 
                   type: string
                   description: The search ID returned in the ID field of the response to a Search call
-                is_monitored:
+                isMonitored:
                   type: boolean
                   description: Set to 'true' if you want to monitor this search. Set to 'false' if you want to stop monitoring 
               example:
