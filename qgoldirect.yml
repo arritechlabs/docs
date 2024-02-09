@@ -335,10 +335,10 @@ paths:
               
               
               example:
-                search_term: Jesse Pinkman
+                searchTerm: Jesse Pinkman
                 filters:
-                  birth_year: '1980'
-                  country_codes:
+                  birthYear: '1980'
+                  countryCodes:
                     - US
                     - CA
                   types:
@@ -358,7 +358,7 @@ paths:
                     - adverse-media-fraud
                     - adverse-media-narcotics
                     - adverse-media-general
-                client_ref: '1234567890'
+                clientRef: '1234567890'
                 notes: This is an optional note for your records.
                 fuzziness: 0.6
                 tags:
@@ -524,7 +524,7 @@ paths:
                   description: Set to 'true' if you want to monitor this search. Set to 'false' if you want to stop monitoring 
               example:
                 id: 63f4a0698870e271fc119fc0
-                is_monitored: false 
+                isMonitored: false 
 
       responses:
         '200':
@@ -628,3 +628,189 @@ paths:
                   code: 401
                   message: unauthorized
                   type: ACCESS_DENIED
+
+  /v1/cfm/case/init/:
+    post:
+      tags:
+        - cfm
+      summary: Initiate a new case via the CFM.
+      description: |
+        Designed to initiate a customer onboarding session via our CFM component. Make the call from your onboarding webpage after collecting basic personal details 
+        from an applicant. To make the call you will need to first get a valid caseTypeId which you can retrieve via the `/v1/cfm/case/types` endpoint. You may
+        ask our applicant to select a product or service linked to the case type created in QGoL or assume it automatically based on the link the applicant used. 
+        A successful request will create a new Case Summary containing the Personal Entity with the personal details you submitted. We will return the `CaseId`, the `entityId`
+        and especially a URL link where the session with the requested CFM flow is hosted. 
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                caseTypeId:
+                  type: string
+                  description: A valid value as returned from the `/v1/cfm/case/types` endpoint. Case Types are created in QGen Online via the UI.
+                  example: "654116dce5c397e29913ca08"
+                referenceId:
+                  type: string
+                  description: A unique reference to your applicant. Make sure this was never submitted before and does not already exist in QGoL.
+                  example: "testreference3"
+                description:
+                  type: string
+                  description: Free text you can submit with the application. Will be visible in the notes field in the Case Summary.
+                  example: "This is the description field"
+                email:
+                  type: string
+                  format: email
+                  description: Applicant email. We validate this and can reject a request if this is not a valid email structure. At least one of email or mobile is required.
+                  example: "bobsmith@example.com"
+                mobile:
+                  type: string
+                  pattern: '^\+[1-9]\d{1,14}$'
+                  description: Applicant valid mobile number with country code.
+                  example: "+35679000000"
+                title:
+                  type: string
+                  enum: [Mr, Mrs, Ms, Dr, Miss]
+                  description: The title before an applicant's name, limited to the specified prefixes.
+                  example: "Mr"
+                firstName:
+                  type: string
+                  description: Applicant's first name. Required.
+                  example: "Abraham"
+                lastName:
+                  type: string
+                  description: Applicant's last name. Required.
+                  example: "Murray"
+                legalName:
+                  type: string
+                  description: Optional field if the applicant has a legal name different from their known by names.
+                  example: "Abraham Murray"
+                countryCode:
+                  type: string
+                  description: Locality of applicant. Use ISO 3166-1 alpha-2 strings format.
+                  example: "MT"
+                locale:
+                  type: string
+                  description: Language preference of the applicant. Defaults to English if unspecified or unsupported.
+                  example: "MT"
+                gender:
+                  type: string
+                  enum: [Male, Female, Non-Binary, Prefer not to say]
+                  description: Gender of the applicant.
+                  example: "Male"
+                dateOfBirth: 
+                  type: string
+                  format: date
+                  description: Date of birth of applicant in YYYY-MM-DD format.
+                  example: "1975-06-12"
+                placeOfBirth:
+                  type: string
+                  description: Birthplace of the applicant.
+                  example: "London"
+                countryOfBirth:
+                  type: string
+                  description: Country of birth of the applicant, using ISO 3166-1 alpha-2 format.
+                  example: "United Kingdom"
+                addressLine1:
+                  type: string
+                  description: Primary address line for the applicant.
+                  example: "House Name"
+                addressLine2:
+                  type: string
+                  description: Secondary address line for the applicant.
+                  example: "New Road"
+                postCode:
+                  type: string
+                  description: Postal code for the applicant's address.
+                  example: "SLM1024"
+                country:
+                  type: string
+                  description: Country of the applicant, using ISO 3166-1 alpha-2 format.
+                  example: "MT"
+                nationality:
+                  type: string
+                  description: The nationality of the applicant.
+              required:
+                  - firstName
+                  - lastName
+
+            examples:
+              InitCaseExample:
+                summary: Example request to initiate a new case
+                value:
+                  caseTypeId: "654116dce5c397e29913ca08"
+                  referenceId: "UniqueReferenceABCD01"
+                  description: "This is the description field"
+                  email: "test@arritech.com"
+                  mobile: "+35679000000"
+                  title: "Mr"
+                  firstName: "Abraham"
+                  lastName: "Murray"
+                  legalName: ""
+                  countryCode: "MT"
+                  locale: "EN"
+                  gender: "Male"
+                  dateOfBirth: "1986-12-12"
+                  placeOfBirth: ""
+                  countryOfBirth: "MT"
+                  addressLine1: ""
+                  addressLine2: ""
+                  postCode: ""
+                  country: "MT"
+                  nationality: "Maltese"
+      
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True if the token was generated successfully. False otherwise
+                  data:
+                    type: object
+                    description: In case of an error, this object will be set to 'null'
+                    properties:
+                      caseId:
+                        type: string
+                        description: The unique search ID is generated automatically
+                      entityId: 
+                        type: integer
+                        description: total number of hits
+                      journeyId:
+                        type: string
+                        description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
+                      sessionID:
+                        type: string
+                        description: the unique session id that makes the CFM url unique. This session expires as per setting in QGoL General settings
+                      cfmUrl:
+                        type: string
+                        description: the URL with the unique session id that makes the CFM url unique.                        
+                  errors:
+                    type: object
+                    description: Array of error object types. If the request was successful, this object will be set to 'null'
+                    properties: 
+                      code:
+                        type: integer
+                        description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
+                      message:
+                        type: string
+                        description: A descriptive message describing the reason for the error
+                      type:
+                        type: string
+                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+              example:
+                success: true
+                data:
+                  caseId: 65c650f3e3f5bbb9c64a98ab
+                  entityId: 65c650f3e3f5bbb9c64a98af
+                  journeyId: 65c650f3d8ee10299bdc9b48
+                  sessionId: 65c650f3c99c0f14a19cb914
+                  cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=65c650f3c99c0f14a19cb914
+                errors: null
+
