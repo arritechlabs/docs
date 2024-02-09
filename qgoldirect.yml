@@ -1,16 +1,16 @@
 openapi: 3.0.0
 info:
-  title: QGen Direct
+  title: QGen Direct (Arritech's QGen Online API)
   version: '1.0.0'
   description: |
-    This API enables QGen clients to integrate their systems with QGen to access our services.
+    This API enables Arritech clients to integrate their systems with QGen Online to access our services.
     It is written supporting the openAPI standards and all data returned is in JSON format. 
     
     Requests should be directed to the appropriate API URL 
     - Staging: https://qgenonlinestaging.com/integration-api/
     - Production: https://qgenonline.com/integration-api/
     
-    All API requests must be made over HTTPS as HTTP is not supported. 
+    All API requests must be made over HTTPS. HTTP is not supported! 
     See the authentication section for information on correctly authenticating calls 
     to the QGen Direct API.
     For any queries please contact: support@qgengroup.com
@@ -20,7 +20,7 @@ info:
     Login to qgenonline.com with a user that has credentials to generate API keys. In the **Settings** menu 
     you will find the **Generate API key** sub menu. Click on it and fill in the form.
     For security reasons, we recommend you specify the IP address of your client accessing our API. If left 
-    empty, IP whitelisting is disabled, meaning that all IPs can access the API.
+    empty, IP whitelisting is disabled, meaning that all IPs will have access to the API.
     
     # How to use the API explorer
     
@@ -38,14 +38,14 @@ info:
   
     
     
-  termsOfService: 'http://qgengroup.com'
+  termsOfService: 'https://arritech.com'
   contact:
     name: API Dev Team
-    email: support@qgengroup.com
-    url: 'https://qgengroup.com/contact/'
+    email: support@arritech.com
+    url: 'https://arritech.com/contact/'
   license:
-    name: QGen Agreement
-    url: 'http://qgengroup.com'
+    name: Arritech Agreement
+    url: 'https://arritech.com'
     
 
 
