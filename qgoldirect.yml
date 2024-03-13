@@ -787,7 +787,7 @@ paths:
                         description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
                       sessionID:
                         type: string
-                        description: the unique session id that makes the CFM url unique. This session expires as per setting in QGoL General settings
+                        description: the unique session id that makes the CFM url unique. This session expires as per setting in QGoL General settings. Should be returned to the frontend to start cfm process.
                       cfmUrl:
                         type: string
                         description: the URL with the unique session id that makes the CFM url unique.                        
@@ -814,3 +814,67 @@ paths:
                   cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=65c650f3c99c0f14a19cb914
                 errors: null
 
+  /v1/cfm/case/types:
+    get:
+      tags:
+        - cfm
+      summary: Retrieve available case types.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: An array of case types with id, name, group, and riskLevelId.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaseType'
+  /v1/case/case/{caseID}:
+    get:
+      tags:
+        - cfm
+      summary: Get detailed information about a specific case by its ID.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Raw JSON containing detailed case information.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+  /v1/cfm/webhook/logs/{sessionID}:
+    get:
+      tags:
+        - cfm
+      summary: Retrieve webhook logs for a given session ID.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Raw JSON message containing the webhook logs.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CaseType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        group:
+          type: string
+        riskLevelId:
+          type: string
