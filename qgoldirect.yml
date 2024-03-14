@@ -826,7 +826,38 @@ paths:
                   sessionId: 65c650f3c99c0f14a19cb914
                   cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=65c650f3c99c0f14a19cb914
                 errors: null
-
+        '400': 
+          description: Bad request
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Set to false if not successful
+                  data:
+                    type: object
+                  errors:
+                    type: object
+                    properties: 
+                      code: 
+                        type: integer
+                        description: Http error code
+                      message:
+                        type: string
+                        description: error message
+                      type:
+                        type: string
+                        description: http status code
+              example:
+                success: false
+                data: null
+                errors:
+                  code: 400
+                  message: invalid character '\\n' in string literal
+                  type: BAD_REQUEST_ERROR
+          
   /v1/cfm/case/types:
     get:
       tags:
@@ -851,13 +882,12 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-      - in: path
-        name: caseID
-        required: true
-        schema:
-          type: string
-        description: The ID of the case to retrieve.
-
+        - in: path
+          name: caseID
+          required: true
+          schema:
+            type: string
+          description: The ID of the case to retrieve.
       responses:
         '200':
           description: Raw JSON containing detailed case information.
@@ -866,6 +896,108 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+              examples:
+                caseDetailsExample:
+                  value: {
+                    "success": true,
+                    "data": {
+                      "audit": {
+                        "createdBy": {
+                          "actorId": "6571957c1ac592bad3f36c59",
+                          "actorType": "Api",
+                          "timestamp": "2024-03-13T16:23:48.158Z"
+                        },
+                        "deletedBy": null,
+                        "modifiedBy": null,
+                        "revisionID": 1
+                      },
+                      "casePriority": {
+                        "id": "6384df3d779f385ae3a5f36b",
+                        "name": "Medium"
+                      },
+                      "caseStatus": {
+                        "id": "6298b8c38c66f1b237ab3a16",
+                        "name": "New"
+                      },
+                      "caseType": {
+                        "id": "65cde0914d214c185edd9afe",
+                        "name": "eCommerce"
+                      },
+                      "companies": [],
+                      "description": "",
+                      "id": "65f1d314067871cd768cc7a1",
+                      "persons": [
+                        {
+                          "addressLine1": "",
+                          "addressLine2": "",
+                          "audit": {
+                            "createdBy": {
+                              "actorId": "6571957c1ac592bad3f36c59",
+                              "actorType": "Api",
+                              "timestamp": "2024-03-13T16:23:48.165Z"
+                            },
+                            "deletedBy": null,
+                            "modifiedBy": null,
+                            "revisionID": 1
+                          },
+                          "country": "",
+                          "dob": "",
+                          "documents": [],
+                          "emailAddress": "",
+                          "gender": "",
+                          "id": "65f1d314067871cd768cc7a3",
+                          "name": "lawliet",
+                          "nationality": "",
+                          "phoneNum": "+35677709206",
+                          "postCode": "",
+                          "searches": [],
+                          "surname": "sebastian",
+                          "title": ""
+                        }
+                      ],
+                      "reference": "65f1d314a4d5aee0a78d6315",
+                      "summary": "no summary"
+                    },
+                    "errors": null
+                  }
+        '400':
+            description: Bad Request - Invalid input parameters.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                    data:
+                      type: 'object'
+                    errors:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            type: integer
+                            format: int32
+                          message:
+                            type: string
+                          type:
+                            type: string
+                examples:
+                  badRequestExample:
+                    value: {
+                      "success": false,
+                      "data": null,
+                      "errors": [
+                        {
+                          "code": 400,
+                          "message": "caseId - Value must be a valid bson object ID",
+                          "type": "BAD_REQUEST_ERROR"
+                        }
+                      ]
+                    }
+
+
   /v1/cfm/webhook/logs/{sessionID}:
     get:
       tags:
@@ -874,13 +1006,12 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-      - in: path
-        name: sessionID
-        required: true
-        schema:
-          type: string
-        description: The ID of the session to retrieve.
-
+        - in: path
+          name: sessionID
+          required: true
+          schema:
+            type: string
+          description: The ID of the session to retrieve.
       responses:
         '200':
           description: Raw JSON message containing the webhook logs.
@@ -888,4 +1019,91 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties: true
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      logs:
+                        type: array
+                  errors:
+                    type: 'object'
+              examples:
+                webhookLogsExample:
+                  value: {
+                    "success": true,
+                    "data": {
+                      "logs": [
+                        {
+                          "ID": "65f1d31483e04bd1cbd65fb5",
+                          "merchantID": "5ede17951111fc24d89bba7b",
+                          "referenceID": "65f1d314a4d5aee0a78d6315",
+                          "sessionID": "65f1d314390ffd4984b8bfb8",
+                          "riskLevelID": "65f160060e67c2013b8f79f1",
+                          "journeyID": "65f1d3140e67c2013b8f7a4c",
+                          "caseID": "65f1d314067871cd768cc7a1",
+                          "entityID": "65f1d314067871cd768cc7a3",
+                          "caseTypeID": "65cde0914d214c185edd9afe",
+                          "webhookID": "6495555e02bf158bee23dd5b",
+                          "locale": "EN",
+                          "eventType": "cfm_case_created_event",
+                          "payload": {
+                            "caseID": "65f1d314067871cd768cc7a1",
+                            "caseTypeID": "65cde0914d214c185edd9afe",
+                            "entityID": "65f1d314067871cd768cc7a3",
+                            "journeyID": "65f1d3140e67c2013b8f7a4c",
+                            "locale": "EN",
+                            "merchantID": "5ede17951111fc24d89bba7b",
+                            "referenceID": "65f1d314a4d5aee0a78d6315",
+                            "riskLevelID": "65f160060e67c2013b8f79f1",
+                            "sessionID": "65f1d314390ffd4984b8bfb8"
+                          },
+                          "endpoint": "https://qgenonlinestaging.com/cfm-simulator-api/v1/webhook/create",
+                          "statusCode": 200,
+                          "response": "object",
+                          "clientErr": null,
+                          "status": "Succeed",
+                          "createdAt": "2024-03-13T16:23:48.24Z",
+                          "modifiedAt": "2024-03-13T16:23:48.279Z"
+                        }
+                      ]
+                    },
+                    "errors": null
+                  }
+        '400':
+          description: Bad Request - Invalid input parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                invalidSessionIdExample:
+                  value: {
+                    "success": false,
+                    "data": null,
+                    "errors": [
+                      {
+                        "code": 400,
+                        "message": "sessionId - Value must be a valid bson object ID",
+                        "type": "BAD_REQUEST_ERROR"
+                      }
+                    ]
+                  }
