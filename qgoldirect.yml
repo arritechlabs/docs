@@ -109,13 +109,17 @@ components:
           description: "Unique ID for the webhook event."
         merchantID:
           type: "string"
-          description: "Identifier for the merchant."
+          description: "This is your merchant identifier. It's your unique identifier across other QGen Online Merchants and never changes"
         eventType:
           type: "string"
-          description: "Type of the event being reported."
+          description: | 
+            This can only be one of the events described below 
+            and will indicate the structure to expect in the next field labelled 'payload'.
+            Expect a string as follows e.g. 'cfm_case_created_event' or
+            'cfm_entity_rejected_terms_event' 
         payload:
           type: "object"
-          description: "Event-specific data payload."
+          description: "Event-specific data payload as per details described below."
 
     cfm_case_created_event:
       type: "object"
@@ -221,36 +225,190 @@ components:
             city:
               type: "string"
               description: "City derived from IP."
-
-          sessionID:
-            type: "string"
-            description: "Session ID associated with the event."
-
-
+            sessionID:
+              type: "string"
+              description: "Session ID associated with the event."
+    
     cfm_journey_completed_event:
       type: "object"
       properties:
         acceptanceInfo:
           type: "object"
+          description: "Details of acceptance information."
           properties:
             deviceIP:
               type: "string"
-              description: "IP address used."
+              description: "IP address of the device."
             deviceInfo:
               type: "string"
-              description: "Browser information."
+              description: "Information about the device and browser used."
             id:
               type: "string"
-              description: "ID of the acceptance."
+              description: "ID of the acceptance event."
             timestamp:
               type: "string"
-              description: "Time of acceptance."
-
+              format: "date-time"
+              description: "Timestamp of the journey start."
+            version:
+              type: "string"
+              description: "Version of the Terms and Conditions"
         caseID:
           type: "string"
           description: "ID of the case."
+        caseTypeID:
+          type: "string"
+          description: "Type ID of the case."
+        entityID:
+          type: "string"
+          description: "ID of the associated entity."
+        journeyID:
+          type: "string"
+          description: "ID of the journey associated with the case."
+        locale:
+          type: "string"
+          description: "Language setting for the case if selected by the user. EN is default"
+        merchantID:
+          type: "string"
+          description: "This is your merchant identifier. It's your unique identifier across other QGen Online Merchants and never changes."
+        referenceID:
+          type: "string"
+          description: "Reference ID associated with the case. You should send this. Make sure it is unique."
+        riskLevelID:
+          type: "string"
+          description: "Risk level ID assigned to the case."
+        sessionID:
+          type: "string"
+          description: "Session ID associated with the case. A session has a time-out."
+        steps:
+          type: "array"
+          description: "List of steps in the journey as defined in the Risk settings."
+          items:
+            type: "object"
+            properties:
+              checkName:
+                type: "string"
+                description: "Name of the check step."
+              checkType:
+                type: "string"
+                description: "Type of the check step. e.g. Identity Documents"
+              completed:
+                type: "boolean"
+                description: "Truq if the step has been completed. False otherwise."
+              completedAt:
+                type: "string"
+                format: "date-time"
+                description: "Time when the step was completed."
+              data:
+                type: "object"
+                properties:
+                  candidate:
+                    type: "object"
+                    properties:
+                      documentCountryCode:
+                        type: "string"
+                        description: "Country code of the document. e.g. MT"
+                      documentCountryName:
+                        type: "string"
+                        description: "Country name of the document. e.g. Malta"
+                      documentDescription:
+                        type: "string"
+                        description: "Description of the document. e.g. Identity Card"
+                      documentName:
+                        type: "string"
+                        description: "Name of the document."
+                      documentTypeDetail:
+                        type: "string"
+                        description: "Type detail of the document."
+                      probability:
+                        type: "number"
+                        description: "Probability of the document that it's what we indicate it to be."
+                  documentType:
+                    type: "string"
+                    description: "Type of the document."
+                  documents:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        fileName:
+                          type: "string"
+                          description: "Name of the file associated with the document."
+                        isUpload:
+                          type: "boolean"
+                          description: "True if the document was uploaded."
+                        side:
+                          type: "string"
+                          description: "Side of the document. Front or Back"
+                        size:
+                          type: "integer"
+                          description: "Size of the document file in bytes."
+                  documentsSize:
+                    type: "integer"
+                    description: "Total size of all documents in bytes."
+                  fastFail:
+                    type: "boolean"
+                    description: "Whether the step had fast fail logic implemented."
+                  numberOfDocuments:
+                    type: "integer"
+                    description: "Number of documents involved in the step."
+              deviceIP:
+                type: "string"
+                description: "IP address of the device used in the step."
+              deviceInfo:
+                type: "string"
+                description: "Information about the device and browser used."
+              documents:
+                type: "array"
+                items:
+                  type: "string"
+              faceLiveness:
+                type: "object"
+                properties:
+                  UUID:
+                    type: "string"
+                    description: "UUID of the face liveness check."
+                  completed:
+                    type: "boolean"
+                    description: "Whether the face liveness check is completed."
+                  createdBy:
+                    type: "object"
+                    properties:
+                      actorId:
+                        type: "string"
+                        description: "ID of the actor initiating the face liveness check."
+                      actorType:
+                        type: "string"
+                        description: "Type of the actor initiating the face liveness check."
+                      timestamp:
+                        type: "string"
+                        format: "date-time"
+                        description: "Timestamp of the actor's action."
+                  response:
+                    type: "object"
+                    properties:
+                      capture_liveness:
+                        type: "object"
+                        properties:
+                          probability:
+                            type: "number"
+                            description: "Probability score for the capture liveness."
+                          score:
+                            type: "number"
+                            description: "Score for the capture liveness."
+                      face_liveness:
+                        type: "object"
+                        properties:
+                          probability:
+                            type: "number"
+                            description: "Probability score for the face liveness."
+                  revisionID:
+                    type: "integer"
 
 
+                    description: "Revision ID of the face liveness response."
+              stepNo:
+                type: "integer"
+                description: "Step number in the journey sequence."
 
 
 tags:
