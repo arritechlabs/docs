@@ -8,7 +8,7 @@ info:
     
     Requests should be directed to the appropriate API URL 
     - Staging: https://qgenonlinestaging.com/integration-api/
-    - Production: https://qgenonline.com/integration-api/
+    - Production: Contact Arritech for details
     
     All API requests must be made over HTTPS. HTTP is not supported! 
     See the authentication section for information on correctly authenticating calls 
