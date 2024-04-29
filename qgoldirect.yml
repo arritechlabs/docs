@@ -99,6 +99,160 @@ components:
           type: string
         riskLevelId:
           type: string
+
+    BaseEvent:
+      type: "object"
+      description: "Base structure for all webhook events."
+      properties:
+        id:
+          type: "string"
+          description: "Unique ID for the webhook event."
+        merchantID:
+          type: "string"
+          description: "Identifier for the merchant."
+        eventType:
+          type: "string"
+          description: "Type of the event being reported."
+        payload:
+          type: "object"
+          description: "Event-specific data payload."
+
+    cfm_case_created_event:
+      type: "object"
+      properties:
+        caseID:
+          type: "string"
+          description: "ID of the case."
+        caseTypeID:
+          type: "string"
+          description: "Type ID of the case."
+        entityID:
+          type: "string"
+          description: "ID of the associated entity."
+        journeyID:
+          type: "string"
+          description: "ID of the journey associated with the case."
+        locale:
+          type: "string"
+          description: "Language/locale setting for the case."
+        merchantID:
+          type: "string"
+          description: "ID of the merchant involved."
+        referenceID:
+          type: "string"
+          description: "Reference ID associated with the case."
+        riskLevelID:
+          type: "string"
+          description: "Risk level ID assigned to the case."
+        sessionID:
+          type: "string"
+          description: "Session ID associated with the case."
+
+    cfm_entity_rejected_terms_event:
+      type: "object"
+      properties:
+        caseID:
+          type: "string"
+          description: "ID of the case."
+        caseTypeID:
+          type: "string"
+          description: "Type ID of the case."
+        entityID:
+          type: "string"
+          description: "ID of the associated entity."
+        journeyID:
+          type: "string"
+          description: "ID of the journey associated with the case."
+        locale:
+          type: "string"
+          description: "Language/locale setting for the case."
+        merchantID:
+          type: "string"
+          description: "ID of the merchant involved."
+        referenceID:
+          type: "string"
+          description: "Reference ID associated with the case."
+        riskLevelID:
+          type: "string"
+          description: "Risk level ID assigned to the case."
+        sessionID:
+          type: "string"
+          description: "Session ID associated with the case."
+
+    cfm_user_geo_blocked_event:
+      type: "object"
+      properties:
+        merchantID:
+          type: "string"
+          description: "ID of the merchant involved."
+        referenceID:
+          type: "string"
+          description: "Reference ID associated with the event."
+        riskLevelID:
+          type: "string"
+          description: "Risk level ID assigned to the event."
+        journeyID:
+          type: "string"
+          description: "ID of the journey associated with the case."
+        IPAddress:
+          type: "string"
+          description: "IP address involved in the event."
+        IPDetails:
+          type: "object"
+          properties:
+            ip:
+              type: "string"
+              description: "IP address string."
+            continentcode:
+              type: "string"
+              description: "Continent code derived from IP."
+            continentname:
+              type: "string"
+              description: "Continent name derived from IP."
+            countrycode:
+              type: "string"
+              description: "Country code derived from IP."
+            countryname:
+              type: "string"
+              description: "Country name derived from IP."
+            regioncode:
+              type: "string"
+              description: "Region code derived from IP."
+            city:
+              type: "string"
+              description: "City derived from IP."
+
+          sessionID:
+            type: "string"
+            description: "Session ID associated with the event."
+
+
+    cfm_journey_completed_event:
+      type: "object"
+      properties:
+        acceptanceInfo:
+          type: "object"
+          properties:
+            deviceIP:
+              type: "string"
+              description: "IP address used."
+            deviceInfo:
+              type: "string"
+              description: "Browser information."
+            id:
+              type: "string"
+              description: "ID of the acceptance."
+            timestamp:
+              type: "string"
+              description: "Time of acceptance."
+
+        caseID:
+          type: "string"
+          description: "ID of the case."
+
+
+
+
 tags:
   - name: authentication
   - name: aml
