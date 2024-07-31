@@ -450,8 +450,8 @@ paths:
                   description: Secret key
               
               example:
-                clientID: 63ee439c60c4f758b44caff6
-                clientSecret: h0tYq:5r6dp3.8Z,)bs>7kO24unF${}P
+                clientID: client_unique_id
+                clientSecret: client_secret
       responses:
         '200':
           description: Successful response
@@ -730,7 +730,7 @@ paths:
               example:
                 success: true
                 data:
-                  ID: 63f39d127b2b07819d09866d
+                  ID: unique_id
                   totalHits: 9
                   matchStatus: potential_match
                 errors: null
@@ -847,7 +847,7 @@ paths:
                   type: boolean
                   description: Set to 'true' if you want to monitor this search. Set to 'false' if you want to stop monitoring 
               example:
-                id: 63f4a0698870e271fc119fc0
+                id: unique_id
                 isMonitored: false 
 
       responses:
@@ -975,7 +975,7 @@ paths:
                 caseTypeId:
                   type: string
                   description: A valid value as returned from the `/v1/cfm/case/types` endpoint. Case Types are created in QGen Online via the UI.
-                  example: "654116dce5c397e29913ca08"
+                  example: "unique_id"
                 referenceId:
                   type: string
                   description: A unique reference to your applicant. Make sure this was never submitted before and does not already exist in QGoL.
@@ -1064,7 +1064,7 @@ paths:
               InitCaseExample:
                 summary: Example request to initiate a new case
                 value:
-                  caseTypeId: "654116dce5c397e29913ca08"
+                  caseTypeId: "unique_id"
                   referenceId: "UniqueReferenceABCD01"
                   description: "This is the description field"
                   email: "test@arritech.com"
@@ -1131,11 +1131,11 @@ paths:
               example:
                 success: true
                 data:
-                  caseId: 65c650f3e3f5bbb9c64a98ab
-                  entityId: 65c650f3e3f5bbb9c64a98af
-                  journeyId: 65c650f3d8ee10299bdc9b48
-                  sessionId: 65c650f3c99c0f14a19cb914
-                  cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=65c650f3c99c0f14a19cb914
+                  caseId: unique_id
+                  entityId: unique_id
+                  journeyId: unique_id
+                  sessionId: unique_id
+                  cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=unique_id
                 errors: null
         '400': 
           description: Bad request
@@ -1214,7 +1214,7 @@ paths:
                     "data": {
                       "audit": {
                         "createdBy": {
-                          "actorId": "6571957c1ac592bad3f36c59",
+                          "actorId": "unique_id",
                           "actorType": "Api",
                           "timestamp": "2024-03-13T16:23:48.158Z"
                         },
@@ -1223,27 +1223,27 @@ paths:
                         "revisionID": 1
                       },
                       "casePriority": {
-                        "id": "6384df3d779f385ae3a5f36b",
+                        "id": "unique_id",
                         "name": "Medium"
                       },
                       "caseStatus": {
-                        "id": "6298b8c38c66f1b237ab3a16",
+                        "id": "unique_id",
                         "name": "New"
                       },
                       "caseType": {
-                        "id": "65cde0914d214c185edd9afe",
+                        "id": "unique_id",
                         "name": "eCommerce"
                       },
                       "companies": [],
                       "description": "",
-                      "id": "65f1d314067871cd768cc7a1",
+                      "id": "unique_id",
                       "persons": [
                         {
                           "addressLine1": "",
                           "addressLine2": "",
                           "audit": {
                             "createdBy": {
-                              "actorId": "6571957c1ac592bad3f36c59",
+                              "actorId": "unique_id",
                               "actorType": "Api",
                               "timestamp": "2024-03-13T16:23:48.165Z"
                             },
@@ -1256,7 +1256,7 @@ paths:
                           "documents": [],
                           "emailAddress": "",
                           "gender": "",
-                          "id": "65f1d314067871cd768cc7a3",
+                          "id": "unique_id",
                           "name": "lawliet",
                           "nationality": "",
                           "phoneNum": "+35677709206",
@@ -1266,7 +1266,7 @@ paths:
                           "title": ""
                         }
                       ],
-                      "reference": "65f1d314a4d5aee0a78d6315",
+                      "reference": "unique_id",
                       "summary": "no summary"
                     },
                     "errors": null
@@ -1347,28 +1347,28 @@ paths:
                     "data": {
                       "logs": [
                         {
-                          "ID": "65f1d31483e04bd1cbd65fb5",
-                          "merchantID": "5ede17951111fc24d89bba7b",
-                          "referenceID": "65f1d314a4d5aee0a78d6315",
-                          "sessionID": "65f1d314390ffd4984b8bfb8",
-                          "riskLevelID": "65f160060e67c2013b8f79f1",
-                          "journeyID": "65f1d3140e67c2013b8f7a4c",
-                          "caseID": "65f1d314067871cd768cc7a1",
-                          "entityID": "65f1d314067871cd768cc7a3",
-                          "caseTypeID": "65cde0914d214c185edd9afe",
-                          "webhookID": "6495555e02bf158bee23dd5b",
+                          "ID": "unique_id",
+                          "merchantID": "unique_id",
+                          "referenceID": "unique_id",
+                          "sessionID": "unique_id",
+                          "riskLevelID": "unique_id",
+                          "journeyID": "unique_id",
+                          "caseID": "unique_id",
+                          "entityID": "unique_id",
+                          "caseTypeID": "unique_id",
+                          "webhookID": "unique_id",
                           "locale": "EN",
                           "eventType": "cfm_case_created_event",
                           "payload": {
-                            "caseID": "65f1d314067871cd768cc7a1",
-                            "caseTypeID": "65cde0914d214c185edd9afe",
-                            "entityID": "65f1d314067871cd768cc7a3",
-                            "journeyID": "65f1d3140e67c2013b8f7a4c",
+                            "caseID": "unique_id",
+                            "caseTypeID": "unique_id",
+                            "entityID": "unique_id",
+                            "journeyID": "unique_id",
                             "locale": "EN",
-                            "merchantID": "5ede17951111fc24d89bba7b",
-                            "referenceID": "65f1d314a4d5aee0a78d6315",
-                            "riskLevelID": "65f160060e67c2013b8f79f1",
-                            "sessionID": "65f1d314390ffd4984b8bfb8"
+                            "merchantID": "unique_id",
+                            "referenceID": "unique_id",
+                            "riskLevelID": "unique_id",
+                            "sessionID": "unique_id"
                           },
                           "endpoint": "https://qgenonlinestaging.com/cfm-simulator-api/v1/webhook/create",
                           "statusCode": 200,
