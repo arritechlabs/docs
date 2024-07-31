@@ -730,7 +730,7 @@ paths:
               example:
                 success: true
                 data:
-                  ID: unique_id
+                  id: unique_id
                   totalHits: 9
                   matchStatus: potential_match
                 errors: null
