@@ -88,6 +88,14 @@ components:
         ```
           securitySchemes:
   schemas:
+    RiskLevel: 
+      type: object
+      properties: 
+        id: 
+          type: string
+        name:
+          type: string
+        
     CaseType:
       type: object
       properties:
@@ -97,8 +105,8 @@ components:
           type: string
         group:
           type: string
-        riskLevelId:
-          type: string
+        riskLevel:
+           $ref: '#/components/schemas/RiskLevel'
 
     BaseEvent:
       type: "object"
@@ -1178,7 +1186,7 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: An array of case types with id, name, group, and riskLevelId.
+          description: An array of case types with id, name, group, and riskLevel.
           content:
             application/json:
               schema:
