@@ -1218,66 +1218,223 @@ paths:
               examples:
                 caseDetailsExample:
                   value: {
-                    "success": true,
-                    "data": {
-                      "audit": {
-                        "createdBy": {
-                          "actorId": "unique_id",
-                          "actorType": "Api",
-                          "timestamp": "2024-03-13T16:23:48.158Z"
-                        },
-                        "deletedBy": null,
-                        "modifiedBy": null,
-                        "revisionID": 1
-                      },
-                      "casePriority": {
-                        "id": "unique_id",
-                        "name": "Medium"
-                      },
-                      "caseStatus": {
-                        "id": "unique_id",
-                        "name": "New"
-                      },
-                      "caseType": {
-                        "id": "unique_id",
-                        "name": "eCommerce"
-                      },
-                      "companies": [],
-                      "description": "",
-                      "id": "unique_id",
-                      "persons": [
-                        {
-                          "addressLine1": "",
-                          "addressLine2": "",
+                      "success": true,
+                      "data": {
                           "audit": {
-                            "createdBy": {
-                              "actorId": "unique_id",
-                              "actorType": "Api",
-                              "timestamp": "2024-03-13T16:23:48.165Z"
-                            },
-                            "deletedBy": null,
-                            "modifiedBy": null,
-                            "revisionID": 1
+                              "createdBy": {
+                                  "actorId": "Key Name",
+                                  "actorType": "Api",
+                                  "timestamp": "2024-09-12T12:19:00.929Z"
+                              },
+                              "deletedBy": null,
+                              "modifiedBy": null,
+                              "revisionID": 1
                           },
-                          "country": "",
-                          "dob": "",
-                          "documents": [],
-                          "emailAddress": "",
-                          "gender": "",
+                          "casePriority": {
+                              "id": "unique_id",
+                              "name": "Medium"
+                          },
+                          "caseStatus": {
+                              "id": "unique_id",
+                              "name": "New"
+                          },
+                          "caseType": {
+                              "id": "unique_id",
+                              "name": "Passport Check"
+                          },
+                          "companies": [],
+                          "description": "",
                           "id": "unique_id",
-                          "name": "lawliet",
-                          "nationality": "",
-                          "phoneNum": "+35677709206",
-                          "postCode": "",
-                          "searches": [],
-                          "surname": "sebastian",
-                          "title": ""
-                        }
-                      ],
-                      "reference": "unique_id",
-                      "summary": "no summary"
-                    },
-                    "errors": null
+                          "persons": [
+                              {
+                                  "addressLine1": "",
+                                  "addressLine2": "",
+                                  "audit": {
+                                      "createdBy": {
+                                          "actorId": "Key Name",
+                                          "actorType": "Api",
+                                          "timestamp": "2024-09-12T12:19:00.932Z"
+                                      },
+                                      "deletedBy": null,
+                                      "modifiedBy": null,
+                                      "revisionID": 1
+                                  },
+                                  "country": "",
+                                  "dob": "1985-06-04",
+                                  "documents": [
+                                      {
+                                          "audit": {
+                                              "createdBy": {
+                                                  "actorId": "Key Name",
+                                                  "actorType": "Api",
+                                                  "timestamp": "2024-09-12T12:19:46.061Z"
+                                              },
+                                              "deletedBy": null,
+                                              "modifiedBy": {
+                                                  "actorId": "system@qgenonline.com",
+                                                  "actorType": "System",
+                                                  "timestamp": "2024-09-12T12:19:57.444Z"
+                                              },
+                                              "revisionID": 3
+                                          },
+                                          "currentStatus": "Rejected",
+                                          "documentType": "Selfie",
+                                          "files": [
+                                              {
+                                                  "audit": {
+                                                      "createdBy": {
+                                                          "actorId": "Key Name",
+                                                          "actorType": "Api",
+                                                          "timestamp": "2024-09-12T12:19:46.061Z"
+                                                      },
+                                                      "deletedBy": null,
+                                                      "modifiedBy": null,
+                                                      "revisionID": 1
+                                                  },
+                                                  "base64File": "base_64_file",
+                                                  "fileName": "file_name.jpeg",
+                                                  "id": "unique_id"
+                                              }
+                                          ],
+                                          "id": "unique_id",
+                                          "metadata": {
+                                              "gender": null,
+                                              "notes": null
+                                          },
+                                          "statuses": [
+                                              {
+                                                  "actor": {
+                                                      "actorId": "Key Name",
+                                                      "actorType": "Api",
+                                                      "timestamp": "2024-09-12T12:19:46.061Z"
+                                                  },
+                                                  "notes": "Initial Default Status",
+                                                  "status": "Awaiting Review"
+                                              },
+                                              {
+                                                  "actor": {
+                                                      "actorId": "system@qgenonline.com",
+                                                      "actorType": "System",
+                                                      "timestamp": "2024-09-12T12:19:56.936Z"
+                                                  },
+                                                  "notes": "No face match found between selfie and  Passport",
+                                                  "status": "Rejected"
+                                              }
+                                          ],
+                                          "verificationMethod": "AutomatedReview"
+                                      },
+                                      {
+                                          "audit": {
+                                              "createdBy": {
+                                                  "actorId": "Key Name",
+                                                  "actorType": "Api",
+                                                  "timestamp": "2024-09-12T12:19:31.96Z"
+                                              },
+                                              "deletedBy": null,
+                                              "modifiedBy": {
+                                                  "actorId": "system@qgenonline.com",
+                                                  "actorType": "System",
+                                                  "timestamp": "2024-09-12T12:19:34.809Z"
+                                              },
+                                              "revisionID": 5
+                                          },
+                                          "currentStatus": "Rejected",
+                                          "documentType": "Passport",
+                                          "files": [
+                                              {
+                                                  "audit": {
+                                                      "createdBy": {
+                                                          "actorId": "Key Name",
+                                                          "actorType": "Api",
+                                                          "timestamp": "2024-09-12T12:19:31.96Z"
+                                                      },
+                                                      "deletedBy": null,
+                                                      "modifiedBy": null,
+                                                      "revisionID": 1
+                                                  },
+                                                  "base64File": "base_64_file",
+                                                  "fileName": "file_name.jpeg",
+                                                  "id": "unique_id"
+                                              },
+                                              {
+                                                  "audit": {
+                                                      "createdBy": {
+                                                          "actorId": "Key Name",
+                                                          "actorType": "Api",
+                                                          "timestamp": "2024-09-12T12:19:31.96Z"
+                                                      },
+                                                      "deletedBy": null,
+                                                      "modifiedBy": null,
+                                                      "revisionID": 1
+                                                  },
+                                                  "base64File": "base_64_file",
+                                                  "fileName": "file_name.jpeg",
+                                                  "id": "unique_id"
+                                              }
+                                          ],
+                                          "id": "unique_id",
+                                          "metadata": {
+                                              "address": null,
+                                              "addressCountry": null,
+                                              "dateOfBirth": "1946-10-20",
+                                              "dateOfIssue": "2021-11-18",
+                                              "documentName": "United States - ePassport (2020)",
+                                              "documentNumber": "A01719425",
+                                              "expirationDate": "2031-11-17",
+                                              "fathersName": null,
+                                              "firstName": "DIANE RAE",
+                                              "gender": "Female",
+                                              "issuingAuthority": "UNITED STATES DEPARTMENT OF STATE",
+                                              "issuingCountry": "US",
+                                              "lastName": "THOMPSON",
+                                              "mothersName": null,
+                                              "nationality": "American",
+                                              "nationalityCode": "US",
+                                              "notes": null,
+                                              "placeOfBirth": "WISCONSIN, U.SA.",
+                                              "placeOfBirthCode": null,
+                                              "placeOfIssue": null,
+                                              "type": "Passport"
+                                          },
+                                          "statuses": [
+                                              {
+                                                  "actor": {
+                                                      "actorId": "Key Name",
+                                                      "actorType": "Api",
+                                                      "timestamp": "2024-09-12T12:19:31.96Z"
+                                                  },
+                                                  "notes": "Initial Default Status",
+                                                  "status": "Awaiting Review"
+                                              },
+                                              {
+                                                  "actor": {
+                                                      "actorId": "system@qgenonline.com",
+                                                      "actorType": "System",
+                                                      "timestamp": "2024-09-12T12:19:34.241Z"
+                                                  },
+                                                  "notes": "Names are not matching. The entity name (Dianne Thompson) and extracted name from Passport (DIANE RAE THOMPSON) is only 84.85% similar | Gender checking is being ignored due to the settings | Birth dates are not matching. The entity has (1985-06-04) and extracted date of birth from Passport is (1946-10-20). The dob cross checking setting is (Refer if mismatch). | Country of residence checking is being ignored due to the settings | Authenticity / Security checks are passed | Image quality checks on front page are failed: Image Glares, Image Portrait | Image quality checks on third page are failed: Image Glares",
+                                                  "status": "Rejected"
+                                              }
+                                          ],
+                                          "verificationMethod": "AutomatedReview"
+                                      }
+                                  ],
+                                  "emailAddress": "dianne@gmail.com",
+                                  "gender": "",
+                                  "id": "unique_id",
+                                  "name": "Dianne",
+                                  "nationality": "American",
+                                  "phoneNum": "",
+                                  "postCode": "",
+                                  "searches": [],
+                                  "surname": "Thompson",
+                                  "title": ""
+                              }
+                          ],
+                          "reference": "unique_id",
+                          "summary": "Dianne Thompson"
+                      },
+                      "errors": null
                   }
         '400':
             description: Bad Request - Invalid input parameters.
