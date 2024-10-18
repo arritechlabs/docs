@@ -1470,7 +1470,7 @@ paths:
                       ]
                     }
 
-  /v1/case/{caseId}/{docId}:
+  /v1/case/case/{caseId}/{docId}:
     get:
       tags:
         - cfm
