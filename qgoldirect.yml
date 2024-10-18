@@ -1291,7 +1291,6 @@ paths:
                                                       "modifiedBy": null,
                                                       "revisionID": 1
                                                   },
-                                                  "base64File": "base_64_file",
                                                   "fileName": "file_name.jpeg",
                                                   "id": "unique_id"
                                               }
@@ -1352,7 +1351,6 @@ paths:
                                                       "modifiedBy": null,
                                                       "revisionID": 1
                                                   },
-                                                  "base64File": "base_64_file",
                                                   "fileName": "file_name.jpeg",
                                                   "id": "unique_id"
                                               },
@@ -1367,7 +1365,6 @@ paths:
                                                       "modifiedBy": null,
                                                       "revisionID": 1
                                                   },
-                                                  "base64File": "base_64_file",
                                                   "fileName": "file_name.jpeg",
                                                   "id": "unique_id"
                                               }
@@ -1473,6 +1470,100 @@ paths:
                       ]
                     }
 
+  /v1/case/{caseId}/{docId}:
+    get:
+      tags:
+        - cfm
+      summary: Download a file associated with a document in a specific case.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: caseId
+          required: true
+          schema:
+            type: string
+          description: The ID of the case to retrieve the document from.
+        - in: path
+          name: docId
+          required: true
+          schema:
+            type: string
+          description: The ID of the document containing the file to download.
+      responses:
+        '200':
+          description: File stream of the requested document.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request - Invalid input parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                badRequestExample:
+                  value: {
+                    "success": false,
+                    "errors": [
+                      {
+                        "code": 400,
+                        "message": "caseId or docId - Invalid or missing",
+                        "type": "BAD_REQUEST_ERROR"
+                      }
+                    ]
+                  }
+        '404':
+          description: Not Found - Document or file not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                notFoundExample:
+                  value: {
+                    "success": false,
+                    "errors": [
+                      {
+                        "code": 404,
+                        "message": "Document or file not found",
+                        "type": "NOT_FOUND_ERROR"
+                      }
+                    ]
+                  }
 
   /v1/cfm/webhook/logs/{sessionID}:
     get:
