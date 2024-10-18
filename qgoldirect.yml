@@ -961,7 +961,7 @@ paths:
                   message: unauthorized
                   type: ACCESS_DENIED
 
-  /v1/cfm/case/init/:
+  /v1/cfm/case/init:
     post:
       tags:
         - cfm
