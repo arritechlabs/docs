@@ -65,7 +65,7 @@ func sign(method, endpoint string, request []byte) (string, string) {
     timeStamp := c.getTimestamp()
     data := []byte(timeStamp + method + endpoint)
     data = append(data, request...)
-    return timeStamp, ComputeHMAC256HEX(string(data), c.secretKey)
+    return timeStamp, computeHMAC256HEX(string(data), c.secretKey)
 }
 ```
 
