@@ -41,22 +41,23 @@ Each webhook request is signed using HMAC for authenticity. Use the provided `se
 
 ### Request Headers
 
-| Header Name                   | Description                                |
-| ----------------------------- | ------------------------------------------ |
-| `SignatureHeaderKey`          | The HMAC signature for the request.        |
-| `SignatureHeaderTimestampKey` | The timestamp when the request was signed. |
-| `SignatureHeaderEndpoint`     | The endpoint URL used for signing.         |
+| Header Name              | Description                                |
+| ------------------------ | ------------------------------------------ |
+| `X-App-Access-Sig`       | The HMAC signature for the request.        |
+| `X-App-Access-Timestamp` | The timestamp when the request was signed. |
+| `X-App-Access-Endpoint`  | The endpoint URL used for signing.         |
 
 ### Signing Process
 
 Before sending the request, we compute the HMAC signature as follows:
 
 1. **Data to Sign**: Concatenate the following:
-   - Timestamp (`SignatureHeaderTimestampKey`)
+   - Timestamp (`X-App-Access-Timestamp`)
    - HTTP Method (e.g., `POST`)
-   - Endpoint (URL path)
+   - Endpoint (`X-App-Access-Endpoint`)
    - JSON payload (ordered by key).
 2. **Generate Signature**: Compute the HMAC using SHA256 and the webhook's `secret_key`.
+3. **Check signature**: Compare your signature generated with the header `X-App-Access-Sig`
 
 Example signing process in Go:
 
