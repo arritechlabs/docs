@@ -61,7 +61,7 @@ Before sending the request, we compute the HMAC signature as follows:
 Example signing process in Go:
 
 ```go
-func (c *RetryableHTTPClient) sign(method, endpoint string, request []byte) (string, string) {
+func sign(method, endpoint string, request []byte) (string, string) {
     timeStamp := c.getTimestamp()
     data := []byte(timeStamp + method + endpoint)
     data = append(data, request...)
