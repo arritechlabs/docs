@@ -417,6 +417,184 @@ components:
               stepNo:
                 type: "integer"
                 description: "Step number in the journey sequence."
+    cfm_kyc_completed_event:
+      type: "object"
+      properties:
+        base:
+          type: "object"
+          description: "Base event information common to all events."
+          properties:
+            merchantID:
+              type: "string"
+              description: "Your merchant identifier."
+            referenceID:
+              type: "string"
+              description: "Unique reference ID for the event."
+            sessionID:
+              type: "string"
+              description: "Session ID associated with the event."
+            riskLevelID:
+              type: "string"
+              description: "Risk level ID assigned to the event."
+            journeyID:
+              type: "string"
+              description: "Journey ID associated with the event."
+            caseID:
+              type: "string"
+              description: "Case ID associated with the event."
+            entityID:
+              type: "string"
+              description: "Entity ID related to the event."
+            caseTypeID:
+              type: "string"
+              description: "Type ID of the case."
+              nullable: true
+            locale:
+              type: "string"
+              description: "Language setting for the case."
+            webhooks:
+              type: "array"
+              description: "List of webhook configurations."
+              items:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                    description: "Unique ID of the webhook."
+                  endpoint:
+                    type: "string"
+                    description: "Endpoint URL for the webhook."
+                  retryCount:
+                    type: "integer"
+                    description: "Number of retries attempted for the webhook."
+                  secretKey:
+                    type: "string"
+                    description: "Secret key for securing the webhook."
+        payload:
+          type: "object"
+          description: "Details of the KYC completed event payload."
+          properties:
+            merchantId:
+              type: "string"
+              description: "Your merchant identifier."
+            referenceId:
+              type: "string"
+              description: "Unique reference ID for the KYC."
+            caseId:
+              type: "string"
+              description: "Case ID associated with the KYC."
+            caseTypeId:
+              type: "string"
+              description: "Case type ID."
+              nullable: true
+            entityId:
+              type: "string"
+              description: "Entity ID related to the KYC."
+            sessionId:
+              type: "string"
+              description: "Session ID associated with the KYC."
+            journeyId:
+              type: "string"
+              description: "Journey ID associated with the KYC."
+            clientId:
+              type: "string"
+              description: "Client ID related to the KYC."
+            linkId:
+              type: "string"
+              description: "Link ID associated with the KYC."
+            messageId:
+              type: "string"
+              description: "Optional message ID."
+              nullable: true
+            riskLevel:
+              type: "string"
+              description: "Risk level information."
+            ipInfo:
+              type: "object"
+              description: "Details of the client's IP information."
+              properties:
+                IPAddress:
+                  type: "string"
+                  description: "IP address of the client."
+                IPCountry:
+                  type: "string"
+                  description: "Country of the IP address."
+                agentInfo:
+                  type: "object"
+                  description: "Information about the client's device and browser."
+                  properties:
+                    browser:
+                      type: "string"
+                      description: "Browser used by the client."
+                    operatingSystem:
+                      type: "string"
+                      description: "Operating system of the client's device."
+                    device:
+                      type: "string"
+                      description: "Device used by the client."
+                    deviceType:
+                      type: "string"
+                      description: "Type of the client's device (e.g., Mobile, Desktop)."
+            steps:
+              type: "object"
+              description: "Mapping of steps in the KYC process."
+              additionalProperties:
+                type: "object"
+                description: "Details of a specific step."
+            terminationState:
+              type: "string"
+              description: "Termination state of the session."
+              nullable: true
+            terminationNotes:
+              type: "string"
+              description: "Notes about the termination state."
+              nullable: true
+            startedAt:
+              type: "string"
+              format: "date-time"
+              description: "Timestamp of when the KYC process started."
+            completedAt:
+              type: "string"
+              format: "date-time"
+              description: "Timestamp of when the KYC process completed."
+              nullable: true
+            expiresAt:
+              type: "string"
+              format: "date-time"
+              description: "Timestamp of when the session expires."
+              nullable: true
+            duration:
+              type: "number"
+              format: "float"
+              description: "Duration of the KYC process in seconds."
+              nullable: true
+            completed:
+              type: "boolean"
+              description: "Whether the KYC process is completed."
+            decision:
+              type: "object"
+              description: "Decision details for the KYC."
+              properties:
+                status:
+                  type: "string"
+                  description: "Status of the decision (e.g., Approved, Rejected)."
+                notes:
+                  type: "array"
+                  description: "Additional notes regarding the decision."
+                  items:
+                    type: "string"
+                timestamp:
+                  type: "string"
+                  format: "date-time"
+                  description: "Timestamp of when the decision was made."
+            cloned:
+              type: "boolean"
+              description: "Indicates whether the session was cloned."
+              nullable: true
+            previousSessionId:
+              type: "string"
+              description: "ID of the previous session, if any."
+              nullable: true
 
 
 tags:
@@ -829,6 +1007,183 @@ paths:
                   message: unauthorized
                   type: UNAUTHORiZED
                   
+  /integration-api/v1/cfm/session/continue:
+    post:
+      tags:
+        - cfm
+      summary: Continue a session
+      description: |
+        Creates a new session for the provided `sessionId`. Depending on the `withMessage` parameter:
+        
+        - If `withMessage` is set to `true`, the system creates a new session and sends the session link to the end user via email or SMS (email has priority if both are available). The end user uses the link to resume their session.
+        - If `withMessage` is set to `false`, the system creates a new session but does not send any notifications. You can use the response to embed the session link directly.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessionId:
+                  type: string
+                  description: The unique session ID.
+                withMessage:
+                  type: boolean
+                  description: |
+                    Determines whether a notification should be sent to the end user. 
+                    - `true`: Sends email or SMS with the session link.
+                    - `false`: Does not send notifications.
+              required:
+                - sessionId
+                - withMessage
+              example:
+                sessionId: "unique-session-id"
+                withMessage: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Indicates whether the operation was successful.
+                  data:
+                    type: object
+                    description: The details of the session and its status.
+                    properties:
+                      caseId:
+                        type: string
+                        description: The unique case ID associated with the session.
+                      entityId:
+                        type: string
+                        description: The unique entity ID.
+                      journeyId:
+                        type: string
+                        description: The unique journey ID.
+                      sessionId:
+                        type: string
+                        description: The unique session ID.
+                      withMessage:
+                        type: boolean
+                        description: Indicates whether a message was sent to the end user.
+                      cfmUrl:
+                        type: string
+                        nullable: true
+                        description: The URL for the session, provided when `withMessage` is `false`.
+                      messageType:
+                        type: string
+                        nullable: true
+                        description: The type of message sent (e.g., "Email"), provided when `withMessage` is `true`.
+                      message:
+                        type: string
+                        nullable: true
+                        description: A detailed message about the session status or action taken.
+                  errors:
+                    type: object
+                    nullable: true
+                    description: Contains error details if the operation failed.
+                    properties:
+                      code:
+                        type: integer
+                        description: The HTTP status code.
+                      message:
+                        type: string
+                        description: A description of the error.
+                      type:
+                        type: string
+                        description: The type of error (e.g., "BAD_REQUEST_ERROR").
+              examples:
+                withMessageTrue:
+                  summary: Response when withMessage is true
+                  value:
+                    success: true
+                    data:
+                      caseId: "uniqueId"
+                      entityId: "uniqueId"
+                      journeyId: "uniqueId"
+                      sessionId: "uniqueId"
+                      withMessage: true
+                      cfmUrl: null
+                      messageType: "Email"
+                      message: "The previous session has been expired but is not completed. New link has been sent via email. End user should check their inbox to continue the session where they left."
+                    errors: null
+                withMessageFalse:
+                  summary: Response when withMessage is false
+                  value:
+                    success: true
+                    data:
+                      caseId: "uniqueId"
+                      entityId: "uniqueId"
+                      journeyId: "uniqueId"
+                      sessionId: "uniqueId"
+                      withMessage: false
+                      cfmUrl: "http://localhost:8082/cfm/?session_id=6728ce0872d7b6937043e5a6"
+                      messageType: null
+                      message: null
+                    errors: null
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Always set to `false` for errors.
+                  errors:
+                    type: object
+                    description: Contains error details.
+                    properties:
+                      code:
+                        type: integer
+                        description: HTTP status code.
+                      message:
+                        type: string
+                        description: A description of the error.
+                      type:
+                        type: string
+                        description: The type of error (e.g., "BAD_REQUEST_ERROR").
+              example:
+                success: false
+                errors:
+                  code: 400
+                  message: "Invalid session ID provided."
+                  type: "BAD_REQUEST_ERROR"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Always set to `false` for errors.
+                  errors:
+                    type: object
+                    description: Contains error details.
+                    properties:
+                      code:
+                        type: integer
+                        description: HTTP status code.
+                      message:
+                        type: string
+                        description: A description of the error.
+                      type:
+                        type: string
+                        description: The type of error (e.g., "UNAUTHORIZED_ERROR").
+              example:
+                success: false
+                errors:
+                  code: 401
+                  message: "Unauthorized. Please check your credentials."
+                  type: "UNAUTHORIZED_ERROR"
 
 
   /v1/aml/search/monitor:
