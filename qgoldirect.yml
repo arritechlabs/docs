@@ -1007,7 +1007,7 @@ paths:
                   message: unauthorized
                   type: UNAUTHORiZED
                   
-  /integration-api/v1/cfm/session/continue:
+  /v1/cfm/session/continue:
     post:
       tags:
         - cfm
