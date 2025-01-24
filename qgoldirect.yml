@@ -1532,11 +1532,11 @@ paths:
                   message: invalid character '\\n' in string literal
                   type: BAD_REQUEST_ERROR
         
-  /integration-api/v1/cfm/session/init:
+  /v1/cfm/session/init:
     post:
       tags:
-        - integration
-      summary: Initialize a session for the CFM API.
+        - cfm
+      summary: Initialize a session for the CFM API using an existing case.
       description: |
         This endpoint initializes a session for the CFM API using the provided case details and applicant's information. 
         Use it to kickstart an interaction or workflow within the CFM component.
