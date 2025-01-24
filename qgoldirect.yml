@@ -1531,7 +1531,105 @@ paths:
                   code: 400
                   message: invalid character '\\n' in string literal
                   type: BAD_REQUEST_ERROR
-          
+        
+  /integration-api/v1/cfm/session/init:
+    post:
+      tags:
+        - integration
+      summary: Initialize a session for the CFM API.
+      description: |
+        This endpoint initializes a session for the CFM API using the provided case details and applicant's information. 
+        Use it to kickstart an interaction or workflow within the CFM component.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                caseId:
+                  type: string
+                  description: The unique ID of the case. Required.
+                  example: "6790ebe8207c470c72e730e1"
+                entityId:
+                  type: string
+                  description: The unique ID of the entity associated with the case. Required.
+                  example: "6790ebe8207c470c72e730e3"
+                riskLevelId:
+                  type: string
+                  description: The risk level ID for the applicant. Required.
+                  example: "678a4029d88380641c418040"
+                locale:
+                  type: string
+                  description: Language preference for the session. Defaults to English if unspecified.
+                  example: "en"
+              required:
+                - caseId
+                - entityId
+                - riskLevelId
+                - locale
+            examples:
+              InitSessionExample:
+                summary: Example request to initialize a session
+                value:
+                  caseId: "6790ebe8207c470c72e730e1"
+                  entityId: "6790ebe8207c470c72e730e3"
+                  riskLevelId: "678a4029d88380641c418040"
+                  locale: "en"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True if the session was initialized successfully. False otherwise.
+                  data:
+                    type: object
+                    properties:
+                      sessionId:
+                        type: string
+                        description: The unique ID of the session initialized for the CFM API.
+                      cfmUrl:
+                        type: string
+                        description: The URL containing the session ID, which can be used to access the initialized session.
+                    example:
+                      sessionId: "unique-session-id"
+                      cfmUrl: "https://qgenonlinestaging.com/cfm/?session_id=unique-session-id"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Always false for bad requests.
+                  errors:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        description: HTTP error code.
+                      message:
+                        type: string
+                        description: A descriptive error message.
+                      type:
+                        type: string
+                        description: Error type.
+                    example:
+                      success: false
+                      errors:
+                        code: 400
+                        message: "Invalid input parameters"
+                        type: "BAD_REQUEST_ERROR"
+
   /v1/cfm/case/types:
     get:
       tags:
