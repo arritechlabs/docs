@@ -1552,15 +1552,15 @@ paths:
                 caseId:
                   type: string
                   description: The unique ID of the case. Required.
-                  example: "6790ebe8207c470c72e730e1"
+                  example: "unique_id"
                 entityId:
                   type: string
                   description: The unique ID of the entity associated with the case. Required.
-                  example: "6790ebe8207c470c72e730e3"
+                  example: "unique_id"
                 riskLevelId:
                   type: string
                   description: The risk level ID for the applicant. Required.
-                  example: "678a4029d88380641c418040"
+                  example: "unique_id"
                 locale:
                   type: string
                   description: Language preference for the session. Defaults to English if unspecified.
@@ -1574,9 +1574,9 @@ paths:
               InitSessionExample:
                 summary: Example request to initialize a session
                 value:
-                  caseId: "6790ebe8207c470c72e730e1"
-                  entityId: "6790ebe8207c470c72e730e3"
-                  riskLevelId: "678a4029d88380641c418040"
+                  caseId: "unique_id"
+                  entityId: "unique_id"
+                  riskLevelId: "unique_id"
                   locale: "en"
       responses:
         '200':
