@@ -1588,19 +1588,48 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    description: True if the session was initialized successfully. False otherwise.
+                    description: True if the token was generated successfully. False otherwise
                   data:
                     type: object
+                    description: In case of an error, this object will be set to 'null'
                     properties:
-                      sessionId:
+                      caseId:
                         type: string
-                        description: The unique ID of the session initialized for the CFM API.
+                        description: The unique search ID is generated automatically
+                      entityId: 
+                        type: integer
+                        description: total number of hits
+                      journeyId:
+                        type: string
+                        description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
+                      sessionID:
+                        type: string
+                        description: the unique session id that makes the CFM url unique. This session expires as per setting in QGoL General settings. Should be returned to the frontend to start cfm process.
                       cfmUrl:
                         type: string
-                        description: The URL containing the session ID, which can be used to access the initialized session.
-                    example:
-                      sessionId: "unique-session-id"
-                      cfmUrl: "https://qgenonlinestaging.com/cfm/?session_id=unique-session-id"
+                        description: the URL with the unique session id that makes the CFM url unique.                        
+                  errors:
+                    type: object
+                    description: Array of error object types. If the request was successful, this object will be set to 'null'
+                    properties: 
+                      code:
+                        type: integer
+                        description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
+                      message:
+                        type: string
+                        description: A descriptive message describing the reason for the error
+                      type:
+                        type: string
+                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+              example:
+                success: true
+                data:
+                  caseId: unique_id
+                  entityId: unique_id
+                  journeyId: unique_id
+                  sessionId: unique_id
+                  cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=unique_id
+                errors: null
         '400':
           description: Bad request
           content:
