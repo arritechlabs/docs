@@ -2076,50 +2076,115 @@ paths:
                     properties:
                       logs:
                         type: array
-                  errors:
-                    type: 'object'
+                        items: 
+                          type: object
+                          properties:
+                            ID:
+                              type: string
+                            merchantID:
+                              type: string
+                            referenceID:
+                              type: string
+                            sessionID:
+                              type: string
+                            riskLevelID:
+                              type: string
+                            journeyID:
+                              type: string
+                            caseID:
+                              type: string
+                            entityID:
+                              type: string
+                            caseTypeID:
+                              type: string
+                            webhookID:
+                              type: string
+                            locale:
+                              type: string
+                            eventType:
+                              type: string
+                            payload:
+                              type: object
+                              properties:
+                                caseID:
+                                  type: string
+                                caseTypeID:
+                                  type: string
+                                entityID:
+                                  type: string
+                                journeyID:
+                                  type: string
+                                locale:
+                                  type: string
+                                merchantID:
+                                  type: string
+                                referenceID:
+                                  type: string
+                                riskLevelID:
+                                  type: string
+                                sessionID:
+                                  type: string
+                            endpoint:
+                              type: string
+                            statusCode:
+                              type: integer
+                            response:
+                              type: string
+                            clientErr:
+                              type: string
+                              nullable: true
+                            status:
+                              type: string
+                            createdAt:
+                              type: string
+                              format: date-time
+                            modifiedAt:
+                              type: string
+                              format: date-time
+                      errors:
+                        type: object
               examples:
-                webhookLogsExample:
-                  value: {
-                    "success": true,
-                    "data": {
-                      "logs": [
-                        {
-                          "ID": "unique_id",
-                          "merchantID": "unique_id",
-                          "referenceID": "unique_id",
-                          "sessionID": "unique_id",
-                          "riskLevelID": "unique_id",
-                          "journeyID": "unique_id",
-                          "caseID": "unique_id",
-                          "entityID": "unique_id",
-                          "caseTypeID": "unique_id",
-                          "webhookID": "unique_id",
-                          "locale": "EN",
-                          "eventType": "cfm_case_created_event",
-                          "payload": {
-                            "caseID": "unique_id",
-                            "caseTypeID": "unique_id",
-                            "entityID": "unique_id",
-                            "journeyID": "unique_id",
-                            "locale": "EN",
+                  webhookLogsExample:
+                    value: {
+                      "success": true,
+                      "data": {
+                        "logs": [
+                          {
+                            "ID": "unique_id",
                             "merchantID": "unique_id",
                             "referenceID": "unique_id",
+                            "sessionID": "unique_id",
                             "riskLevelID": "unique_id",
-                            "sessionID": "unique_id"
-                          },
-                          "endpoint": "https://qgenonlinestaging.com/cfm-simulator-api/v1/webhook/create",
-                          "statusCode": 200,
-                          "response": "object",
-                          "clientErr": null,
-                          "status": "Succeed",
-                          "createdAt": "2024-03-13T16:23:48.24Z",
-                          "modifiedAt": "2024-03-13T16:23:48.279Z"
-                        }
-                      ]
-                    },
-                    "errors": null
-                  }
+                            "journeyID": "unique_id",
+                            "caseID": "unique_id",
+                            "entityID": "unique_id",
+                            "caseTypeID": "unique_id",
+                            "webhookID": "unique_id",
+                            "locale": "EN",
+                            "eventType": "cfm_case_created_event",
+                            "payload": {
+                              "caseID": "unique_id",
+                              "caseTypeID": "unique_id",
+                              "entityID": "unique_id",
+                              "journeyID": "unique_id",
+                              "locale": "EN",
+                              "merchantID": "unique_id",
+                              "referenceID": "unique_id",
+                              "riskLevelID": "unique_id",
+                              "sessionID": "unique_id"
+                            },
+                            "endpoint": "https://qgenonlinestaging.com/cfm-simulator-api/v1/webhook/create",
+                            "statusCode": 200,
+                            "response": "object",
+                            "clientErr": null,
+                            "status": "Succeed",
+                            "createdAt": "2024-03-13T16:23:48.24Z",
+                            "modifiedAt": "2024-03-13T16:23:48.279Z"
+                          }
+                        ]
+                      },
+                      "errors": null
+                    }
         '400':
           description: Bad Request - Invalid input parameters.
           content:
@@ -2144,15 +2209,15 @@ paths:
                         type:
                           type: string
               examples:
-                invalidSessionIdExample:
-                  value: {
-                    "success": false,
-                    "data": null,
-                    "errors": [
-                      {
-                        "code": 400,
-                        "message": "sessionId - Value must be a valid bson object ID",
-                        "type": "BAD_REQUEST_ERROR"
-                      }
-                    ]
-                  }
+                  invalidSessionIdExample:
+                    value: {
+                      "success": false,
+                      "data": null,
+                      "errors": [
+                        {
+                          "code": 400,
+                          "message": "sessionId - Value must be a valid bson object ID",
+                          "type": "BAD_REQUEST_ERROR"
+                        }
+                      ]
+                    }
