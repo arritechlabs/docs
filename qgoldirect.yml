@@ -2221,3 +2221,2192 @@ paths:
                         }
                       ]
                     }
+
+  /v1/case/case/session/{case_id}/{entity_id}:
+    get:
+      summary: Get case session details
+      description: Retrieves session details for a given case and entity.
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the case.
+        - name: entity_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the entity.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success: 
+                    type: "boolean"
+                  data: 
+                    required: 
+                      - "sessions"
+                    properties: 
+                      sessions: 
+                        required: 
+                          - "id"
+                          - "merchantId"
+                          - "caseId"
+                          - "entityId"
+                          - "sessions"
+                          - "documents"
+                          - "faceComparisons"
+                          - "faceLivenessAttempts"
+                          - "fastFailAttempts"
+                          - "revisionID"
+                          - "createdBy"
+                          - "modifiedBy"
+                          - "deletedBy"
+                        properties: 
+                          id: 
+                            type: "string"
+                          merchantId: 
+                            type: "string"
+                          caseId: 
+                            type: "string"
+                          entityId: 
+                            type: "string"
+                          sessions: 
+                            type: "array"
+                            items: 
+                              type: "object"
+                              properties: 
+                                sessionId: 
+                                  type: "string"
+                                journeyId: 
+                                  type: "string"
+                                linkId: 
+                                  type: "string"
+                                clientId: 
+                                  type: "string"
+                                riskLevel: 
+                                  required: 
+                                    - "id"
+                                    - "name"
+                                    - "steps"
+                                  properties: 
+                                    id: 
+                                      type: "string"
+                                    name: 
+                                      type: "string"
+                                    steps: 
+                                      required: 
+                                        - "1"
+                                        - "2"
+                                        - "3"
+                                        - "4"
+                                      properties: 
+                                        1: 
+                                          required: 
+                                            - "stepNo"
+                                            - "checkId"
+                                            - "checkName"
+                                            - "checkType"
+                                            - "settings"
+                                          properties: 
+                                            stepNo: 
+                                              type: "number"
+                                            checkId: 
+                                              type: "string"
+                                            checkName: 
+                                              type: "string"
+                                            checkType: 
+                                              type: "string"
+                                            settings: 
+                                              required: 
+                                                - "allowMobile"
+                                                - "allowUpload"
+                                                - "crossCheckingFields"
+                                                - "fastFailEnabled"
+                                                - "fastFailRetryCount"
+                                                - "proceedIfFastFailIsInconclusive"
+                                                - "revisionId"
+                                                - "supportedCountries"
+                                                - "supportedDocuments"
+                                              properties: 
+                                                allowMobile: 
+                                                  type: "boolean"
+                                                allowUpload: 
+                                                  type: "boolean"
+                                                crossCheckingFields: 
+                                                  required: 
+                                                    - "countryOfResidence"
+                                                    - "dateOfBirth"
+                                                    - "gender"
+                                                    - "names"
+                                                    - "nationality"
+                                                  properties: 
+                                                    countryOfResidence: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    dateOfBirth: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    gender: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    names: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    nationality: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                  type: "object"
+                                                fastFailEnabled: 
+                                                  type: "boolean"
+                                                fastFailRetryCount: 
+                                                  type: "number"
+                                                proceedIfFastFailIsInconclusive: 
+                                                  type: "boolean"
+                                                revisionId: 
+                                                  type: "number"
+                                                supportedCountries: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                                supportedDocuments: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        2: 
+                                          required: 
+                                            - "stepNo"
+                                            - "checkId"
+                                            - "checkName"
+                                            - "checkType"
+                                            - "settings"
+                                          properties: 
+                                            stepNo: 
+                                              type: "number"
+                                            checkId: 
+                                              type: "string"
+                                            checkName: 
+                                              type: "string"
+                                            checkType: 
+                                              type: "string"
+                                            settings: 
+                                              required: 
+                                                - "allowMobile"
+                                                - "allowMultiple"
+                                                - "blockImmediately"
+                                                - "faceLiveness"
+                                                - "revisionId"
+                                              properties: 
+                                                allowMobile: 
+                                                  type: "boolean"
+                                                allowMultiple: 
+                                                  type: "boolean"
+                                                blockImmediately: 
+                                                  type: "boolean"
+                                                faceLiveness: 
+                                                  type: "boolean"
+                                                revisionId: 
+                                                  type: "number"
+                                              type: "object"
+                                          type: "object"
+                                        3: 
+                                          required: 
+                                            - "stepNo"
+                                            - "checkId"
+                                            - "checkName"
+                                            - "checkType"
+                                            - "settings"
+                                          properties: 
+                                            stepNo: 
+                                              type: "number"
+                                            checkId: 
+                                              type: "string"
+                                            checkName: 
+                                              type: "string"
+                                            checkType: 
+                                              type: "string"
+                                            settings: 
+                                              required: 
+                                                - "enableMonitoring"
+                                                - "exactMatch"
+                                                - "fuzzinessLevel"
+                                                - "revisionId"
+                                                - "types"
+                                              properties: 
+                                                enableMonitoring: 
+                                                  type: "boolean"
+                                                exactMatch: 
+                                                  type: "boolean"
+                                                fuzzinessLevel: 
+                                                  type: "number"
+                                                revisionId: 
+                                                  type: "number"
+                                                types: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        4: 
+                                          required: 
+                                            - "stepNo"
+                                            - "checkId"
+                                            - "checkName"
+                                            - "checkType"
+                                            - "settings"
+                                          properties: 
+                                            stepNo: 
+                                              type: "number"
+                                            checkId: 
+                                              type: "string"
+                                            checkName: 
+                                              type: "string"
+                                            checkType: 
+                                              type: "string"
+                                            settings: 
+                                              required: 
+                                                - "allowMobile"
+                                                - "documents"
+                                                - "groupTogether"
+                                                - "name"
+                                                - "revisionId"
+                                                - "title"
+                                              properties: 
+                                                allowMobile: 
+                                                  type: "boolean"
+                                                documents: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "object"
+                                                    properties: 
+                                                      fileTypes: 
+                                                        type: "array"
+                                                        items: 
+                                                          type: "string"
+                                                      helpText: 
+                                                        type: "string"
+                                                      index: 
+                                                        type: "number"
+                                                      isRequired: 
+                                                        type: "boolean"
+                                                      title: 
+                                                        type: "string"
+                                                groupTogether: 
+                                                  type: "boolean"
+                                                name: 
+                                                  type: "string"
+                                                revisionId: 
+                                                  type: "number"
+                                                title: 
+                                                  type: "string"
+                                              type: "object"
+                                          type: "object"
+                                      type: "object"
+                                  type: "object"
+                                ipInfo: 
+                                  required: 
+                                    - "ipAddress"
+                                    - "ipCountry"
+                                    - "agentInfo"
+                                  properties: 
+                                    ipAddress: 
+                                      type: "string"
+                                    ipCountry: 
+                                      type: "string"
+                                    agentInfo: 
+                                      required: 
+                                        - "browser"
+                                        - "operatingSystem"
+                                        - "device"
+                                        - "deviceType"
+                                      properties: 
+                                        browser: 
+                                          type: "string"
+                                        operatingSystem: 
+                                          type: "string"
+                                        device: 
+                                          type: "string"
+                                        deviceType: 
+                                          type: "string"
+                                      type: "object"
+                                  type: "object"
+                                completed: 
+                                  type: "boolean"
+                                steps: 
+                                  required: 
+                                    - "1"
+                                    - "2"
+                                    - "3"
+                                    - "4"
+                                  properties: 
+                                    1: 
+                                      required: 
+                                        - "stepNo"
+                                        - "checkId"
+                                        - "checkName"
+                                        - "checkType"
+                                        - "documentType"
+                                        - "ipInfo"
+                                        - "metadata"
+                                        - "settings"
+                                        - "documents"
+                                        - "outputs"
+                                        - "decision"
+                                        - "cloned"
+                                        - "previousSessionId"
+                                        - "completedAt"
+                                      properties: 
+                                        stepNo: 
+                                          type: "number"
+                                        checkId: 
+                                          type: "string"
+                                        checkName: 
+                                          type: "string"
+                                        checkType: 
+                                          type: "string"
+                                        documentType: 
+                                          type: "string"
+                                        ipInfo: 
+                                          required: 
+                                            - "ipAddress"
+                                            - "ipCountry"
+                                            - "agentInfo"
+                                          properties: 
+                                            ipAddress: 
+                                              type: "string"
+                                            ipCountry: 
+                                              type: "string"
+                                            agentInfo: 
+                                              required: 
+                                                - "browser"
+                                                - "operatingSystem"
+                                                - "device"
+                                                - "deviceType"
+                                              properties: 
+                                                browser: 
+                                                  type: "string"
+                                                operatingSystem: 
+                                                  type: "string"
+                                                device: 
+                                                  type: "string"
+                                                deviceType: 
+                                                  type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        metadata: 
+                                          required: 
+                                            - "applyOCRDuringFastFail"
+                                            - "automationRequest"
+                                            - "candidate"
+                                            - "countryCode"
+                                            - "documentType"
+                                            - "documents"
+                                            - "documentsSize"
+                                            - "fastFail"
+                                            - "forcedManual"
+                                            - "numberOfDocuments"
+                                            - "ocrMetadata"
+                                            - "userChanges"
+                                          properties: 
+                                            applyOCRDuringFastFail: 
+                                              type: "boolean"
+                                            automationRequest: 
+                                              required: 
+                                                - "alreadyCropped"
+                                                - "authParams"
+                                                - "dateFormat"
+                                                - "doublePageSpread"
+                                                - "fieldTypesFilter"
+                                                - "minimalHolderAge"
+                                                - "noGraphics"
+                                                - "resultTypeOutput"
+                                                - "scenario"
+                                              properties: 
+                                                alreadyCropped: 
+                                                  type: "boolean"
+                                                authParams: 
+                                                  required: 
+                                                    - "checkLiveness"
+                                                  properties: 
+                                                    checkLiveness: 
+                                                      type: "boolean"
+                                                  type: "object"
+                                                dateFormat: 
+                                                  type: "string"
+                                                doublePageSpread: 
+                                                  type: "boolean"
+                                                fieldTypesFilter: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "number"
+                                                minimalHolderAge: 
+                                                  type: "number"
+                                                noGraphics: 
+                                                  type: "boolean"
+                                                resultTypeOutput: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "number"
+                                                scenario: 
+                                                  type: "string"
+                                              type: "object"
+                                            candidate: 
+                                              required: 
+                                                - "documentCountryCode"
+                                                - "documentCountryName"
+                                                - "documentDescription"
+                                                - "documentName"
+                                                - "documentTypeDetail"
+                                                - "probability"
+                                              properties: 
+                                                documentCountryCode: 
+                                                  type: "string"
+                                                documentCountryName: 
+                                                  type: "string"
+                                                documentDescription: 
+                                                  type: "string"
+                                                documentName: 
+                                                  type: "string"
+                                                documentTypeDetail: 
+                                                  type: "string"
+                                                probability: 
+                                                  type: "number"
+                                              type: "object"
+                                            countryCode: 
+                                              type: "string"
+                                            documentType: 
+                                              type: "string"
+                                            documents: 
+                                              type: "array"
+                                              items: 
+                                                type: "object"
+                                                properties: 
+                                                  fileName: 
+                                                    type: "string"
+                                                  isUpload: 
+                                                    type: "boolean"
+                                                  side: 
+                                                    type: "string"
+                                                  size: 
+                                                    type: "number"
+                                            documentsSize: 
+                                              type: "number"
+                                            fastFail: 
+                                              type: "boolean"
+                                            numberOfDocuments: 
+                                              type: "number"
+                                            ocrMetadata: 
+                                              required: 
+                                                - "address"
+                                                - "addressCountry"
+                                                - "dateOfBirth"
+                                                - "dateOfIssue"
+                                                - "documentName"
+                                                - "documentNumber"
+                                                - "expirationDate"
+                                                - "fathersName"
+                                                - "firstName"
+                                                - "gender"
+                                                - "issuingAuthority"
+                                                - "issuingCountry"
+                                                - "lastName"
+                                                - "mothersName"
+                                                - "nationality"
+                                                - "nationalityCode"
+                                                - "notes"
+                                                - "placeOfBirth"
+                                                - "placeOfBirthCode"
+                                                - "placeOfIssue"
+                                                - "type"
+                                              properties: 
+                                                dateOfBirth: 
+                                                  type: "string"
+                                                dateOfIssue: 
+                                                  type: "string"
+                                                documentName: 
+                                                  type: "string"
+                                                documentNumber: 
+                                                  type: "string"
+                                                expirationDate: 
+                                                  type: "string"
+                                                firstName: 
+                                                  type: "string"
+                                                gender: 
+                                                  type: "string"
+                                                issuingAuthority: 
+                                                  type: "string"
+                                                issuingCountry: 
+                                                  type: "string"
+                                                lastName: 
+                                                  type: "string"
+                                                nationality: 
+                                                  type: "string"
+                                                nationalityCode: 
+                                                  type: "string"
+                                                placeOfBirth: 
+                                                  type: "string"
+                                                type: 
+                                                  type: "string"
+                                              type: "object"
+                                            userChanges: 
+                                              required: 
+                                                - "dateOfBirth"
+                                                - "documentNumber"
+                                                - "firstName"
+                                                - "gender"
+                                                - "lastName"
+                                                - "nationality"
+                                              properties: 
+                                                dateOfBirth: 
+                                                  type: "string"
+                                                documentNumber: 
+                                                  type: "string"
+                                                firstName: 
+                                                  type: "string"
+                                                gender: 
+                                                  type: "string"
+                                                lastName: 
+                                                  type: "string"
+                                                nationality: 
+                                                  type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        settings: 
+                                          required: 
+                                            - "global"
+                                            - "step"
+                                          properties: 
+                                            global: 
+                                              required: 
+                                                - "documents"
+                                                - "settings"
+                                              properties: 
+                                                documents: 
+                                                  required: 
+                                                    - "ID"
+                                                    - "createdBy"
+                                                    - "deletedBy"
+                                                    - "isSystem"
+                                                    - "merchantId"
+                                                    - "modifiedBy"
+                                                    - "regions"
+                                                    - "revisionID"
+                                                  properties: 
+                                                    ID: 
+                                                      type: "string"
+                                                    createdBy: 
+                                                      required: 
+                                                        - "actorId"
+                                                        - "actorType"
+                                                        - "timestamp"
+                                                      properties: 
+                                                        actorId: 
+                                                          type: "string"
+                                                        actorType: 
+                                                          type: "string"
+                                                        timestamp: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    isSystem: 
+                                                      type: "boolean"
+                                                    merchantId: 
+                                                      type: "string"
+                                                    modifiedBy: 
+                                                      required: 
+                                                        - "actorId"
+                                                        - "actorType"
+                                                        - "timestamp"
+                                                      properties: 
+                                                        actorId: 
+                                                          type: "string"
+                                                        actorType: 
+                                                          type: "string"
+                                                        timestamp: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    regions: 
+                                                      required: 
+                                                        - "Europe"
+                                                      properties: 
+                                                        Europe: 
+                                                          required: 
+                                                            - "countries"
+                                                          properties: 
+                                                            countries: 
+                                                              required: 
+                                                                - "GB"
+                                                              properties: 
+                                                                GB: 
+                                                                  required: 
+                                                                    - "automated"
+                                                                    - "manual"
+                                                                  properties: 
+                                                                    automated: 
+                                                                      required: 
+                                                                        - "drivingLicense"
+                                                                        - "identityCard"
+                                                                        - "passport"
+                                                                      properties: 
+                                                                        drivingLicense: 
+                                                                          required: 
+                                                                            - "documentTypeIds"
+                                                                            - "pageSides"
+                                                                          properties: 
+                                                                            documentTypeIds: 
+                                                                              type: "array"
+                                                                              items: 
+                                                                                type: "number"
+                                                                            pageSides: 
+                                                                              type: "string"
+                                                                          type: "object"
+                                                                        identityCard: 
+                                                                          required: 
+                                                                            - "documentTypeIds"
+                                                                            - "pageSides"
+                                                                          properties: 
+                                                                            documentTypeIds: 
+                                                                              type: "array"
+                                                                              items: 
+                                                                                type: "number"
+                                                                            pageSides: 
+                                                                              type: "string"
+                                                                          type: "object"
+                                                                        passport: 
+                                                                          required: 
+                                                                            - "documentTypeIds"
+                                                                            - "pageSides"
+                                                                          properties: 
+                                                                            documentTypeIds: 
+                                                                              type: "array"
+                                                                              items: 
+                                                                                type: "number"
+                                                                            pageSides: 
+                                                                              type: "string"
+                                                                          type: "object"
+                                                                      type: "object"
+                                                                    manual: 
+                                                                      required: 
+                                                                        - "drivingLicense"
+                                                                        - "identityCard"
+                                                                        - "passport"
+                                                                      properties: 
+                                                                        drivingLicense: 
+                                                                          required: 
+                                                                            - "pageSides"
+                                                                          properties: 
+                                                                            pageSides: 
+                                                                              type: "string"
+                                                                          type: "object"
+                                                                        identityCard: 
+                                                                          required: 
+                                                                            - "pageSides"
+                                                                          properties: 
+                                                                            pageSides: 
+                                                                              type: "string"
+                                                                          type: "object"
+                                                                        passport: 
+                                                                          required: 
+                                                                            - "pageSides"
+                                                                          properties: 
+                                                                            pageSides: 
+                                                                              type: "string"
+                                                                          type: "object"
+                                                                      type: "object"
+                                                                  type: "object"
+                                                              type: "object"
+                                                          type: "object"
+                                                      type: "object"
+                                                    revisionID: 
+                                                      type: "number"
+                                                  type: "object"
+                                                settings: 
+                                                  required: 
+                                                    - "ID"
+                                                    - "acceptIDIfNotExpired"
+                                                    - "cfmLinkExpiryInHrs"
+                                                    - "contactEmail"
+                                                    - "contactUrl"
+                                                    - "createdBy"
+                                                    - "defaultLanguage"
+                                                    - "deletedBy"
+                                                    - "duplications"
+                                                    - "maxFileSizeInBytes"
+                                                    - "maximumAge"
+                                                    - "merchantID"
+                                                    - "minimumAge"
+                                                    - "modifiedBy"
+                                                    - "rejectIDBeforeExpirationInMonths"
+                                                    - "revisionID"
+                                                    - "termsAndConditionsURL"
+                                                    - "theme"
+                                                  properties: 
+                                                    ID: 
+                                                      type: "string"
+                                                    acceptIDIfNotExpired: 
+                                                      type: "boolean"
+                                                    cfmLinkExpiryInHrs: 
+                                                      type: "number"
+                                                    contactEmail: 
+                                                      type: "string"
+                                                    contactUrl: 
+                                                      type: "string"
+                                                    createdBy: 
+                                                      required: 
+                                                        - "actorId"
+                                                        - "actorType"
+                                                        - "timestamp"
+                                                      properties: 
+                                                        actorId: 
+                                                          type: "string"
+                                                        actorType: 
+                                                          type: "string"
+                                                        timestamp: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    defaultLanguage: 
+                                                      type: "string"
+                                                    duplications: 
+                                                      required: 
+                                                        - "allowEmail"
+                                                        - "allowMobile"
+                                                      properties: 
+                                                        allowEmail: 
+                                                          type: "boolean"
+                                                        allowMobile: 
+                                                          type: "boolean"
+                                                      type: "object"
+                                                    maxFileSizeInBytes: 
+                                                      type: "number"
+                                                    maximumAge: 
+                                                      type: "number"
+                                                    merchantID: 
+                                                      type: "string"
+                                                    minimumAge: 
+                                                      type: "number"
+                                                    modifiedBy: 
+                                                      required: 
+                                                        - "actorId"
+                                                        - "actorType"
+                                                        - "timestamp"
+                                                      properties: 
+                                                        actorId: 
+                                                          type: "string"
+                                                        actorType: 
+                                                          type: "string"
+                                                        timestamp: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    revisionID: 
+                                                      type: "number"
+                                                    termsAndConditionsURL: 
+                                                      type: "string"
+                                                    theme: 
+                                                      type: "string"
+                                                  type: "object"
+                                              type: "object"
+                                            step: 
+                                              required: 
+                                                - "allowMobile"
+                                                - "allowUpload"
+                                                - "crossCheckingFields"
+                                                - "fastFailEnabled"
+                                                - "fastFailRetryCount"
+                                                - "proceedIfFastFailIsInconclusive"
+                                                - "revisionId"
+                                                - "supportedCountries"
+                                                - "supportedDocuments"
+                                              properties: 
+                                                allowMobile: 
+                                                  type: "boolean"
+                                                allowUpload: 
+                                                  type: "boolean"
+                                                crossCheckingFields: 
+                                                  required: 
+                                                    - "countryOfResidence"
+                                                    - "dateOfBirth"
+                                                    - "gender"
+                                                    - "names"
+                                                    - "nationality"
+                                                  properties: 
+                                                    countryOfResidence: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    dateOfBirth: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    gender: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    names: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    nationality: 
+                                                      required: 
+                                                        - "ignoreIfNull"
+                                                        - "verification"
+                                                      properties: 
+                                                        ignoreIfNull: 
+                                                          type: "boolean"
+                                                        verification: 
+                                                          type: "string"
+                                                      type: "object"
+                                                  type: "object"
+                                                fastFailEnabled: 
+                                                  type: "boolean"
+                                                fastFailRetryCount: 
+                                                  type: "number"
+                                                proceedIfFastFailIsInconclusive: 
+                                                  type: "boolean"
+                                                revisionId: 
+                                                  type: "number"
+                                                supportedCountries: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                                supportedDocuments: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        documents: 
+                                          type: "array"
+                                          items: 
+                                            type: "string"
+                                        outputs: 
+                                          type: "array"
+                                          items: 
+                                            type: "object"
+                                            properties: 
+                                              id: 
+                                                type: "string"
+                                              documents: 
+                                                type: "array"
+                                                items: 
+                                                  type: "object"
+                                                  properties: 
+                                                    id: 
+                                                      type: "string"
+                                                    key: 
+                                                      type: "string"
+                                                    fileName: 
+                                                      type: "string"
+                                                    documentType: 
+                                                      type: "string"
+                                                    documentSide: 
+                                                      type: "string"
+                                                    mimeType: 
+                                                      type: "string"
+                                                    extension: 
+                                                      type: "string"
+                                                    size: 
+                                                      type: "number"
+                                        decision: 
+                                          required: 
+                                            - "status"
+                                            - "notes"
+                                            - "timestamp"
+                                          properties: 
+                                            status: 
+                                              type: "string"
+                                            notes: 
+                                              type: "string"
+                                            timestamp: 
+                                              type: "string"
+                                          type: "object"
+                                        cloned: 
+                                          type: "boolean"
+                                        completedAt: 
+                                          type: "string"
+                                      type: "object"
+                                    2: 
+                                      required: 
+                                        - "stepNo"
+                                        - "checkId"
+                                        - "checkName"
+                                        - "checkType"
+                                        - "documentType"
+                                        - "ipInfo"
+                                        - "metadata"
+                                        - "settings"
+                                        - "documents"
+                                        - "outputs"
+                                        - "decision"
+                                        - "cloned"
+                                        - "previousSessionId"
+                                        - "completedAt"
+                                      properties: 
+                                        stepNo: 
+                                          type: "number"
+                                        checkId: 
+                                          type: "string"
+                                        checkName: 
+                                          type: "string"
+                                        checkType: 
+                                          type: "string"
+                                        documentType: 
+                                          type: "string"
+                                        ipInfo: 
+                                          required: 
+                                            - "ipAddress"
+                                            - "ipCountry"
+                                            - "agentInfo"
+                                          properties: 
+                                            ipAddress: 
+                                              type: "string"
+                                            ipCountry: 
+                                              type: "string"
+                                            agentInfo: 
+                                              required: 
+                                                - "browser"
+                                                - "operatingSystem"
+                                                - "device"
+                                                - "deviceType"
+                                              properties: 
+                                                browser: 
+                                                  type: "string"
+                                                operatingSystem: 
+                                                  type: "string"
+                                                device: 
+                                                  type: "string"
+                                                deviceType: 
+                                                  type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        metadata: 
+                                          required: 
+                                            - "documentType"
+                                            - "faceLiveness"
+                                            - "fileSize"
+                                            - "numberOfSelfies"
+                                          properties: 
+                                            documentType: 
+                                              type: "string"
+                                            faceLiveness: 
+                                              required: 
+                                                - "required"
+                                                - "response"
+                                              properties: 
+                                                required: 
+                                                  type: "boolean"
+                                                response: 
+                                                  required: 
+                                                    - "calibration"
+                                                    - "captureLiveness"
+                                                    - "correlationId"
+                                                    - "error"
+                                                    - "executionTime"
+                                                    - "faceLiveness"
+                                                    - "os"
+                                                    - "pipeline"
+                                                    - "rawResponse"
+                                                    - "sessionId"
+                                                    - "status"
+                                                  properties: 
+                                                    calibration: 
+                                                      type: "string"
+                                                    captureLiveness: 
+                                                      required: 
+                                                        - "error"
+                                                        - "errorResponse"
+                                                        - "executionTime"
+                                                        - "rawResponse"
+                                                        - "response"
+                                                        - "status"
+                                                      properties: 
+                                                        executionTime: 
+                                                          type: "number"
+                                                        response: 
+                                                          required: 
+                                                            - "probability"
+                                                            - "score"
+                                                          properties: 
+                                                            probability: 
+                                                              type: "number"
+                                                            score: 
+                                                              type: "number"
+                                                          type: "object"
+                                                        status: 
+                                                          type: "number"
+                                                      type: "object"
+                                                    correlationId: 
+                                                      type: "string"
+                                                    executionTime: 
+                                                      type: "number"
+                                                    faceLiveness: 
+                                                      required: 
+                                                        - "error"
+                                                        - "errorResponse"
+                                                        - "executionTime"
+                                                        - "rawResponse"
+                                                        - "response"
+                                                        - "status"
+                                                      properties: 
+                                                        executionTime: 
+                                                          type: "number"
+                                                        response: 
+                                                          required: 
+                                                            - "probability"
+                                                            - "quality"
+                                                            - "score"
+                                                          properties: 
+                                                            probability: 
+                                                              type: "number"
+                                                            quality: 
+                                                              type: "number"
+                                                            score: 
+                                                              type: "number"
+                                                          type: "object"
+                                                        status: 
+                                                          type: "number"
+                                                      type: "object"
+                                                    os: 
+                                                      type: "string"
+                                                    pipeline: 
+                                                      type: "string"
+                                                    sessionId: 
+                                                      type: "string"
+                                                    status: 
+                                                      type: "number"
+                                                  type: "object"
+                                              type: "object"
+                                            fileSize: 
+                                              type: "number"
+                                            numberOfSelfies: 
+                                              type: "number"
+                                          type: "object"
+                                        settings: 
+                                          required: 
+                                            - "step"
+                                          properties: 
+                                            step: 
+                                              required: 
+                                                - "allowMobile"
+                                                - "allowMultiple"
+                                                - "blockImmediately"
+                                                - "faceLiveness"
+                                                - "revisionId"
+                                              properties: 
+                                                allowMobile: 
+                                                  type: "boolean"
+                                                allowMultiple: 
+                                                  type: "boolean"
+                                                blockImmediately: 
+                                                  type: "boolean"
+                                                faceLiveness: 
+                                                  type: "boolean"
+                                                revisionId: 
+                                                  type: "number"
+                                              type: "object"
+                                          type: "object"
+                                        documents: 
+                                          type: "array"
+                                          items: 
+                                            type: "string"
+                                        outputs: 
+                                          type: "array"
+                                          items: 
+                                            type: "object"
+                                            properties: 
+                                              id: 
+                                                type: "string"
+                                              documents: 
+                                                type: "array"
+                                                items: 
+                                                  type: "object"
+                                                  properties: 
+                                                    id: 
+                                                      type: "string"
+                                                    key: 
+                                                      type: "string"
+                                                    fileName: 
+                                                      type: "string"
+                                                    documentType: 
+                                                      type: "string"
+                                                    documentSide: 
+                                                      type: "string"
+                                                    mimeType: 
+                                                      type: "string"
+                                                    extension: 
+                                                      type: "string"
+                                                    size: 
+                                                      type: "number"
+                                        decision: 
+                                          required: 
+                                            - "status"
+                                            - "notes"
+                                            - "timestamp"
+                                          properties: 
+                                            status: 
+                                              type: "string"
+                                            notes: 
+                                              type: "string"
+                                            timestamp: 
+                                              type: "string"
+                                          type: "object"
+                                        cloned: 
+                                          type: "boolean"
+                                        completedAt: 
+                                          type: "string"
+                                      type: "object"
+                                    3: 
+                                      required: 
+                                        - "stepNo"
+                                        - "checkId"
+                                        - "checkName"
+                                        - "checkType"
+                                        - "documentType"
+                                        - "ipInfo"
+                                        - "metadata"
+                                        - "settings"
+                                        - "documents"
+                                        - "outputs"
+                                        - "decision"
+                                        - "cloned"
+                                        - "previousSessionId"
+                                        - "completedAt"
+                                      properties: 
+                                        stepNo: 
+                                          type: "number"
+                                        checkId: 
+                                          type: "string"
+                                        checkName: 
+                                          type: "string"
+                                        checkType: 
+                                          type: "string"
+                                        ipInfo: 
+                                          required: 
+                                            - "ipAddress"
+                                            - "ipCountry"
+                                            - "agentInfo"
+                                          properties: 
+                                            ipAddress: 
+                                              type: "string"
+                                            ipCountry: 
+                                              type: "string"
+                                            agentInfo: 
+                                              required: 
+                                                - "browser"
+                                                - "operatingSystem"
+                                                - "device"
+                                                - "deviceType"
+                                              properties: 
+                                                browser: 
+                                                  type: "string"
+                                                operatingSystem: 
+                                                  type: "string"
+                                                device: 
+                                                  type: "string"
+                                                deviceType: 
+                                                  type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        metadata: 
+                                          required: 
+                                            - "exactMatch"
+                                            - "searchParams"
+                                            - "searchStatus"
+                                            - "totalHits"
+                                          properties: 
+                                            exactMatch: 
+                                              type: "boolean"
+                                            searchParams: 
+                                              required: 
+                                                - "countryCodes"
+                                                - "dateOfBirth"
+                                                - "fuzziness"
+                                                - "searchTerm"
+                                                - "types"
+                                              properties: 
+                                                countryCodes: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                                dateOfBirth: 
+                                                  type: "string"
+                                                fuzziness: 
+                                                  type: "number"
+                                                searchTerm: 
+                                                  type: "string"
+                                                types: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                              type: "object"
+                                            searchStatus: 
+                                              type: "string"
+                                            totalHits: 
+                                              type: "number"
+                                          type: "object"
+                                        settings: 
+                                          required: 
+                                            - "step"
+                                          properties: 
+                                            step: 
+                                              required: 
+                                                - "enableMonitoring"
+                                                - "exactMatch"
+                                                - "fuzzinessLevel"
+                                                - "revisionId"
+                                                - "types"
+                                              properties: 
+                                                enableMonitoring: 
+                                                  type: "boolean"
+                                                exactMatch: 
+                                                  type: "boolean"
+                                                fuzzinessLevel: 
+                                                  type: "number"
+                                                revisionId: 
+                                                  type: "number"
+                                                types: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        documents: 
+                                          type: "array"
+                                          items: 
+                                            type: "string"
+                                        outputs: 
+                                          type: "array"
+                                          items: 
+                                            type: "object"
+                                            properties: 
+                                              id: 
+                                                type: "string"
+                                              documents: 
+                                                type: "array"
+                                                items: 
+                                                  type: "object"
+                                                  properties: 
+                                                    id: 
+                                                      type: "string"
+                                                    key: 
+                                                      type: "string"
+                                                    fileName: 
+                                                      type: "string"
+                                                    documentType: 
+                                                      type: "string"
+                                                    documentSide: 
+                                                      type: "string"
+                                                    mimeType: 
+                                                      type: "string"
+                                                    extension: 
+                                                      type: "string"
+                                                    size: 
+                                                      type: "number"
+                                        decision: 
+                                          required: 
+                                            - "status"
+                                            - "notes"
+                                            - "timestamp"
+                                          properties: 
+                                            status: 
+                                              type: "string"
+                                            notes: 
+                                              type: "string"
+                                            timestamp: 
+                                              type: "string"
+                                          type: "object"
+                                        cloned: 
+                                          type: "boolean"
+                                        completedAt: 
+                                          type: "string"
+                                      type: "object"
+                                    4: 
+                                      required: 
+                                        - "stepNo"
+                                        - "checkId"
+                                        - "checkName"
+                                        - "checkType"
+                                        - "documentType"
+                                        - "ipInfo"
+                                        - "metadata"
+                                        - "settings"
+                                        - "documents"
+                                        - "outputs"
+                                        - "decision"
+                                        - "cloned"
+                                        - "previousSessionId"
+                                        - "completedAt"
+                                      properties: 
+                                        stepNo: 
+                                          type: "number"
+                                        checkId: 
+                                          type: "string"
+                                        checkName: 
+                                          type: "string"
+                                        checkType: 
+                                          type: "string"
+                                        documentType: 
+                                          type: "string"
+                                        ipInfo: 
+                                          required: 
+                                            - "ipAddress"
+                                            - "ipCountry"
+                                            - "agentInfo"
+                                          properties: 
+                                            ipAddress: 
+                                              type: "string"
+                                            ipCountry: 
+                                              type: "string"
+                                            agentInfo: 
+                                              required: 
+                                                - "browser"
+                                                - "operatingSystem"
+                                                - "device"
+                                                - "deviceType"
+                                              properties: 
+                                                browser: 
+                                                  type: "string"
+                                                operatingSystem: 
+                                                  type: "string"
+                                                device: 
+                                                  type: "string"
+                                                deviceType: 
+                                                  type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        metadata: 
+                                          required: 
+                                            - "documentType"
+                                            - "documents"
+                                            - "documentsSize"
+                                            - "numberOfDocuments"
+                                          properties: 
+                                            documentType: 
+                                              type: "string"
+                                            documents: 
+                                              type: "array"
+                                              items: 
+                                                type: "object"
+                                                properties: 
+                                                  fileName: 
+                                                    type: "string"
+                                                  index: 
+                                                    type: "number"
+                                                  isRequired: 
+                                                    type: "boolean"
+                                                  isUpload: 
+                                                    type: "boolean"
+                                                  size: 
+                                                    type: "number"
+                                                  skipped: 
+                                                    type: "boolean"
+                                                  title: 
+                                                    type: "string"
+                                            documentsSize: 
+                                              type: "number"
+                                            numberOfDocuments: 
+                                              type: "number"
+                                          type: "object"
+                                        settings: 
+                                          required: 
+                                            - "global"
+                                            - "step"
+                                          properties: 
+                                            global: 
+                                              required: 
+                                                - "settings"
+                                              properties: 
+                                                settings: 
+                                                  required: 
+                                                    - "ID"
+                                                    - "acceptIDIfNotExpired"
+                                                    - "cfmLinkExpiryInHrs"
+                                                    - "contactEmail"
+                                                    - "contactUrl"
+                                                    - "createdBy"
+                                                    - "defaultLanguage"
+                                                    - "deletedBy"
+                                                    - "duplications"
+                                                    - "maxFileSizeInBytes"
+                                                    - "maximumAge"
+                                                    - "merchantID"
+                                                    - "minimumAge"
+                                                    - "modifiedBy"
+                                                    - "rejectIDBeforeExpirationInMonths"
+                                                    - "revisionID"
+                                                    - "termsAndConditionsURL"
+                                                    - "theme"
+                                                  properties: 
+                                                    ID: 
+                                                      type: "string"
+                                                    acceptIDIfNotExpired: 
+                                                      type: "boolean"
+                                                    cfmLinkExpiryInHrs: 
+                                                      type: "number"
+                                                    contactEmail: 
+                                                      type: "string"
+                                                    contactUrl: 
+                                                      type: "string"
+                                                    createdBy: 
+                                                      required: 
+                                                        - "actorId"
+                                                        - "actorType"
+                                                        - "timestamp"
+                                                      properties: 
+                                                        actorId: 
+                                                          type: "string"
+                                                        actorType: 
+                                                          type: "string"
+                                                        timestamp: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    defaultLanguage: 
+                                                      type: "string"
+                                                    duplications: 
+                                                      required: 
+                                                        - "allowEmail"
+                                                        - "allowMobile"
+                                                      properties: 
+                                                        allowEmail: 
+                                                          type: "boolean"
+                                                        allowMobile: 
+                                                          type: "boolean"
+                                                      type: "object"
+                                                    maxFileSizeInBytes: 
+                                                      type: "number"
+                                                    maximumAge: 
+                                                      type: "number"
+                                                    merchantID: 
+                                                      type: "string"
+                                                    minimumAge: 
+                                                      type: "number"
+                                                    modifiedBy: 
+                                                      required: 
+                                                        - "actorId"
+                                                        - "actorType"
+                                                        - "timestamp"
+                                                      properties: 
+                                                        actorId: 
+                                                          type: "string"
+                                                        actorType: 
+                                                          type: "string"
+                                                        timestamp: 
+                                                          type: "string"
+                                                      type: "object"
+                                                    revisionID: 
+                                                      type: "number"
+                                                    termsAndConditionsURL: 
+                                                      type: "string"
+                                                    theme: 
+                                                      type: "string"
+                                                  type: "object"
+                                              type: "object"
+                                            step: 
+                                              required: 
+                                                - "allowMobile"
+                                                - "documents"
+                                                - "groupTogether"
+                                                - "name"
+                                                - "revisionId"
+                                                - "title"
+                                              properties: 
+                                                allowMobile: 
+                                                  type: "boolean"
+                                                documents: 
+                                                  type: "array"
+                                                  items: 
+                                                    type: "object"
+                                                    properties: 
+                                                      fileTypes: 
+                                                        type: "array"
+                                                        items: 
+                                                          type: "string"
+                                                      helpText: 
+                                                        type: "string"
+                                                      index: 
+                                                        type: "number"
+                                                      isRequired: 
+                                                        type: "boolean"
+                                                      title: 
+                                                        type: "string"
+                                                groupTogether: 
+                                                  type: "boolean"
+                                                name: 
+                                                  type: "string"
+                                                revisionId: 
+                                                  type: "number"
+                                                title: 
+                                                  type: "string"
+                                              type: "object"
+                                          type: "object"
+                                        documents: 
+                                          type: "array"
+                                          items: 
+                                            type: "string"
+                                        outputs: 
+                                          type: "array"
+                                          items: 
+                                            type: "object"
+                                            properties: 
+                                              id: 
+                                                type: "string"
+                                              documents: 
+                                                type: "array"
+                                                items: 
+                                                  type: "object"
+                                                  properties: 
+                                                    id: 
+                                                      type: "string"
+                                                    key: 
+                                                      type: "string"
+                                                    fileName: 
+                                                      type: "string"
+                                                    documentType: 
+                                                      type: "string"
+                                                    documentSide: 
+                                                      type: "string"
+                                                    mimeType: 
+                                                      type: "string"
+                                                    extension: 
+                                                      type: "string"
+                                                    size: 
+                                                      type: "number"
+                                        decision: 
+                                          required: 
+                                            - "status"
+                                            - "notes"
+                                            - "timestamp"
+                                          properties: 
+                                            status: 
+                                              type: "string"
+                                            notes: 
+                                              type: "string"
+                                            timestamp: 
+                                              type: "string"
+                                          type: "object"
+                                        cloned: 
+                                          type: "boolean"
+                                        completedAt: 
+                                          type: "string"
+                                      type: "object"
+                                  type: "object"
+                                startedAt: 
+                                  type: "string"
+                                completedAt: 
+                                  type: "string"
+                                expiresAt: 
+                                  type: "string"
+                                cloned: 
+                                  type: "boolean"
+                                duration: 
+                                  type: "number"
+                          documents: 
+                            type: "array"
+                            items: 
+                              type: "object"
+                              properties: 
+                                sessionId: 
+                                  type: "string"
+                                stepNo: 
+                                  type: "number"
+                                checkType: 
+                                  type: "string"
+                                documentType: 
+                                  type: "string"
+                                groupedDocumentId: 
+                                  type: "string"
+                                outputs: 
+                                  type: "array"
+                                  items: 
+                                    type: "object"
+                                    properties: 
+                                      id: 
+                                        type: "string"
+                                      key: 
+                                        type: "string"
+                                      fileName: 
+                                        type: "string"
+                                      documentType: 
+                                        type: "string"
+                                      documentSide: 
+                                        type: "string"
+                                      mimeType: 
+                                        type: "string"
+                                      extension: 
+                                        type: "string"
+                                      size: 
+                                        type: "number"
+                                cloned: 
+                                  type: "boolean"
+                                timestamp: 
+                                  type: "string"
+                          faceComparisons: 
+                            type: "array"
+                            items: 
+                              type: "object"
+                              properties: 
+                                sessionId: 
+                                  type: "string"
+                                source: 
+                                  required: 
+                                    - "documentId"
+                                    - "groupedDocumentId"
+                                    - "documentType"
+                                    - "image"
+                                  properties: 
+                                    documentId: 
+                                      type: "string"
+                                    groupedDocumentId: 
+                                      type: "string"
+                                    documentType: 
+                                      type: "string"
+                                    image: 
+                                      required: 
+                                        - "key"
+                                        - "bucketName"
+                                      properties: 
+                                        key: 
+                                          type: "string"
+                                        bucketName: 
+                                          type: "string"
+                                      type: "object"
+                                  type: "object"
+                                target: 
+                                  required: 
+                                    - "documentId"
+                                    - "groupedDocumentId"
+                                    - "documentType"
+                                    - "image"
+                                  properties: 
+                                    documentId: 
+                                      type: "string"
+                                    groupedDocumentId: 
+                                      type: "string"
+                                    documentType: 
+                                      type: "string"
+                                    image: 
+                                      required: 
+                                        - "key"
+                                        - "bucketName"
+                                      properties: 
+                                        key: 
+                                          type: "string"
+                                        bucketName: 
+                                          type: "string"
+                                      type: "object"
+                                  type: "object"
+                                success: 
+                                  type: "boolean"
+                                failReason: 
+                                  type: "string"
+                                sourceFace: 
+                                  required: 
+                                    - "AgeRange"
+                                    - "Beard"
+                                    - "BoundingBox"
+                                    - "Confidence"
+                                    - "Emotions"
+                                    - "EyeDirection"
+                                    - "Eyeglasses"
+                                    - "EyesOpen"
+                                    - "FaceOccluded"
+                                    - "Gender"
+                                    - "Landmarks"
+                                    - "MouthOpen"
+                                    - "Mustache"
+                                    - "Pose"
+                                    - "Quality"
+                                    - "Smile"
+                                    - "Sunglasses"
+                                  properties: 
+                                    AgeRange: 
+                                      required: 
+                                        - "High"
+                                        - "Low"
+                                      properties: 
+                                        High: 
+                                          type: "number"
+                                        Low: 
+                                          type: "number"
+                                      type: "object"
+                                    Beard: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    BoundingBox: 
+                                      required: 
+                                        - "Height"
+                                        - "Left"
+                                        - "Top"
+                                        - "Width"
+                                      properties: 
+                                        Height: 
+                                          type: "number"
+                                        Left: 
+                                          type: "number"
+                                        Top: 
+                                          type: "number"
+                                        Width: 
+                                          type: "number"
+                                      type: "object"
+                                    Confidence: 
+                                      type: "number"
+                                    Emotions: 
+                                      type: "array"
+                                      items: 
+                                        type: "object"
+                                        properties: 
+                                          Confidence: 
+                                            type: "number"
+                                          Type: 
+                                            type: "string"
+                                    EyeDirection: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Pitch"
+                                        - "Yaw"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Pitch: 
+                                          type: "number"
+                                        Yaw: 
+                                          type: "number"
+                                      type: "object"
+                                    Eyeglasses: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    EyesOpen: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    FaceOccluded: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Gender: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "string"
+                                      type: "object"
+                                    Landmarks: 
+                                      type: "array"
+                                      items: 
+                                        type: "object"
+                                        properties: 
+                                          Type: 
+                                            type: "string"
+                                          X: 
+                                            type: "number"
+                                          Y: 
+                                            type: "number"
+                                    MouthOpen: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Mustache: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Pose: 
+                                      required: 
+                                        - "Pitch"
+                                        - "Roll"
+                                        - "Yaw"
+                                      properties: 
+                                        Pitch: 
+                                          type: "number"
+                                        Roll: 
+                                          type: "number"
+                                        Yaw: 
+                                          type: "number"
+                                      type: "object"
+                                    Quality: 
+                                      required: 
+                                        - "Brightness"
+                                        - "Sharpness"
+                                      properties: 
+                                        Brightness: 
+                                          type: "number"
+                                        Sharpness: 
+                                          type: "number"
+                                      type: "object"
+                                    Smile: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Sunglasses: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                  type: "object"
+                                targetFace: 
+                                  required: 
+                                    - "AgeRange"
+                                    - "Beard"
+                                    - "BoundingBox"
+                                    - "Confidence"
+                                    - "Emotions"
+                                    - "EyeDirection"
+                                    - "Eyeglasses"
+                                    - "EyesOpen"
+                                    - "FaceOccluded"
+                                    - "Gender"
+                                    - "Landmarks"
+                                    - "MouthOpen"
+                                    - "Mustache"
+                                    - "Pose"
+                                    - "Quality"
+                                    - "Smile"
+                                    - "Sunglasses"
+                                  properties: 
+                                    AgeRange: 
+                                      required: 
+                                        - "High"
+                                        - "Low"
+                                      properties: 
+                                        High: 
+                                          type: "number"
+                                        Low: 
+                                          type: "number"
+                                      type: "object"
+                                    Beard: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    BoundingBox: 
+                                      required: 
+                                        - "Height"
+                                        - "Left"
+                                        - "Top"
+                                        - "Width"
+                                      properties: 
+                                        Height: 
+                                          type: "number"
+                                        Left: 
+                                          type: "number"
+                                        Top: 
+                                          type: "number"
+                                        Width: 
+                                          type: "number"
+                                      type: "object"
+                                    Confidence: 
+                                      type: "number"
+                                    Emotions: 
+                                      type: "array"
+                                      items: 
+                                        type: "object"
+                                        properties: 
+                                          Confidence: 
+                                            type: "number"
+                                          Type: 
+                                            type: "string"
+                                    EyeDirection: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Pitch"
+                                        - "Yaw"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Pitch: 
+                                          type: "number"
+                                        Yaw: 
+                                          type: "number"
+                                      type: "object"
+                                    Eyeglasses: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    EyesOpen: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    FaceOccluded: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Gender: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "string"
+                                      type: "object"
+                                    Landmarks: 
+                                      type: "array"
+                                      items: 
+                                        type: "object"
+                                        properties: 
+                                          Type: 
+                                            type: "string"
+                                          X: 
+                                            type: "number"
+                                          Y: 
+                                            type: "number"
+                                    MouthOpen: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Mustache: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Pose: 
+                                      required: 
+                                        - "Pitch"
+                                        - "Roll"
+                                        - "Yaw"
+                                      properties: 
+                                        Pitch: 
+                                          type: "number"
+                                        Roll: 
+                                          type: "number"
+                                        Yaw: 
+                                          type: "number"
+                                      type: "object"
+                                    Quality: 
+                                      required: 
+                                        - "Brightness"
+                                        - "Sharpness"
+                                      properties: 
+                                        Brightness: 
+                                          type: "number"
+                                        Sharpness: 
+                                          type: "number"
+                                      type: "object"
+                                    Smile: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                    Sunglasses: 
+                                      required: 
+                                        - "Confidence"
+                                        - "Value"
+                                      properties: 
+                                        Confidence: 
+                                          type: "number"
+                                        Value: 
+                                          type: "boolean"
+                                      type: "object"
+                                  type: "object"
+                                actor: 
+                                  required: 
+                                    - "actorType"
+                                    - "actorId"
+                                    - "timestamp"
+                                  properties: 
+                                    actorType: 
+                                      type: "string"
+                                    actorId: 
+                                      type: "string"
+                                    timestamp: 
+                                      type: "string"
+                                  type: "object"
+                                cloned: 
+                                  type: "boolean"
+                                createdAt: 
+                                  type: "string"
+                          faceLivenessAttempts: 
+                            type: "array"
+                            items: 
+                              type: "number"
+                          fastFailAttempts: 
+                            type: "array"
+                            items: 
+                              type: "number"
+                          revisionID: 
+                            type: "number"
+                          createdBy: 
+                            required: 
+                              - "actorType"
+                              - "actorId"
+                              - "timestamp"
+                            properties: 
+                              actorType: 
+                                type: "string"
+                              actorId: 
+                                type: "string"
+                              timestamp: 
+                                type: "string"
+                            type: "object"
+                          modifiedBy: 
+                            required: 
+                              - "actorType"
+                              - "actorId"
+                              - "timestamp"
+                            properties: 
+                              actorType: 
+                                type: "string"
+                              actorId: 
+                                type: "string"
+                              timestamp: 
+                                type: "string"
+                            type: "object"
+                        type: "object"
+                    type: "object"
+
