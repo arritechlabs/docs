@@ -2226,6 +2226,10 @@ paths:
     get:
       summary: Get case session details
       description: Retrieves session details for a given case and entity.
+      tags:
+        - cfm
+      security:
+        - bearerAuth: []
       parameters:
         - name: case_id
           in: path
