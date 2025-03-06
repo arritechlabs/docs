@@ -1952,6 +1952,310 @@ paths:
                       ]
                     }
 
+  /v1/case/cases/{caseid}/{entityid}/{complyid}/link:
+    post:
+      tags:
+        - cfm
+      summary: Link an AML search to an entity within a case.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: caseid
+          required: true
+          schema:
+            type: string
+          description: The ID of the case containing the entity.
+        - in: path
+          name: entityid
+          required: true
+          schema:
+            type: string
+          description: The ID of the entity (person/company) to link the AML search to.
+        - in: path
+          name: complyid
+          required: true
+          schema:
+            type: string
+          description: The ID of the AML search to link to the entity.
+      responses:
+        '200':
+          description: Successfully linked AML search to the entity.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+              examples:
+                linkSuccessExample:
+                  value: {
+                      "success": true,
+                      "data": {
+                          "message": "AML search successfully linked to entity"
+                      },
+                      "errors": null
+                  }
+        '400':
+          description: Bad Request - Invalid input parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: 'object'
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                badRequestExample:
+                  value: {
+                    "success": false,
+                    "data": null,
+                    "errors": [
+                      {
+                        "code": 400,
+                        "message": "Invalid request parameters",
+                        "type": "BAD_REQUEST_ERROR"
+                      }
+                    ]
+                  }
+        '403':
+          description: Forbidden - User lacks necessary permissions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                forbiddenExample:
+                  value: {
+                    "success": false,
+                    "data": null,
+                    "errors": [
+                      {
+                        "code": 403,
+                        "message": "Insufficient permissions to perform this operation",
+                        "type": "FORBIDDEN_ERROR"
+                      }
+                    ]
+                  }
+        '404':
+          description: Not Found - Case, entity or AML search not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                notFoundExample:
+                  value: {
+                    "success": false,
+                    "data": null,
+                    "errors": [
+                      {
+                        "code": 404,
+                        "message": "Resource not found",
+                        "type": "NOT_FOUND_ERROR"
+                      }
+                    ]
+                  }
+
+  /v1/case/cases/{caseid}/{entityid}/{complyid}/unlink:
+    post:
+      tags:
+        - cfm
+      summary: Unlink an AML search from an entity within a case.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: caseid
+          required: true
+          schema:
+            type: string
+          description: The ID of the case containing the entity.
+        - in: path
+          name: entityid
+          required: true
+          schema:
+            type: string
+          description: The ID of the entity (person/company) to unlink the AML search from.
+        - in: path
+          name: complyid
+          required: true
+          schema:
+            type: string
+          description: The ID of the AML search to unlink from the entity.
+      responses:
+        '200':
+          description: Successfully unlinked AML search from the entity.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+              examples:
+                unlinkSuccessExample:
+                  value: {
+                      "success": true,
+                      "data": {
+                          "message": "AML search successfully unlinked from entity"
+                      },
+                      "errors": null
+                  }
+        '400':
+          description: Bad Request - Invalid input parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: 'object'
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                badRequestExample:
+                  value: {
+                    "success": false,
+                    "data": null,
+                    "errors": [
+                      {
+                        "code": 400,
+                        "message": "Invalid request parameters",
+                        "type": "BAD_REQUEST_ERROR"
+                      }
+                    ]
+                  }
+        '403':
+          description: Forbidden - User lacks necessary permissions.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                forbiddenExample:
+                  value: {
+                    "success": false,
+                    "data": null,
+                    "errors": [
+                      {
+                        "code": 403,
+                        "message": "Insufficient permissions to perform this operation",
+                        "type": "FORBIDDEN_ERROR"
+                      }
+                    ]
+                  }
+        '404':
+          description: Not Found - Case, entity or AML search not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                notFoundExample:
+                  value: {
+                    "success": false,
+                    "data": null,
+                    "errors": [
+                      {
+                        "code": 404,
+                        "message": "Resource not found",
+                        "type": "NOT_FOUND_ERROR"
+                      }
+                    ]
+                  }
+
   /v1/case/case/{caseId}/{docId}:
     get:
       tags:
