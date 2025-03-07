@@ -816,6 +816,20 @@ paths:
                           - adverse-media-fraud
                           - adverse-media-narcotics
                           - adverse-media-general
+                          - adverse-media-v2-property
+                          - adverse-media-v2-financial-aml-cft
+                          - adverse-media-v2-fraud-linked
+                          - adverse-media-v2-narcotics-aml-cft
+                          - adverse-media-v2-violence-aml-cft
+                          - adverse-media-v2-terrorism
+                          - adverse-media-v2-cybercrime
+                          - adverse-media-v2-general-aml-cft
+                          - adverse-media-v2-regulatory
+                          - adverse-media-v2-financial-difficulty
+                          - adverse-media-v2-violence-non-aml-cft
+                          - adverse-media-v2-other-financial
+                          - adverse-media-v2-other-serious
+                          - adverse-media-v2-other-minor
                 clientRef:
                   type: string
                   description: Your reference for easy link to your records
