@@ -1103,7 +1103,7 @@ paths:
               properties:
                 searchId:
                   type: string
-                  description: The unique search ID for which to retrieve paginated hits
+                  description: The searchResultId for which to retrieve paginated hits
                 page:
                   type: integer
                   description: The page number to retrieve (starts at 0)
