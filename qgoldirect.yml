@@ -778,6 +778,9 @@ paths:
                 filters:
                   type: object
                   properties:
+                    entityType: 
+                      type: string
+                      description: The type of entity to search for. Can be one of [person, company, vessel, aircraft, organization]
                     birthYear:
                       type: integer
                       description: The year of birth of the person if known. Leave empty if the entity is a company
@@ -861,6 +864,7 @@ paths:
               example:
                 searchTerm: Jesse Pinkman
                 filters:
+                  entityType: person
                   birthYear: '1980'
                   countryCodes:
                     - US
@@ -1020,7 +1024,190 @@ paths:
                   code: 401
                   message: unauthorized
                   type: UNAUTHORiZED
+
+  /v1/aml/search/{id}:
+    get:
+      tags:
+        - aml
+      summary: Get Search by ID
+      description: |
+        Retrieves details of a previously performed search using its unique ID. This endpoint allows you to 
+        access search results that were previously created through the search endpoint. You can use this 
+        endpoint to review potential matches that were identified during the initial search process.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The unique search ID that was previously generated when the search was created
+          example: unique_id
+      responses:
+        '200':
+          description: |
+            Successful response containing the search details and associated hits. The response includes
+            the original search parameters along with the match status and the hits.
+           
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Set to false if not successful
+                  data:
+                    type: object
+                    description: This will be null when there's an error
+                  errors:
+                    type: object
+                    properties: 
+                      code: 
+                        type: integer
+                        description: Http error code
+                      message:
+                        type: string
+                        description: error message
+                      type:
+                        type: string
+                        description: http status code
+
+              example:
+                success: false
+                data: null
+                errors:
+                  code: 400
+                  message: invalid search ID format
+                  type: BAD_REQUEST_ERROR
+
+  /v1/aml/search/hits/paginate:
+    post:
+      tags:
+        - aml
+      summary: Paginate AML Hits
+      description: |
+        Retrieves paginated hits for a specific search. This endpoint allows you to 
+        fetch hits in smaller chunks, enabling more efficient data retrieval and display.
+        You can specify which page of results to retrieve and how many results per page.
+      security:
+        - bearerAuth: []        
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searchId:
+                  type: string
+                  description: The unique search ID for which to retrieve paginated hits
+                page:
+                  type: integer
+                  description: The page number to retrieve (starts at 0)
+                perPage:
+                  type: integer
+                  description: The number of hits per page
+              required:
+                - searchId
+                - page
+                - perPage
+              example:
+                searchId: 60f1b5b3e6b1f2c8a4d7e8f9
+                page: 0
+                perPage: 10
+      responses:
+        '200':
+          description: |
+            Successful response containing the paginated hits for the requested search.
+            Returns a list of hits based on the specified page and perPage parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True if the hits were retrieved successfully. False otherwise
+                  data:
+                    type: object
+                    description: Contains the paginated hits information
+                  errors:
+                    type: object
+                    description: Will be null when the request is successful
+
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Set to false if not successful
+                  data:
+                    type: object
+                    description: This will be null when there's an error
+                  errors:
+                    type: object
+                    properties: 
+                      code: 
+                        type: integer
+                        description: Http error code
+                      message:
+                        type: string
+                        description: error message
+                      type:
+                        type: string
+                        description: http status code
+
+              example:
+                success: false
+                data: null
+                errors:
+                  code: 400
+                  message: invalid search ID format
+                  type: BAD_REQUEST_ERROR
                   
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Set to false if not successful
+                  data:
+                    type: object
+                    description: This will be null when there's an error
+                  errors:
+                    type: object
+                    properties: 
+                      code: 
+                        type: integer
+                        description: Http error code
+                      message:
+                        type: string
+                        description: error message
+                      type:
+                        type: string
+                        description: http status code
+
+              example:
+                success: false
+                data: null
+                errors:
+                  code: 401
+                  message: unauthorized
+                  type: UNAUTHORIZED
+        
+      
+
   /v1/cfm/session/continue:
     post:
       tags:
