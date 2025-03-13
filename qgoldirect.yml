@@ -1026,7 +1026,7 @@ paths:
                   type: UNAUTHORiZED
 
   /v1/aml/search/{id}:
-    get:
+    post:
       tags:
         - aml
       summary: Get Search by ID
