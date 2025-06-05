@@ -1355,7 +1355,7 @@
                                 "size": 81353
                             }
                         ],
-                        "id": "68404eb963af89a6efabb0b7"
+                        "id": "unique_id"
                     }
                 ],
                 "ipInfo": {
@@ -1594,9 +1594,9 @@
                         }
                     },
                     "targetImage": {
-                        "documentId": "68404eb963af89a6efabb0b8",
+                        "documentId": "unique_id",
                         "documentType": "Identity Card",
-                        "groupedDocumentId": "68404eb963af89a6efabb0b7",
+                        "groupedDocumentId": "unique_id",
                         "image": {
                             "bucketName": "unique_id",
                             "extension": null,
@@ -1672,7 +1672,7 @@
                                 "size": 1096404
                             }
                         ],
-                        "id": "68404ec263af89a6efabb0bc"
+                        "id": "unique_id"
                     }
                 ],
                 "ipInfo": {
