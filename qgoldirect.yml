@@ -418,6 +418,8 @@ components:
                 type: "integer"
                 description: "Step number in the journey sequence."
     cfm_kyc_completed_event:
+      example: 
+        $ref: "./examples/cfm_kyc_completed_event.json"
       type: "object"
       properties:
         base:
