@@ -1,3 +1,1920 @@
 {
-    
+    "eventType": "cfm_kyc_completed_event",
+    "id": "unique_id",
+    "merchantID": "unique_id",
+    "payload": {
+        "caseId": "unique_id",
+        "caseTypeId": "unique_id",
+        "clientId": "unique_id",
+        "cloned": false,
+        "completed": true,
+        "completedAt": "2025-06-04T13:49:00.492Z",
+        "decision": {
+            "decision": {
+                "decisions": [
+                    {
+                        "data": {
+                            "decisions": null,
+                            "remarks": "Step (4) with type Upload Document has status Awaiting Review"
+                        },
+                        "ruleName": "Step (4) Upload Document rules",
+                        "status": "Awaiting Review"
+                    },
+                    {
+                        "data": {
+                            "decisions": [
+                                {
+                                    "data": {
+                                        "faceComparison": {
+                                            "ageRange": {
+                                                "high": 40,
+                                                "low": 32
+                                            },
+                                            "failReason": null,
+                                            "gender": {
+                                                "confidence": "0.9980470275878907",
+                                                "value": "Male"
+                                            },
+                                            "similarity": "98.71504",
+                                            "success": true
+                                        },
+                                        "fastFail": true,
+                                        "hasIdentityStep": true,
+                                        "liveness": {
+                                            "calibration": "REGULAR",
+                                            "captureLiveness": {
+                                                "probability": 1,
+                                                "threshold": "0.5"
+                                            },
+                                            "executionTime": 1878,
+                                            "faceLiveness": {
+                                                "probability": "0.92594665",
+                                                "threshold": "0.5"
+                                            },
+                                            "os": "DESKTOP",
+                                            "pipeline": "pad-r-1"
+                                        },
+                                        "livenessRequired": true,
+                                        "remarks": "Face liveness has high confidence and face comparison was successful"
+                                    },
+                                    "ruleName": "Face Liveness / Comparison rules",
+                                    "status": "Verified"
+                                }
+                            ],
+                            "remarks": "Step (2) with type Selfie has status Verified"
+                        },
+                        "ruleName": "Step (2) Selfie rules",
+                        "status": "Verified"
+                    },
+                    {
+                        "data": {
+                            "decisions": null,
+                            "remarks": "Step (3) with type AML Screening has status Verified"
+                        },
+                        "ruleName": "Step (3) AML Screening rules",
+                        "status": "Verified"
+                    },
+                    {
+                        "data": {
+                            "decisions": [
+                                {
+                                    "data": {
+                                        "crossCheckSettings": null,
+                                        "entityName": null,
+                                        "extractedName": null,
+                                        "ignoreReason": null,
+                                        "ignored": false,
+                                        "remarks": "Names cross-checking is skipped",
+                                        "similarity": null,
+                                        "similarityThreshold": 0,
+                                        "skipReason": "OCR is applied during fast fail",
+                                        "skipped": true
+                                    },
+                                    "ruleName": "Name checking rule",
+                                    "status": "Verified"
+                                },
+                                {
+                                    "data": {
+                                        "crossCheckSettings": null,
+                                        "entityGender": null,
+                                        "extractedGender": null,
+                                        "ignoreReason": null,
+                                        "ignored": false,
+                                        "remarks": "Gender cross-checking is skipped",
+                                        "skipReason": "OCR is applied during fast fail",
+                                        "skipped": true
+                                    },
+                                    "ruleName": "Gender checking rule",
+                                    "status": "Verified"
+                                },
+                                {
+                                    "data": {
+                                        "acceptIDIfNotExpired": null,
+                                        "expirationDate": null,
+                                        "rejectIDBeforeExpirationInMonths": null,
+                                        "rejectReason": null,
+                                        "remarks": "expiry date information may be missing or invalid"
+                                    },
+                                    "ruleName": "Document expiration rule",
+                                    "status": "Error"
+                                },
+                                {
+                                    "data": {
+                                        "crossCheckSettings": null,
+                                        "currentUserAge": 38,
+                                        "entityDOB": null,
+                                        "extractedDOB": "1909-11-15",
+                                        "ignoreReason": null,
+                                        "ignored": false,
+                                        "maximumAge": 75,
+                                        "minimumAge": 18,
+                                        "reApplicationDate": null,
+                                        "remarks": "Birth dates cross-checking is skipped",
+                                        "skipReason": "OCR is applied during fast fail",
+                                        "skipped": true
+                                    },
+                                    "ruleName": "Age checking rule",
+                                    "status": "Verified"
+                                },
+                                {
+                                    "data": {
+                                        "crossCheckSettings": null,
+                                        "entityNationality": null,
+                                        "extractedNationality": null,
+                                        "ignoreReason": null,
+                                        "ignored": false,
+                                        "remarks": "Nationality cross-checking is skipped",
+                                        "skipReason": "OCR is applied during fast fail",
+                                        "skipped": true
+                                    },
+                                    "ruleName": "Nationality checking rule",
+                                    "status": "Verified"
+                                },
+                                {
+                                    "data": {
+                                        "crossCheckSettings": null,
+                                        "entityCountry": null,
+                                        "extractedCountry": null,
+                                        "ignoreReason": null,
+                                        "ignored": false,
+                                        "remarks": "Country of residence cross-checking is skipped",
+                                        "skipReason": "OCR is applied during fast fail",
+                                        "skipped": true
+                                    },
+                                    "ruleName": "Country residence checking rule",
+                                    "status": "Verified"
+                                },
+                                {
+                                    "data": {
+                                        "authenticityChecks": [
+                                            {
+                                                "checks": [
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "Blank",
+                                                        "result": "Ok",
+                                                        "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                    },
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "ContactChipClassification",
+                                                        "result": "Ok",
+                                                        "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                    },
+                                                    {
+                                                        "diagnose": "Traces of an electronic device were found in the image",
+                                                        "elementType": "LivenessElectronicDevice",
+                                                        "result": "Error",
+                                                        "type": "Liveness check"
+                                                    }
+                                                ],
+                                                "pageIndex": 1,
+                                                "pageName": "Malta - Id Card (2014) Side B"
+                                            },
+                                            {
+                                                "checks": [
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "Blank",
+                                                        "result": "Ok",
+                                                        "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                    },
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "FacePresence",
+                                                        "result": "Ok",
+                                                        "type": "Control of photo embedding type"
+                                                    },
+                                                    {
+                                                        "diagnose": "Traces of an electronic device were found in the image",
+                                                        "elementType": "LivenessElectronicDevice",
+                                                        "result": "Error",
+                                                        "type": "Liveness check"
+                                                    },
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "LivenessBlackAndWhiteCopyCheck",
+                                                        "result": "Ok",
+                                                        "type": "Liveness check"
+                                                    }
+                                                ],
+                                                "pageIndex": 0,
+                                                "pageName": "Malta - Id Card (2014)"
+                                            }
+                                        ],
+                                        "documentStatus": {
+                                            "DetailsOptical": {
+                                                "DocumentType": "Ok",
+                                                "Expiry": "Error",
+                                                "ImageQA": "Error",
+                                                "Mrz": "Error",
+                                                "OverallStatus": "Error",
+                                                "PagesCount": 2,
+                                                "Security": "Error",
+                                                "Text": "Error",
+                                                "Vds": "Not Performed"
+                                            },
+                                            "Optical": "Error",
+                                            "OverallStatus": "Error",
+                                            "Portrait": "Not Performed"
+                                        },
+                                        "imageQAChecks": [
+                                            {
+                                                "checks": {
+                                                    "bounds": "Error",
+                                                    "focus": "Ok",
+                                                    "glares": "Ok",
+                                                    "perspective": "Ok",
+                                                    "portrait": "Not Performed",
+                                                    "resolution": "Ok"
+                                                },
+                                                "documentName": "Malta - Id Card (2014) Side B",
+                                                "pageIndex": 1
+                                            },
+                                            {
+                                                "checks": {
+                                                    "bounds": "Error",
+                                                    "focus": "Ok",
+                                                    "glares": "Error",
+                                                    "perspective": "Ok",
+                                                    "portrait": "Ok",
+                                                    "resolution": "Ok"
+                                                },
+                                                "documentName": "Malta - Id Card (2014)",
+                                                "pageIndex": 0
+                                            }
+                                        ],
+                                        "remarks": "Authenticity / Security checks are failed"
+                                    },
+                                    "ruleName": "Authenticity checking rule",
+                                    "status": "Rejected"
+                                },
+                                {
+                                    "data": {
+                                        "imageQAChecks": [
+                                            {
+                                                "checks": {
+                                                    "bounds": "Error",
+                                                    "focus": "Ok",
+                                                    "glares": "Ok",
+                                                    "perspective": "Ok",
+                                                    "portrait": "Not Performed",
+                                                    "resolution": "Ok"
+                                                },
+                                                "documentName": "Malta - Id Card (2014) Side B",
+                                                "pageIndex": 1
+                                            },
+                                            {
+                                                "checks": {
+                                                    "bounds": "Error",
+                                                    "focus": "Ok",
+                                                    "glares": "Error",
+                                                    "perspective": "Ok",
+                                                    "portrait": "Ok",
+                                                    "resolution": "Ok"
+                                                },
+                                                "documentName": "Malta - Id Card (2014)",
+                                                "pageIndex": 0
+                                            }
+                                        ],
+                                        "remarks": "Some image quality checks are failed"
+                                    },
+                                    "ruleName": "Image quality checking rule",
+                                    "status": "Informative"
+                                },
+                                {
+                                    "data": {
+                                        "authenticityChecks": [
+                                            {
+                                                "checks": [
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "Blank",
+                                                        "result": "Ok",
+                                                        "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                    },
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "ContactChipClassification",
+                                                        "result": "Ok",
+                                                        "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                    },
+                                                    {
+                                                        "diagnose": "Traces of an electronic device were found in the image",
+                                                        "elementType": "LivenessElectronicDevice",
+                                                        "result": "Error",
+                                                        "type": "Liveness check"
+                                                    }
+                                                ],
+                                                "pageIndex": 1,
+                                                "pageName": "Malta - Id Card (2014) Side B"
+                                            },
+                                            {
+                                                "checks": [
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "Blank",
+                                                        "result": "Ok",
+                                                        "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                    },
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "FacePresence",
+                                                        "result": "Ok",
+                                                        "type": "Control of photo embedding type"
+                                                    },
+                                                    {
+                                                        "diagnose": "Traces of an electronic device were found in the image",
+                                                        "elementType": "LivenessElectronicDevice",
+                                                        "result": "Error",
+                                                        "type": "Liveness check"
+                                                    },
+                                                    {
+                                                        "diagnose": "Check was passed",
+                                                        "elementType": "LivenessBlackAndWhiteCopyCheck",
+                                                        "result": "Ok",
+                                                        "type": "Liveness check"
+                                                    }
+                                                ],
+                                                "pageIndex": 0,
+                                                "pageName": "Malta - Id Card (2014)"
+                                            }
+                                        ],
+                                        "documentStatus": {
+                                            "DetailsOptical": {
+                                                "DocumentType": "Ok",
+                                                "Expiry": "Error",
+                                                "ImageQA": "Error",
+                                                "Mrz": "Error",
+                                                "OverallStatus": "Error",
+                                                "PagesCount": 2,
+                                                "Security": "Error",
+                                                "Text": "Error",
+                                                "Vds": "Not Performed"
+                                            },
+                                            "Optical": "Error",
+                                            "OverallStatus": "Error",
+                                            "Portrait": "Not Performed"
+                                        },
+                                        "imageQAChecks": [
+                                            {
+                                                "checks": {
+                                                    "bounds": "Error",
+                                                    "focus": "Ok",
+                                                    "glares": "Ok",
+                                                    "perspective": "Ok",
+                                                    "portrait": "Not Performed",
+                                                    "resolution": "Ok"
+                                                },
+                                                "documentName": "Malta - Id Card (2014) Side B",
+                                                "pageIndex": 1
+                                            },
+                                            {
+                                                "checks": {
+                                                    "bounds": "Error",
+                                                    "focus": "Ok",
+                                                    "glares": "Error",
+                                                    "perspective": "Ok",
+                                                    "portrait": "Ok",
+                                                    "resolution": "Ok"
+                                                },
+                                                "documentName": "Malta - Id Card (2014)",
+                                                "pageIndex": 0
+                                            }
+                                        ],
+                                        "remarks": "Overall document status is not ok. The status is Error"
+                                    },
+                                    "ruleName": "Overall status checking rule",
+                                    "status": "Rejected"
+                                }
+                            ],
+                            "remarks": "Step (1) with type Identity Documents has status Rejected"
+                        },
+                        "ruleName": "Step (1) Identity Documents rules",
+                        "status": "Rejected"
+                    }
+                ],
+                "status": "Rejected"
+            },
+            "notes": [
+                "Step (4) with type Upload Document has status Awaiting Review",
+                "Step (2) with type Selfie has status Verified",
+                "Step (3) with type AML Screening has status Verified",
+                "Step (1) with type Identity Documents has status Rejected"
+            ],
+            "status": "VerificationFailed",
+            "timestamp": "2025-06-04T13:49:19.144266429Z"
+        },
+        "duration": "31.081168694",
+        "entityId": "unique_id",
+        "expiresAt": "2025-06-04T14:03:29.385Z",
+        "ipInfo": {
+            "IPAddress": "46.11.191.47",
+            "IPCountry": "MT",
+            "agentInfo": {
+                "browser": "Firefox v137.0",
+                "device": "",
+                "deviceType": "Desktop",
+                "operatingSystem": "macOS v10.15"
+            }
+        },
+        "journeyId": "unique_id",
+        "linkId": "unique_id",
+        "merchantId": "unique_id",
+        "referenceId": "unique_id",
+        "riskLevel": {
+            "id": "unique_id",
+            "name": "4 Steps",
+            "steps": {
+                "1": {
+                    "checkId": "unique_id",
+                    "checkName": "Documents Check",
+                    "checkType": "Identity Documents",
+                    "settings": {
+                        "allowMobile": true,
+                        "allowUpload": true,
+                        "crossCheckingFields": {
+                            "countryOfResidence": {
+                                "ignoreIfNull": true,
+                                "verification": "Ignore Check"
+                            },
+                            "dateOfBirth": {
+                                "ignoreIfNull": true,
+                                "verification": "Reject If Mismatch"
+                            },
+                            "gender": {
+                                "ignoreIfNull": true,
+                                "verification": "Refer If Mismatch"
+                            },
+                            "names": {
+                                "ignoreIfNull": false,
+                                "verification": "Reject If Mismatch"
+                            },
+                            "nationality": {
+                                "ignoreIfNull": true,
+                                "verification": "Refer If Mismatch"
+                            }
+                        },
+                        "fastFailEnabled": true,
+                        "fastFailRetryCount": 3,
+                        "proceedIfFastFailIsInconclusive": false,
+                        "revisionId": 48,
+                        "supportedCountries": [
+                            "AR",
+                            "AU",
+                            "AT",
+                            "BE",
+                            "BG",
+                            "CA",
+                            "HR",
+                            "CY",
+                            "CZ",
+                            "DK",
+                            "EG",
+                            "EE",
+                            "FI",
+                            "FR",
+                            "DE",
+                            "GR",
+                            "HU",
+                            "IS",
+                            "IN",
+                            "IE",
+                            "IL",
+                            "IT",
+                            "JM",
+                            "JP",
+                            "JO",
+                            "LV",
+                            "LT",
+                            "LU",
+                            "LI",
+                            "MX",
+                            "ME",
+                            "MA",
+                            "NL",
+                            "NZ",
+                            "NO",
+                            "PK",
+                            "OM",
+                            "PY",
+                            "PH",
+                            "PL",
+                            "PT",
+                            "PR",
+                            "QA",
+                            "RO",
+                            "RS",
+                            "SG",
+                            "SK",
+                            "SI",
+                            "ZA",
+                            "ES",
+                            "LK",
+                            "SD",
+                            "SE",
+                            "CH",
+                            "TN",
+                            "UA",
+                            "AE",
+                            "GB",
+                            "US",
+                            "UY",
+                            "UZ",
+                            "VE",
+                            "VN",
+                            "DZ",
+                            "MK",
+                            "TR",
+                            "TH",
+                            "CN",
+                            "HK",
+                            "RK",
+                            "MT"
+                        ],
+                        "supportedDocuments": [
+                            "Identity Card",
+                            "Driving License",
+                            "Passport"
+                        ]
+                    },
+                    "stepNo": 1
+                },
+                "2": {
+                    "checkId": "unique_id",
+                    "checkName": "Selfie Auto",
+                    "checkType": "Selfie",
+                    "settings": {
+                        "allowMobile": true,
+                        "allowMultiple": true,
+                        "blockImmediately": false,
+                        "faceLiveness": true,
+                        "revisionId": 5
+                    },
+                    "stepNo": 2
+                },
+                "3": {
+                    "checkId": "unique_id",
+                    "checkName": "AML Check",
+                    "checkType": "AML Screening",
+                    "settings": {
+                        "enableMonitoring": false,
+                        "exactMatch": false,
+                        "fuzzinessLevel": "0.2",
+                        "revisionId": 6,
+                        "types": [
+                            "sanction",
+                            "warning",
+                            "fitness-probity",
+                            "pep",
+                            "pep-class-1",
+                            "pep-class-2",
+                            "pep-class-3",
+                            "pep-class-4",
+                            "adverse-media-v2-financial-aml-cft",
+                            "adverse-media-v2-terrorism",
+                            "adverse-media-v2-cybercrime",
+                            "adverse-media-sexual-crime"
+                        ]
+                    },
+                    "stepNo": 3
+                },
+                "4": {
+                    "checkId": "unique_id",
+                    "checkName": "Source of Funds",
+                    "checkType": "Upload Document",
+                    "settings": {
+                        "allowMobile": true,
+                        "documents": [
+                            {
+                                "fileTypes": [
+                                    "PDF",
+                                    "JPG",
+                                    "PNG"
+                                ],
+                                "helpText": "Please upload a bank statement that was issued not later than 3 months ago",
+                                "index": 1,
+                                "isRequired": true,
+                                "title": "Bank Statement"
+                            },
+                            {
+                                "fileTypes": [
+                                    "PDF"
+                                ],
+                                "helpText": "Help me",
+                                "index": 2,
+                                "isRequired": false,
+                                "title": "Utility Bill"
+                            }
+                        ],
+                        "groupTogether": true,
+                        "name": "Source of Funds",
+                        "revisionId": 3,
+                        "title": "Source of Funds"
+                    },
+                    "stepNo": 4
+                }
+            }
+        },
+        "sessionId": "unique_id",
+        "startedAt": "2025-06-04T13:48:29.411Z",
+        "steps": {
+            "1": {
+                "checkId": "unique_id",
+                "checkName": "Documents Check",
+                "checkType": "Identity Documents",
+                "cloned": false,
+                "completedAt": "2025-06-04T13:48:42.055Z",
+                "decision": {
+                    "decision": {
+                        "decisions": [
+                            {
+                                "data": {
+                                    "crossCheckSettings": null,
+                                    "entityName": null,
+                                    "extractedName": null,
+                                    "ignoreReason": null,
+                                    "ignored": false,
+                                    "remarks": "Names cross-checking is skipped",
+                                    "similarity": null,
+                                    "similarityThreshold": 0,
+                                    "skipReason": "OCR is applied during fast fail",
+                                    "skipped": true
+                                },
+                                "ruleName": "Name checking rule",
+                                "status": "Verified"
+                            },
+                            {
+                                "data": {
+                                    "crossCheckSettings": null,
+                                    "entityGender": null,
+                                    "extractedGender": null,
+                                    "ignoreReason": null,
+                                    "ignored": false,
+                                    "remarks": "Gender cross-checking is skipped",
+                                    "skipReason": "OCR is applied during fast fail",
+                                    "skipped": true
+                                },
+                                "ruleName": "Gender checking rule",
+                                "status": "Verified"
+                            },
+                            {
+                                "data": {
+                                    "acceptIDIfNotExpired": null,
+                                    "expirationDate": null,
+                                    "rejectIDBeforeExpirationInMonths": null,
+                                    "rejectReason": null,
+                                    "remarks": "expiry date information may be missing or invalid"
+                                },
+                                "ruleName": "Document expiration rule",
+                                "status": "Error"
+                            },
+                            {
+                                "data": {
+                                    "crossCheckSettings": null,
+                                    "currentUserAge": 38,
+                                    "entityDOB": null,
+                                    "extractedDOB": "1909-11-15",
+                                    "ignoreReason": null,
+                                    "ignored": false,
+                                    "maximumAge": 75,
+                                    "minimumAge": 18,
+                                    "reApplicationDate": null,
+                                    "remarks": "Birth dates cross-checking is skipped",
+                                    "skipReason": "OCR is applied during fast fail",
+                                    "skipped": true
+                                },
+                                "ruleName": "Age checking rule",
+                                "status": "Verified"
+                            },
+                            {
+                                "data": {
+                                    "crossCheckSettings": null,
+                                    "entityNationality": null,
+                                    "extractedNationality": null,
+                                    "ignoreReason": null,
+                                    "ignored": false,
+                                    "remarks": "Nationality cross-checking is skipped",
+                                    "skipReason": "OCR is applied during fast fail",
+                                    "skipped": true
+                                },
+                                "ruleName": "Nationality checking rule",
+                                "status": "Verified"
+                            },
+                            {
+                                "data": {
+                                    "crossCheckSettings": null,
+                                    "entityCountry": null,
+                                    "extractedCountry": null,
+                                    "ignoreReason": null,
+                                    "ignored": false,
+                                    "remarks": "Country of residence cross-checking is skipped",
+                                    "skipReason": "OCR is applied during fast fail",
+                                    "skipped": true
+                                },
+                                "ruleName": "Country residence checking rule",
+                                "status": "Verified"
+                            },
+                            {
+                                "data": {
+                                    "authenticityChecks": [
+                                        {
+                                            "checks": [
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "Blank",
+                                                    "result": "Ok",
+                                                    "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                },
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "ContactChipClassification",
+                                                    "result": "Ok",
+                                                    "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                },
+                                                {
+                                                    "diagnose": "Traces of an electronic device were found in the image",
+                                                    "elementType": "LivenessElectronicDevice",
+                                                    "result": "Error",
+                                                    "type": "Liveness check"
+                                                }
+                                            ],
+                                            "pageIndex": 1,
+                                            "pageName": "Malta - Id Card (2014) Side B"
+                                        },
+                                        {
+                                            "checks": [
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "Blank",
+                                                    "result": "Ok",
+                                                    "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                },
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "FacePresence",
+                                                    "result": "Ok",
+                                                    "type": "Control of photo embedding type"
+                                                },
+                                                {
+                                                    "diagnose": "Traces of an electronic device were found in the image",
+                                                    "elementType": "LivenessElectronicDevice",
+                                                    "result": "Error",
+                                                    "type": "Liveness check"
+                                                },
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "LivenessBlackAndWhiteCopyCheck",
+                                                    "result": "Ok",
+                                                    "type": "Liveness check"
+                                                }
+                                            ],
+                                            "pageIndex": 0,
+                                            "pageName": "Malta - Id Card (2014)"
+                                        }
+                                    ],
+                                    "documentStatus": {
+                                        "DetailsOptical": {
+                                            "DocumentType": "Ok",
+                                            "Expiry": "Error",
+                                            "ImageQA": "Error",
+                                            "Mrz": "Error",
+                                            "OverallStatus": "Error",
+                                            "PagesCount": 2,
+                                            "Security": "Error",
+                                            "Text": "Error",
+                                            "Vds": "Not Performed"
+                                        },
+                                        "Optical": "Error",
+                                        "OverallStatus": "Error",
+                                        "Portrait": "Not Performed"
+                                    },
+                                    "imageQAChecks": [
+                                        {
+                                            "checks": {
+                                                "bounds": "Error",
+                                                "focus": "Ok",
+                                                "glares": "Ok",
+                                                "perspective": "Ok",
+                                                "portrait": "Not Performed",
+                                                "resolution": "Ok"
+                                            },
+                                            "documentName": "Malta - Id Card (2014) Side B",
+                                            "pageIndex": 1
+                                        },
+                                        {
+                                            "checks": {
+                                                "bounds": "Error",
+                                                "focus": "Ok",
+                                                "glares": "Error",
+                                                "perspective": "Ok",
+                                                "portrait": "Ok",
+                                                "resolution": "Ok"
+                                            },
+                                            "documentName": "Malta - Id Card (2014)",
+                                            "pageIndex": 0
+                                        }
+                                    ],
+                                    "remarks": "Authenticity / Security checks are failed"
+                                },
+                                "ruleName": "Authenticity checking rule",
+                                "status": "Rejected"
+                            },
+                            {
+                                "data": {
+                                    "imageQAChecks": [
+                                        {
+                                            "checks": {
+                                                "bounds": "Error",
+                                                "focus": "Ok",
+                                                "glares": "Ok",
+                                                "perspective": "Ok",
+                                                "portrait": "Not Performed",
+                                                "resolution": "Ok"
+                                            },
+                                            "documentName": "Malta - Id Card (2014) Side B",
+                                            "pageIndex": 1
+                                        },
+                                        {
+                                            "checks": {
+                                                "bounds": "Error",
+                                                "focus": "Ok",
+                                                "glares": "Error",
+                                                "perspective": "Ok",
+                                                "portrait": "Ok",
+                                                "resolution": "Ok"
+                                            },
+                                            "documentName": "Malta - Id Card (2014)",
+                                            "pageIndex": 0
+                                        }
+                                    ],
+                                    "remarks": "Some image quality checks are failed"
+                                },
+                                "ruleName": "Image quality checking rule",
+                                "status": "Informative"
+                            },
+                            {
+                                "data": {
+                                    "authenticityChecks": [
+                                        {
+                                            "checks": [
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "Blank",
+                                                    "result": "Ok",
+                                                    "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                },
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "ContactChipClassification",
+                                                    "result": "Ok",
+                                                    "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                },
+                                                {
+                                                    "diagnose": "Traces of an electronic device were found in the image",
+                                                    "elementType": "LivenessElectronicDevice",
+                                                    "result": "Error",
+                                                    "type": "Liveness check"
+                                                }
+                                            ],
+                                            "pageIndex": 1,
+                                            "pageName": "Malta - Id Card (2014) Side B"
+                                        },
+                                        {
+                                            "checks": [
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "Blank",
+                                                    "result": "Ok",
+                                                    "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                                                },
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "FacePresence",
+                                                    "result": "Ok",
+                                                    "type": "Control of photo embedding type"
+                                                },
+                                                {
+                                                    "diagnose": "Traces of an electronic device were found in the image",
+                                                    "elementType": "LivenessElectronicDevice",
+                                                    "result": "Error",
+                                                    "type": "Liveness check"
+                                                },
+                                                {
+                                                    "diagnose": "Check was passed",
+                                                    "elementType": "LivenessBlackAndWhiteCopyCheck",
+                                                    "result": "Ok",
+                                                    "type": "Liveness check"
+                                                }
+                                            ],
+                                            "pageIndex": 0,
+                                            "pageName": "Malta - Id Card (2014)"
+                                        }
+                                    ],
+                                    "documentStatus": {
+                                        "DetailsOptical": {
+                                            "DocumentType": "Ok",
+                                            "Expiry": "Error",
+                                            "ImageQA": "Error",
+                                            "Mrz": "Error",
+                                            "OverallStatus": "Error",
+                                            "PagesCount": 2,
+                                            "Security": "Error",
+                                            "Text": "Error",
+                                            "Vds": "Not Performed"
+                                        },
+                                        "Optical": "Error",
+                                        "OverallStatus": "Error",
+                                        "Portrait": "Not Performed"
+                                    },
+                                    "imageQAChecks": [
+                                        {
+                                            "checks": {
+                                                "bounds": "Error",
+                                                "focus": "Ok",
+                                                "glares": "Ok",
+                                                "perspective": "Ok",
+                                                "portrait": "Not Performed",
+                                                "resolution": "Ok"
+                                            },
+                                            "documentName": "Malta - Id Card (2014) Side B",
+                                            "pageIndex": 1
+                                        },
+                                        {
+                                            "checks": {
+                                                "bounds": "Error",
+                                                "focus": "Ok",
+                                                "glares": "Error",
+                                                "perspective": "Ok",
+                                                "portrait": "Ok",
+                                                "resolution": "Ok"
+                                            },
+                                            "documentName": "Malta - Id Card (2014)",
+                                            "pageIndex": 0
+                                        }
+                                    ],
+                                    "remarks": "Overall document status is not ok. The status is Error"
+                                },
+                                "ruleName": "Overall status checking rule",
+                                "status": "Rejected"
+                            }
+                        ],
+                        "status": "Rejected"
+                    },
+                    "notes": [
+                        "Names cross-checking is skipped",
+                        "Gender cross-checking is skipped",
+                        "expiry date information may be missing or invalid",
+                        "Birth dates cross-checking is skipped",
+                        "Nationality cross-checking is skipped",
+                        "Country of residence cross-checking is skipped",
+                        "Authenticity / Security checks are failed",
+                        "Some image quality checks are failed",
+                        "Overall document status is not ok. The status is Error"
+                    ],
+                    "status": "Rejected",
+                    "timestamp": "2025-06-04T13:48:43.255Z"
+                },
+                "documentOCR": {
+                    "applyOCRDuringFastFail": true,
+                    "authenticityChecks": [
+                        {
+                            "elementDiagnose": "Check was passed",
+                            "elementResult": "Ok",
+                            "elementType": "SecurityFeatureTypeBlank",
+                            "pageIndex": 0,
+                            "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                        },
+                        {
+                            "elementDiagnose": "Check was passed",
+                            "elementResult": "Ok",
+                            "elementType": "SecurityFeatureTypeFacePresence",
+                            "pageIndex": 0,
+                            "type": "Control of photo embedding type"
+                        },
+                        {
+                            "elementDiagnose": "Traces of an electronic device were found in the image",
+                            "elementResult": "Error",
+                            "elementType": "SecurityFeatureTypeLivenessElectronicDevice",
+                            "pageIndex": 0,
+                            "type": "Liveness check"
+                        },
+                        {
+                            "elementDiagnose": "Check was passed",
+                            "elementResult": "Ok",
+                            "elementType": "SecurityFeatureTypeLivenessBlackAndWhiteCopyCheck",
+                            "pageIndex": 0,
+                            "type": "Liveness check"
+                        },
+                        {
+                            "elementDiagnose": "Check was passed",
+                            "elementResult": "Ok",
+                            "elementType": "SecurityFeatureTypeBlank",
+                            "pageIndex": 1,
+                            "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                        },
+                        {
+                            "elementDiagnose": "Check was passed",
+                            "elementResult": "Ok",
+                            "elementType": "SecurityFeatureTypeContactChipClassification",
+                            "pageIndex": 1,
+                            "type": "Control of the presence of an image pattern of a specified color, shape and brightness"
+                        },
+                        {
+                            "elementDiagnose": "Traces of an electronic device were found in the image",
+                            "elementResult": "Error",
+                            "elementType": "SecurityFeatureTypeLivenessElectronicDevice",
+                            "pageIndex": 1,
+                            "type": "Liveness check"
+                        }
+                    ],
+                    "candidates": [
+                        {
+                            "countryCode": "MLT",
+                            "countryName": "Malta",
+                            "documentDescription": "Identity Card",
+                            "documentFormat": "ID1 format document",
+                            "documentIssueYear": "2014",
+                            "documentName": "Malta - Id Card (2014) Side B",
+                            "documentType": "Identity Card",
+                            "isDeprecated": false,
+                            "mrz": true,
+                            "pageIndex": 1,
+                            "probability": "0.9677615761756896"
+                        },
+                        {
+                            "countryCode": "MLT",
+                            "countryName": "Malta",
+                            "documentDescription": "Identity Card",
+                            "documentFormat": "ID1 format document",
+                            "documentIssueYear": "2014",
+                            "documentName": "Malta - Id Card (2014)",
+                            "documentType": "Identity Card",
+                            "isDeprecated": false,
+                            "mrz": false,
+                            "pageIndex": 0,
+                            "probability": "0.9089474678039552"
+                        }
+                    ],
+                    "countryCode": "MT",
+                    "documentStatus": {
+                        "detailsOptical": {
+                            "documentType": "Ok",
+                            "expiry": "Error",
+                            "imageQA": "Error",
+                            "mrz": "Error",
+                            "overallStatus": "Error",
+                            "pagesCount": 2,
+                            "security": "Error",
+                            "text": "Error"
+                        },
+                        "optical": "Error",
+                        "overallStatus": "Error",
+                        "portrait": "Not Performed"
+                    },
+                    "extractedFields": [
+                        {
+                            "language": "",
+                            "name": "Document Class Code",
+                            "status": "Ok",
+                            "value": "ID"
+                        },
+                        {
+                            "language": "",
+                            "name": "Document Number",
+                            "status": "Ok",
+                            "value": "document_number"
+                        },
+                        {
+                            "language": "",
+                            "name": "Issuing State Code",
+                            "status": "Ok",
+                            "value": "MLT"
+                        },
+                        {
+                            "language": "",
+                            "name": "Issuing State Name",
+                            "status": "Ok",
+                            "value": "value"
+                        },
+                        {
+                            "language": "",
+                            "name": "Date of Expiry",
+                            "status": "Error",
+                            "value": "value"
+                        },
+                        {
+                            "language": "",
+                            "name": "Date of Issue",
+                            "status": "Ok",
+                            "value": "value"
+                        },
+                        {
+                            "language": "",
+                            "name": "Date of Birth",
+                            "status": "Ok",
+                            "value": "value"
+                        },
+                        {
+                            "language": "Maltese",
+                            "name": "Place of Birth",
+                            "status": "Not Performed",
+                            "value": "value"
+                        },
+                        {
+                            "language": "",
+                            "name": "Surname",
+                            "status": "Ok",
+                            "value": "surname"
+                        },
+                        {
+                            "language": "",
+                            "name": "Given Names",
+                            "status": "Ok",
+                            "value": "name"
+                        },
+                        {
+                            "language": "",
+                            "name": "Nationality",
+                            "status": "Ok",
+                            "value": "Malta"
+                        },
+                        {
+                            "language": "Maltese",
+                            "name": "Nationality",
+                            "status": "Not Performed",
+                            "value": "Maltija"
+                        },
+                        {
+                            "language": "",
+                            "name": "Sex",
+                            "status": "Ok",
+                            "value": "M"
+                        },
+                        {
+                            "language": "Maltese",
+                            "name": "Sex",
+                            "status": "Not Performed",
+                            "value": "Raġel"
+                        },
+                        {
+                            "language": "",
+                            "name": "Age",
+                            "status": "Ok",
+                            "value": "38"
+                        },
+                        {
+                            "language": "",
+                            "name": "Age at Issue",
+                            "status": "Ok",
+                            "value": "27"
+                        },
+                        {
+                            "language": "",
+                            "name": "Years Since Issue",
+                            "status": "Ok",
+                            "value": "10"
+                        },
+                        {
+                            "language": "",
+                            "name": "Authority",
+                            "status": "Not Performed",
+                            "value": "Identity Management Office"
+                        },
+                        {
+                            "language": "",
+                            "name": "Surname And Given Names",
+                            "status": "Ok",
+                            "value": "name_surname"
+                        },
+                        {
+                            "language": "",
+                            "name": "Nationality Code",
+                            "status": "Ok",
+                            "value": "MLT"
+                        },
+                        {
+                            "language": "",
+                            "name": "RemainderTerm",
+                            "status": "Error",
+                            "value": "0"
+                        },
+                        {
+                            "language": "",
+                            "name": "Final Checkdigit",
+                            "status": "Ok",
+                            "value": "0"
+                        },
+                        {
+                            "language": "",
+                            "name": "MRZ Strings",
+                            "status": "Ok",
+                            "value": "mrz"
+                        },
+                        {
+                            "language": "",
+                            "name": "Document Number Checkdigit",
+                            "status": "Ok",
+                            "value": "4"
+                        },
+                        {
+                            "language": "",
+                            "name": "Date of Birth Checkdigit",
+                            "status": "Ok",
+                            "value": "7"
+                        },
+                        {
+                            "language": "",
+                            "name": "Date of Expiry Checkdigit",
+                            "status": "Ok",
+                            "value": "1"
+                        },
+                        {
+                            "language": "",
+                            "name": "Identity Card Number",
+                            "status": "Not Performed",
+                            "value": "id_number"
+                        },
+                        {
+                            "language": "",
+                            "name": "Optional Data",
+                            "status": "Not Performed",
+                            "value": "optional_data"
+                        },
+                        {
+                            "language": "",
+                            "name": "MRZ Type",
+                            "status": "Not Performed",
+                            "value": "ID-1"
+                        },
+                        {
+                            "language": "",
+                            "name": "Line2 Optional Data",
+                            "status": "Not Performed",
+                            "value": "optional_data"
+                        }
+                    ],
+                    "fastFail": true,
+                    "metadata": {
+                        "address": null,
+                        "addressCountry": null,
+                        "dateOfBirth": "1909-11-15",
+                        "dateOfIssue": "date_of_issue",
+                        "documentName": "Malta - Id Card (2014)",
+                        "documentNumber": "unique_id",
+                        "expirationDate": null,
+                        "fathersName": null,
+                        "firstName": "first_name",
+                        "gender": "Male",
+                        "issuingAuthority": "Identity Management Office",
+                        "issuingCountry": "MT",
+                        "lastName": "last_name",
+                        "mothersName": null,
+                        "nationality": "Maltese",
+                        "nationalityCode": "MT",
+                        "notes": null,
+                        "placeOfBirth": "place_of_birth",
+                        "placeOfBirthCode": null,
+                        "placeOfIssue": null,
+                        "type": "Identity Card"
+                    },
+                    "ocrMetadata": {
+                        "address": null,
+                        "addressCountry": null,
+                        "dateOfBirth": "1909-11-15",
+                        "dateOfIssue": "date_of_issue",
+                        "documentName": "Malta - Id Card (2014)",
+                        "documentNumber": "unique_id",
+                        "expirationDate": null,
+                        "fathersName": null,
+                        "firstName": "first_name",
+                        "gender": "Male",
+                        "issuingAuthority": "Identity Management Office",
+                        "issuingCountry": "MT",
+                        "lastName": "last_name",
+                        "mothersName": null,
+                        "nationality": "Maltese",
+                        "nationalityCode": "MT",
+                        "notes": null,
+                        "placeOfBirth": "place_of_birth",
+                        "placeOfBirthCode": null,
+                        "placeOfIssue": null,
+                        "type": "Identity Card"
+                    },
+                    "userChanges": {
+                        "dateOfBirth": "1909-11-15",
+                        "documentNumber": "document_number",
+                        "firstName": "first_name",
+                        "gender": "Male",
+                        "lastName": "last_name",
+                        "nationality": "Maltese"
+                    }
+                },
+                "documentType": "Identity Card",
+                "documents": [
+                    {
+                        "documents": [
+                            {
+                                "documentSide": "Front",
+                                "documentType": "Identity Card",
+                                "extension": ".jpg",
+                                "fileName": "unique_id.jpeg",
+                                "id": "unique_id",
+                                "key": "unique_id",
+                                "mimeType": "image/jpeg",
+                                "size": 85119
+                            },
+                            {
+                                "documentSide": "Back",
+                                "documentType": "Identity Card",
+                                "extension": ".jpg",
+                                "fileName": "unique_id.jpeg",
+                                "id": "unique_id",
+                                "key": "unique_id",
+                                "mimeType": "image/jpeg",
+                                "size": 81353
+                            }
+                        ],
+                        "id": "unique_id"
+                    }
+                ],
+                "ipInfo": {
+                    "IPAddress": "xx.xx.xx.xx",
+                    "IPCountry": "MT",
+                    "agentInfo": {
+                        "browser": "Firefox v137.0",
+                        "device": "",
+                        "deviceType": "Desktop",
+                        "operatingSystem": "macOS v10.15"
+                    }
+                },
+                "settings": {
+                    "global": {
+                        "documents": {
+                            "ID": "unique_id",
+                            "createdBy": {
+                                "actorId": "unique_id",
+                                "actorType": "User",
+                                "timestamp": "2024-03-26T11:21:48.69Z"
+                            },
+                            "deletedBy": null,
+                            "isSystem": false,
+                            "merchantId": "unique_id",
+                            "modifiedBy": {
+                                "actorId": "unique_id",
+                                "actorType": "System",
+                                "timestamp": "2025-05-07T11:31:17.395Z"
+                            },
+                            "regions": {
+                                "Europe": {
+                                    "countries": {
+                                        "MT": {
+                                            "automated": {
+                                                "drivingLicense": {
+                                                    "pageSides": "FrontAndBack"
+                                                },
+                                                "identityCard": {
+                                                    "pageSides": "FrontAndBack"
+                                                },
+                                                "passport": {
+                                                    "pageSides": "OnlyFront"
+                                                }
+                                            },
+                                            "manual": {
+                                                "drivingLicense": {
+                                                    "pageSides": "FrontAndBack"
+                                                },
+                                                "identityCard": {
+                                                    "pageSides": "FrontAndBack"
+                                                },
+                                                "passport": {
+                                                    "pageSides": "OnlyFront"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "revisionID": 49
+                        },
+                        "settings": {
+                            "ID": "unique_id",
+                            "acceptIDIfNotExpired": true,
+                            "cfmLinkExpiryInHrs": 24,
+                            "contactEmail": "info@arritech.com",
+                            "contactUrl": "https://arritech.com",
+                            "createdBy": {
+                                "actorId": "unique_id",
+                                "actorType": "System",
+                                "timestamp": "2023-08-03T09:53:43.081Z"
+                            },
+                            "defaultLanguage": "en",
+                            "deletedBy": null,
+                            "duplications": {
+                                "allowEmail": true,
+                                "allowMobile": true
+                            },
+                            "maxFileSizeInBytes": 10000000,
+                            "maximumAge": 75,
+                            "merchantID": "unique_id",
+                            "minimumAge": 18,
+                            "modifiedBy": {
+                                "actorId": "unique_id",
+                                "actorType": "User",
+                                "timestamp": "2025-02-06T12:13:20.425Z"
+                            },
+                            "rejectIDBeforeExpirationInMonths": null,
+                            "revisionID": 124,
+                            "termsAndConditionsURL": "https://qgengroup.com/our-services",
+                            "theme": "Custom"
+                        }
+                    },
+                    "step": {
+                        "allowMobile": true,
+                        "allowUpload": true,
+                        "crossCheckingFields": {
+                            "countryOfResidence": {
+                                "ignoreIfNull": true,
+                                "verification": "Ignore Check"
+                            },
+                            "dateOfBirth": {
+                                "ignoreIfNull": true,
+                                "verification": "Reject If Mismatch"
+                            },
+                            "gender": {
+                                "ignoreIfNull": true,
+                                "verification": "Refer If Mismatch"
+                            },
+                            "names": {
+                                "ignoreIfNull": false,
+                                "verification": "Reject If Mismatch"
+                            },
+                            "nationality": {
+                                "ignoreIfNull": true,
+                                "verification": "Refer If Mismatch"
+                            }
+                        },
+                        "fastFailEnabled": true,
+                        "fastFailRetryCount": 3,
+                        "proceedIfFastFailIsInconclusive": false,
+                        "revisionId": 48,
+                        "supportedCountries": [
+                            "AR",
+                            "AU",
+                            "AT",
+                            "BE",
+                            "BG",
+                            "CA",
+                            "HR",
+                            "CY",
+                            "CZ",
+                            "DK",
+                            "EG",
+                            "EE",
+                            "FI",
+                            "FR",
+                            "DE",
+                            "GR",
+                            "HU",
+                            "IS",
+                            "IN",
+                            "IE",
+                            "IL",
+                            "IT",
+                            "JM",
+                            "JP",
+                            "JO",
+                            "LV",
+                            "LT",
+                            "LU",
+                            "LI",
+                            "MX",
+                            "ME",
+                            "MA",
+                            "NL",
+                            "NZ",
+                            "NO",
+                            "PK",
+                            "OM",
+                            "PY",
+                            "PH",
+                            "PL",
+                            "PT",
+                            "PR",
+                            "QA",
+                            "RO",
+                            "RS",
+                            "SG",
+                            "SK",
+                            "SI",
+                            "ZA",
+                            "ES",
+                            "LK",
+                            "SD",
+                            "SE",
+                            "CH",
+                            "TN",
+                            "UA",
+                            "AE",
+                            "GB",
+                            "US",
+                            "UY",
+                            "UZ",
+                            "VE",
+                            "VN",
+                            "DZ",
+                            "MK",
+                            "TR",
+                            "TH",
+                            "CN",
+                            "HK",
+                            "RK",
+                            "MT"
+                        ],
+                        "supportedDocuments": [
+                            "Identity Card",
+                            "Driving License",
+                            "Passport"
+                        ]
+                    }
+                }
+            },
+            "2": {
+                "checkId": "unique_id",
+                "checkName": "Selfie Auto",
+                "checkType": "Selfie",
+                "cloned": false,
+                "comparison": {
+                    "ageRange": {
+                        "high": 40,
+                        "low": 32
+                    },
+                    "done": true,
+                    "gender": {
+                        "confidence": "0.9980470275878907",
+                        "value": "Male"
+                    },
+                    "imageQuality": {
+                        "brightness": "0.7591306304931641",
+                        "sharpness": "0.9745164489746094"
+                    },
+                    "matched": true,
+                    "similarity": "0.9871504211425781",
+                    "sourceImage": {
+                        "documentId": "unique_id",
+                        "documentType": "Selfie",
+                        "groupedDocumentId": "unique_id",
+                        "image": {
+                            "bucketName": "unique_id",
+                            "extension": null,
+                            "index": 0,
+                            "key": "unique_id",
+                            "mimeType": null,
+                            "size": 0
+                        }
+                    },
+                    "targetImage": {
+                        "documentId": "unique_id",
+                        "documentType": "Identity Card",
+                        "groupedDocumentId": "unique_id",
+                        "image": {
+                            "bucketName": "unique_id",
+                            "extension": null,
+                            "index": 0,
+                            "key": "unique_id",
+                            "mimeType": null,
+                            "size": 0
+                        }
+                    }
+                },
+                "completedAt": "2025-06-04T13:48:50.35Z",
+                "decision": {
+                    "decision": {
+                        "decisions": [
+                            {
+                                "data": {
+                                    "faceComparison": {
+                                        "ageRange": {
+                                            "high": 40,
+                                            "low": 32
+                                        },
+                                        "failReason": null,
+                                        "gender": {
+                                            "confidence": "0.9980470275878907",
+                                            "value": "Male"
+                                        },
+                                        "similarity": "98.71504",
+                                        "success": true
+                                    },
+                                    "fastFail": true,
+                                    "hasIdentityStep": true,
+                                    "liveness": {
+                                        "calibration": "REGULAR",
+                                        "captureLiveness": {
+                                            "probability": 1,
+                                            "threshold": "0.5"
+                                        },
+                                        "executionTime": 1878,
+                                        "faceLiveness": {
+                                            "probability": "0.92594665",
+                                            "threshold": "0.5"
+                                        },
+                                        "os": "DESKTOP",
+                                        "pipeline": "pad-r-1"
+                                    },
+                                    "livenessRequired": true,
+                                    "remarks": "Face liveness has high confidence and face comparison was successful"
+                                },
+                                "ruleName": "Face Liveness / Comparison rules",
+                                "status": "Verified"
+                            }
+                        ],
+                        "status": "Verified"
+                    },
+                    "notes": [
+                        "Face liveness has high confidence and face comparison was successful"
+                    ],
+                    "status": "Verified",
+                    "timestamp": "2025-06-04T13:49:11.46Z"
+                },
+                "documentType": "Selfie",
+                "documents": [
+                    {
+                        "documents": [
+                            {
+                                "documentSide": "Front",
+                                "documentType": "Selfie",
+                                "extension": ".jpg",
+                                "fileName": "unique_id.jpg",
+                                "id": "unique_id",
+                                "key": "unique_id",
+                                "mimeType": "image/jpeg",
+                                "size": 1096404
+                            }
+                        ],
+                        "id": "unique_id"
+                    }
+                ],
+                "ipInfo": {
+                    "IPAddress": "xx.xx.xx.xx",
+                    "IPCountry": "MT",
+                    "agentInfo": {
+                        "browser": "Firefox v137.0",
+                        "device": "",
+                        "deviceType": "Desktop",
+                        "operatingSystem": "macOS v10.15"
+                    }
+                },
+                "liveness": {
+                    "calibration": "REGULAR",
+                    "captureLiveness": 1,
+                    "faceLiveness": "0.92594665",
+                    "imageQuality": "0.97547746",
+                    "os": "DESKTOP",
+                    "pipeline": "pad-r-1",
+                    "required": true,
+                    "status": 200
+                },
+                "settings": {
+                    "step": {
+                        "allowMobile": true,
+                        "allowMultiple": true,
+                        "blockImmediately": false,
+                        "faceLiveness": true,
+                        "revisionId": 5
+                    }
+                }
+            },
+            "3": {
+                "amlScreening": {
+                    "exactMatch": false,
+                    "searchParams": {
+                        "countryCodes": [
+                            ""
+                        ],
+                        "dateOfBirth": "1909",
+                        "fuzziness": "0.2",
+                        "searchTerm": "name",
+                        "types": [
+                            "sanction",
+                            "warning",
+                            "fitness-probity",
+                            "pep",
+                            "pep-class-1",
+                            "pep-class-2",
+                            "pep-class-3",
+                            "pep-class-4",
+                            "adverse-media-v2-financial-aml-cft",
+                            "adverse-media-v2-terrorism",
+                            "adverse-media-v2-cybercrime",
+                            "adverse-media-sexual-crime"
+                        ]
+                    },
+                    "searchStatus": "Completed",
+                    "totalHits": 0
+                },
+                "checkId": "unique_id",
+                "checkName": "AML Check",
+                "checkType": "AML Screening",
+                "cloned": false,
+                "completedAt": "2025-06-04T13:48:53.935Z",
+                "decision": {
+                    "decision": {
+                        "decisions": null,
+                        "status": ""
+                    },
+                    "notes": [],
+                    "status": "Verified",
+                    "timestamp": "2025-06-04T13:48:53.935Z"
+                },
+                "documents": [
+                    {
+                        "documents": [
+                            {
+                                "documentSide": "Front",
+                                "documentType": "",
+                                "extension": ".pdf",
+                                "fileName": "unique_id.pdf",
+                                "id": "unique_id",
+                                "key": "unique_id",
+                                "mimeType": "application/pdf",
+                                "size": 65398
+                            }
+                        ],
+                        "id": "unique_id"
+                    }
+                ],
+                "ipInfo": {
+                    "IPAddress": "xx.xx.xx.xx",
+                    "IPCountry": "MT",
+                    "agentInfo": {
+                        "browser": "Firefox v137.0",
+                        "device": "",
+                        "deviceType": "Desktop",
+                        "operatingSystem": "macOS v10.15"
+                    }
+                },
+                "settings": {
+                    "step": {
+                        "enableMonitoring": false,
+                        "exactMatch": false,
+                        "fuzzinessLevel": "0.2",
+                        "revisionId": 6,
+                        "types": [
+                            "sanction",
+                            "warning",
+                            "fitness-probity",
+                            "pep",
+                            "pep-class-1",
+                            "pep-class-2",
+                            "pep-class-3",
+                            "pep-class-4",
+                            "adverse-media-v2-financial-aml-cft",
+                            "adverse-media-v2-terrorism",
+                            "adverse-media-v2-cybercrime",
+                            "adverse-media-sexual-crime"
+                        ]
+                    }
+                }
+            },
+            "4": {
+                "checkId": "unique_id",
+                "checkName": "Source of Funds",
+                "checkType": "Upload Document",
+                "cloned": false,
+                "completedAt": "2025-06-04T13:49:00.485Z",
+                "decision": {
+                    "decision": {
+                        "decisions": null,
+                        "status": ""
+                    },
+                    "notes": [],
+                    "status": "Awaiting Review",
+                    "timestamp": "2025-06-04T13:49:00.485Z"
+                },
+                "documentType": "Other Document",
+                "documents": [
+                    {
+                        "documents": [
+                            {
+                                "documentSide": "Front",
+                                "documentType": "Other Document",
+                                "extension": ".pdf",
+                                "fileName": "Bank Statement",
+                                "id": "unique_id",
+                                "key": "unique_id",
+                                "mimeType": "application/pdf",
+                                "size": 46530
+                            },
+                            {
+                                "documentSide": "Front",
+                                "documentType": "Other Document",
+                                "extension": ".pdf",
+                                "fileName": "Utility Bill",
+                                "id": "unique_id",
+                                "key": "unique_id",
+                                "mimeType": "application/pdf",
+                                "size": 46530
+                            }
+                        ],
+                        "id": "unique_id"
+                    }
+                ],
+                "ipInfo": {
+                    "IPAddress": "xx.xx.xx.xx",
+                    "IPCountry": "MT",
+                    "agentInfo": {
+                        "browser": "Firefox v137.0",
+                        "device": "",
+                        "deviceType": "Desktop",
+                        "operatingSystem": "macOS v10.15"
+                    }
+                },
+                "settings": {
+                    "global": {
+                        "settings": {
+                            "ID": "unique_id",
+                            "acceptIDIfNotExpired": true,
+                            "cfmLinkExpiryInHrs": 24,
+                            "contactEmail": "info@arritech.com",
+                            "contactUrl": "https://arritech.com",
+                            "createdBy": {
+                                "actorId": "unique_id",
+                                "actorType": "System",
+                                "timestamp": "2023-08-03T09:53:43.081Z"
+                            },
+                            "defaultLanguage": "en",
+                            "deletedBy": null,
+                            "duplications": {
+                                "allowEmail": true,
+                                "allowMobile": true
+                            },
+                            "maxFileSizeInBytes": 10000000,
+                            "maximumAge": 75,
+                            "merchantID": "unique_id",
+                            "minimumAge": 18,
+                            "modifiedBy": {
+                                "actorId": "unique_id",
+                                "actorType": "User",
+                                "timestamp": "2025-02-06T12:13:20.425Z"
+                            },
+                            "rejectIDBeforeExpirationInMonths": null,
+                            "revisionID": 124,
+                            "termsAndConditionsURL": "https://qgengroup.com/our-services",
+                            "theme": "Custom"
+                        }
+                    },
+                    "step": {
+                        "allowMobile": true,
+                        "documents": [
+                            {
+                                "fileTypes": [
+                                    "PDF",
+                                    "JPG",
+                                    "PNG"
+                                ],
+                                "helpText": "Please upload a bank statement that was issued not later than 3 months ago",
+                                "index": 1,
+                                "isRequired": true,
+                                "title": "Bank Statement"
+                            },
+                            {
+                                "fileTypes": [
+                                    "PDF"
+                                ],
+                                "helpText": "Help me",
+                                "index": 2,
+                                "isRequired": false,
+                                "title": "Utility Bill"
+                            }
+                        ],
+                        "groupTogether": true,
+                        "name": "Source of Funds",
+                        "revisionId": 3,
+                        "title": "Source of Funds"
+                    }
+                }
+            }
+        }
+    }
 }
