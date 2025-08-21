@@ -49,6 +49,9 @@ servers:
   - url: https://qgenonlinestaging.com/integration-api
     description: Staging server
 
+  - url: https://qgenonlinedev.com/integration-api
+    description: Development server
+
 components:
   securitySchemes:
     bearerAuth:
