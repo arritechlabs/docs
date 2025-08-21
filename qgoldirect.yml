@@ -7,6 +7,7 @@ info:
     It is written supporting the openAPI standards and all data returned is in JSON format. 
 
     Requests should be directed to the appropriate API URL 
+    - Development: https://qgenonlinedev.com/integration-api/
     - Staging: https://qgenonlinestaging.com/integration-api/
     - Production: Contact Arritech for details
 
