@@ -8,7 +8,6 @@ info:
 
     Requests should be directed to the appropriate API URL 
     - Development: https://qgenonlinedev.com/integration-api/
-    - Staging: https://qgenonlinestaging.com/integration-api/
     - Production: Contact Arritech for details
 
     All API requests must be made over HTTPS. HTTP is not supported! 
@@ -46,9 +45,6 @@ info:
     url: "https://arritech.com"
 
 servers:
-  - url: https://qgenonlinestaging.com/integration-api
-    description: Staging server
-
   - url: https://qgenonlinedev.com/integration-api
     description: Development server
 
@@ -609,7 +605,7 @@ paths:
         You should have already generated an access key pair via QGen Online Dev tools section.
         If not, Login to QGen Online using your admin user credentials, and access the Dev tools 
         to generate an API key. You can generate multiple keys for both
-        the staging or production environments. Multiple keys are uniquely
+        the development or production environments. Multiple keys are uniquely
         identified by a unique key identifier called ClientID.
         This 'Login' endpoint converts your clientID/secretkey pair, if validated, into
         a JWT session token to use during your other API calls. You can call this more than one 
@@ -1079,6 +1075,101 @@ paths:
                   code: 400
                   message: invalid search ID format
                   type: BAD_REQUEST_ERROR
+    delete:
+      tags:
+        - aml
+      summary: Delete a Search
+      description: |
+        Deletes a previously performed search using its unique ID. For auditing purposes, the `x-action-name` header should be included with a value like 'Delete a Search'.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The unique search ID that was previously generated when the search was created.
+          example: unique_id
+        - in: header
+          name: x-action-name
+          required: false
+          schema:
+            type: string
+            default: 'Delete a Search'
+          description: Action name for audit purposes.
+      responses:
+        "200":
+          description: Search successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: object
+              example:
+                success: true
+                data: null
+                errors: null
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      message:
+                        type: string
+                      type:
+                        type: string
+              example:
+                success: false
+                data: null
+                errors:
+                  code: 400
+                  message: "unable to delete AML search"
+                  type: "BAD_REQUEST_ERROR"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                      message:
+                        type: string
+                      type:
+                        type: string
+              example:
+                success: false
+                data: null
+                errors:
+                  code: 401
+                  message: "unauthorized"
+                  type: "ACCESS_DENIED"
 
   /v1/aml/search/hits/paginate:
     post:
@@ -1692,7 +1783,7 @@ paths:
                   entityId: unique_id
                   journeyId: unique_id
                   sessionId: unique_id
-                  cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=unique_id
+                  cfmUrl: https://qgenonlinedev.com/cfm/?session_id=unique_id
                 errors: null
         "400":
           description: Bad request
@@ -1822,7 +1913,7 @@ paths:
                   entityId: unique_id
                   journeyId: unique_id
                   sessionId: unique_id
-                  cfmUrl: https://qgenonlinestaging.com/cfm/?session_id=unique_id
+                  cfmUrl: https://qgenonlinedev.com/cfm/?session_id=unique_id
                 errors: null
         "400":
           description: Bad request
@@ -2717,7 +2808,7 @@ paths:
                                     "riskLevelID": "unique_id",
                                     "sessionID": "unique_id",
                                   },
-                                "endpoint": "https://qgenonlinestaging.com/cfm-simulator-api/v1/webhook/create",
+                                "endpoint": "https://qgenonlinedev.com/cfm-simulator-api/v1/webhook/create",
                                 "statusCode": 200,
                                 "response": "object",
                                 "clientErr": null,
