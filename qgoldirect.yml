@@ -757,7 +757,7 @@ paths:
         and a 0 value in the totalHits. This allows you to instantly onboard a customer. If this search
         return 'potential match' plus a value which is higher than 1 in the totalHits field, you can suspend the 
         onboarding process until you review the hits on qgenonline.com using the returned ID to filter 
-        the results.
+        the results. To enable monitoring isMonitored boolean flag should be set explicitly.
       security:
         - bearerAuth: []
       requestBody:
@@ -852,6 +852,9 @@ paths:
                   type: array
                   items:
                     type: string
+                isMonitored:
+                  type: boolean
+                  description: Flag to enable / disable monitoring of the search
 
               example:
                 searchTerm: Jesse Pinkman
@@ -885,6 +888,7 @@ paths:
                   - String to assign to Tag 1
                   - String to assign to Tag 2
                   - String to assign to Tag 3
+                isMonitored: false
 
       responses:
         "200":
