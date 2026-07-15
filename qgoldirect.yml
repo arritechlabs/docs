@@ -2263,6 +2263,113 @@ paths:
                         ],
                     }
 
+  /v1/case/status/{caseId}:
+    get:
+      tags:
+        - cfm
+      summary: Get a lightweight status snapshot for a case and its entities.
+      description: >
+        Returns the current status of a case and each of its entities in a small
+        payload designed to be polled at a reasonable interval. Use it to drive
+        your own onboarding flow off QGen Online state without fetching the full
+        case payload (`GET /v1/case/case/{caseID}`). Subsequent polls reflect any
+        status changes. When an entity has an open (not yet completed) CFM
+        session, its `pendingSessionId` is included so you can fetch the session
+        URL via `GET /v1/case/case/session/{case_id}/{entity_id}`. This
+        complements, and does not replace, the existing webhooks.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: caseId
+          required: true
+          schema:
+            type: string
+          description: The ID of the case to poll.
+      responses:
+        "200":
+          description: Current status of the case and its entities.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    required:
+                      - caseId
+                      - caseStatus
+                      - lastUpdated
+                      - entities
+                    properties:
+                      caseId:
+                        type: string
+                        description: The ID of the case.
+                      caseStatus:
+                        type: string
+                        description: The case's current status name.
+                      lastUpdated:
+                        type: string
+                        format: date-time
+                        description: When the case was last modified.
+                      entities:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - entityId
+                            - status
+                            - lastUpdated
+                          properties:
+                            entityId:
+                              type: string
+                              description: >
+                                The entity (link) ID. The same ID is accepted by
+                                the case session endpoint.
+                            status:
+                              type: string
+                              description: >
+                                The entity's current status, e.g. Created,
+                                AwaitingVerification, PendingApproval, Approved,
+                                Verified, Referred, VerificationFailed.
+                            lastUpdated:
+                              type: string
+                              format: date-time
+                              description: When this entity's status last changed.
+                            pendingSessionId:
+                              type: string
+                              description: >
+                                Present only when the entity has an open CFM
+                                session awaiting completion.
+              examples:
+                caseStatusSummaryExample:
+                  value:
+                    {
+                      "success": true,
+                      "data":
+                        {
+                          "caseId": "66e2c1a4f1a2b3c4d5e6f7a8",
+                          "caseStatus": "In Review",
+                          "lastUpdated": "2026-07-15T09:12:00.000Z",
+                          "entities":
+                            [
+                              {
+                                "entityId": "66e2c1a4f1a2b3c4d5e6f7b1",
+                                "status": "AwaitingVerification",
+                                "lastUpdated": "2026-07-15T09:10:00.000Z",
+                                "pendingSessionId": "66e2c1a4f1a2b3c4d5e6f7c9",
+                              },
+                              {
+                                "entityId": "66e2c1a4f1a2b3c4d5e6f7b2",
+                                "status": "Approved",
+                                "lastUpdated": "2026-07-14T16:41:00.000Z",
+                              },
+                            ],
+                        },
+                    }
+
   /v1/case/cases/{caseid}/{entityid}/{complyid}/link:
     post:
       tags:
