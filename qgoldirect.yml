@@ -1611,11 +1611,15 @@ paths:
         - cfm
       summary: Initiate a new case via the CFM.
       description: |
-        Designed to initiate a customer onboarding session via our CFM component. Make the call from your onboarding webpage after collecting basic personal details 
+        Designed to initiate a customer onboarding session via our CFM component. Make the call from your onboarding webpage after collecting basic personal details
         from an applicant. To make the call you will need to first get a valid caseTypeId which you can retrieve via the `/v1/cfm/case/types` endpoint. You may
-        ask our applicant to select a product or service linked to the case type created in QGoL or assume it automatically based on the link the applicant used. 
+        ask our applicant to select a product or service linked to the case type created in QGoL or assume it automatically based on the link the applicant used.
         A successful request will create a new Case Summary containing the Personal Entity with the personal details you submitted. We will return the `CaseId`, the `entityId`
         and especially a URL link where the session with the requested CFM flow is hosted.
+
+        Person entities remain the default: existing integrations that omit `entityType` continue to work unchanged. To onboard a Company instead, set
+        `entityType: "company"` and provide a `company` block (only `company.name` is required; all other company fields are optional).
+        The response echoes `entityType` so you can tell which kind of entity a session belongs to.
       security:
         - bearerAuth: []
       requestBody:
@@ -1624,6 +1628,61 @@ paths:
             schema:
               type: object
               properties:
+                entityType:
+                  type: string
+                  enum: [person, company]
+                  description: Kind of entity the session is opened against. Defaults to `person` when omitted.
+                  example: "person"
+                company:
+                  type: object
+                  description: Company details. Required when `entityType` is `company`. Only `name` is required; other fields are optional.
+                  properties:
+                    name:
+                      type: string
+                      description: Registered legal name of the company. Required when `entityType` is `company`.
+                      example: "Acme Widgets Ltd"
+                    tradeName:
+                      type: string
+                      description: Trading name if different from the registered name.
+                    regNum:
+                      type: string
+                      description: Company registration number.
+                    regDate:
+                      type: string
+                      format: date
+                      description: Company registration date in `YYYY-MM-DD` format.
+                    regCountry:
+                      type: string
+                      description: Country of registration, ISO 3166-1 alpha-2.
+                    businessType:
+                      type: string
+                      description: Free-text business type / industry.
+                    companyType:
+                      type: string
+                      description: Legal company type (e.g. Ltd, LLC).
+                    vatNum:
+                      type: string
+                      description: VAT registration number.
+                    repName:
+                      type: string
+                      description: Company representative's name.
+                    repEmailAddress:
+                      type: string
+                      format: email
+                      description: Company representative's email.
+                    repPhoneNum:
+                      type: string
+                      description: Company representative's phone number.
+                    compEmailAddress:
+                      type: string
+                      format: email
+                      description: Company contact email.
+                    compPhoneNum:
+                      type: string
+                      description: Company contact phone number.
+                    compStatus:
+                      type: string
+                      description: Company operational status.
                 caseTypeId:
                   type: string
                   description: A valid value as returned from the `/v1/cfm/case/types` endpoint. Case Types are created in QGen Online via the UI.
@@ -1714,7 +1773,7 @@ paths:
 
             examples:
               InitCaseExample:
-                summary: Example request to initiate a new case
+                summary: Example request to initiate a new case (Person)
                 value:
                   caseTypeId: "unique_id"
                   referenceId: "UniqueReferenceABCD01"
@@ -1736,6 +1795,29 @@ paths:
                   postCode: ""
                   country: "MT"
                   nationality: "Maltese"
+              InitCaseCompanyExample:
+                summary: Example request to initiate a new case (Company)
+                value:
+                  caseTypeId: "unique_id"
+                  referenceId: "UniqueReferenceCompany01"
+                  description: "Company onboarding"
+                  entityType: "company"
+                  email: "billing@acmewidgets.example"
+                  company:
+                    name: "Acme Widgets Ltd"
+                    tradeName: "Acme"
+                    regNum: "12345678"
+                    regDate: "2015-03-14"
+                    regCountry: "MT"
+                    businessType: "Retail"
+                    companyType: "Ltd"
+                    vatNum: "MT12345678"
+                    repName: "Abraham Murray"
+                    repEmailAddress: "abraham@acmewidgets.example"
+                    repPhoneNum: "+35679000000"
+                    compEmailAddress: "hello@acmewidgets.example"
+                    compPhoneNum: "+35621000000"
+                    compStatus: "Active"
 
       responses:
         "200":
@@ -1758,6 +1840,10 @@ paths:
                       entityId:
                         type: integer
                         description: total number of hits
+                      entityType:
+                        type: string
+                        enum: [person, company]
+                        description: Kind of entity the session was opened against. Echoes the request's `entityType` (defaults to `person`).
                       journeyId:
                         type: string
                         description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
@@ -1785,6 +1871,7 @@ paths:
                 data:
                   caseId: unique_id
                   entityId: unique_id
+                  entityType: person
                   journeyId: unique_id
                   sessionId: unique_id
                   cfmUrl: https://qgenonlinedev.com/cfm/?session_id=unique_id
@@ -1888,6 +1975,10 @@ paths:
                       entityId:
                         type: integer
                         description: total number of hits
+                      entityType:
+                        type: string
+                        enum: [person, company]
+                        description: Kind of entity the session belongs to. Reflects the entity type set when the case or entity was first initialised.
                       journeyId:
                         type: string
                         description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
@@ -1915,6 +2006,7 @@ paths:
                 data:
                   caseId: unique_id
                   entityId: unique_id
+                  entityType: person
                   journeyId: unique_id
                   sessionId: unique_id
                   cfmUrl: https://qgenonlinedev.com/cfm/?session_id=unique_id
@@ -1969,6 +2061,11 @@ paths:
       tags:
         - cfm
       summary: Get detailed information about a specific case by its ID.
+      description: |
+        Returns the full case payload including all Person and Company entities, and a `files[]` array of documents
+        uploaded manually against the case (documents that are not part of a CFM flow). Each file entry carries
+        `id`, `fileName`, `entityId` (a string when the document was uploaded against a specific entity, or `null`
+        when uploaded against the case itself), and the standard `audit` block.
       security:
         - bearerAuth: []
       parameters:
@@ -2011,6 +2108,26 @@ paths:
                           "caseType":
                             { "id": "unique_id", "name": "Passport Check" },
                           "companies": [],
+                          "files":
+                            [
+                              {
+                                "id": "unique_id",
+                                "fileName": "supporting_document.pdf",
+                                "entityId": "unique_id",
+                                "audit":
+                                  {
+                                    "createdBy":
+                                      {
+                                        "actorId": "Key Name",
+                                        "actorType": "Api",
+                                        "timestamp": "2024-09-12T12:19:46.061Z",
+                                      },
+                                    "deletedBy": null,
+                                    "modifiedBy": null,
+                                    "revisionID": 1,
+                                  },
+                              },
+                            ],
                           "description": "",
                           "id": "unique_id",
                           "persons":
@@ -5161,3 +5278,129 @@ paths:
                             type: "object"
                         type: "object"
                     type: "object"
+
+  /v1/case/case/session/{case_id}/pending:
+    get:
+      summary: List unstarted CFM sessions for a case.
+      description: >
+        Returns the CFM sessions on the case that the applicant has not yet opened
+        and whose share link has not yet expired. Use this to discover the URL(s)
+        still available to hand back to an applicant so they can start the flow,
+        without needing to fetch the full case payload. Each entry carries the
+        entity the session belongs to, the CFM link/journey identifiers, the risk
+        level that was applied when the link was created, the link expiry timestamp,
+        and the hosted CFM URL the applicant can be directed to.
+      tags:
+        - cfm
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the case.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      merchantId:
+                        type: string
+                      caseId:
+                        type: string
+                      sessions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            entityId:
+                              type: string
+                              description: The entity the session belongs to.
+                            sessionId:
+                              type: string
+                              description: The unique CFM session ID.
+                            journeyId:
+                              type: string
+                              description: The journey ID associated with the session. May be empty if a journey has not yet been persisted for this session.
+                            linkId:
+                              type: string
+                              description: The CFM link ID that produced this share URL.
+                            clientId:
+                              type: string
+                              description: The API client (integration credential) that created this CFM link.
+                            riskLevel:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                              description: The risk level applied when the link was created. `id` and `name` may be empty when a journey has not yet been persisted for the session.
+                            expiresAt:
+                              type: string
+                              format: date-time
+                              nullable: true
+                              description: Link expiry timestamp. Links past this point are excluded from the response.
+                            url:
+                              type: string
+                              description: Hosted CFM URL the applicant can be directed to in order to open the session.
+                  errors:
+                    type: object
+                    nullable: true
+              example:
+                success: true
+                data:
+                  merchantId: unique_id
+                  caseId: unique_id
+                  sessions:
+                    - entityId: unique_id
+                      sessionId: unique_id
+                      journeyId: unique_id
+                      linkId: unique_id
+                      clientId: unique_id
+                      riskLevel:
+                        id: unique_id
+                        name: Standard
+                      expiresAt: "2026-08-01T12:00:00Z"
+                      url: "https://qgenonlinedev.com/cfm/?session_id=unique_id"
+                errors: null
+        "400":
+          description: Bad request — invalid case ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    nullable: true
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+                        type:
+                          type: string
+              example:
+                success: false
+                data: null
+                errors:
+                  - code: 400
+                    message: "caseId - Value must be a valid bson object ID"
+                    type: BAD_REQUEST_ERROR
