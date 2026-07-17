@@ -5404,3 +5404,862 @@ paths:
                   - code: 400
                     message: "caseId - Value must be a valid bson object ID"
                     type: BAD_REQUEST_ERROR
+
+  /v1/case/cases:
+    post:
+      tags:
+        - cfm
+      summary: Create a case (no CFM session).
+      description: |
+        Creates a new Case directly, **without** starting a CFM (Customer Flow Manager) onboarding session.
+        Use this endpoint for machine-to-machine integrations that manage cases programmatically rather than
+        through an applicant-facing CFM flow — no `sessionId` is created or returned.
+
+        The case is created under the merchant that owns your API credentials. Once the case exists you can attach
+        entities to it using the `/v1/case/persons/{caseid}` and `/v1/case/companies/{caseid}` endpoints.
+
+        You will need valid identifiers, all configured in QGen Online:
+        - `caseTypeId` — retrieve from the `/v1/cfm/case/types` endpoint.
+        - `statusId` — the ObjectId of the case status to assign.
+        - `casePriorityId` — the ObjectId of the case priority to assign.
+
+        All three identifiers must be 24-character hexadecimal MongoDB ObjectIds.
+
+        Requires the **case:operator** role.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: string
+                  description: Your unique case number / reference. Required.
+                  example: "CASE-2026-0001"
+                summary:
+                  type: string
+                  description: Short summary of the case. Optional.
+                  example: "Onboarding - Acme Ltd"
+                description:
+                  type: string
+                  description: Free text description stored against the case. Optional.
+                  example: "Corporate onboarding for Acme Ltd and its directors."
+                caseTypeId:
+                  type: string
+                  description: A valid case type ObjectId as returned from the `/v1/cfm/case/types` endpoint. Required.
+                  example: "6298b8c38c66f1b237ab3a1c"
+                statusId:
+                  type: string
+                  description: The ObjectId of the case status to assign. Required.
+                  example: "64b1f0a2c9e77a1234567890"
+                casePriorityId:
+                  type: string
+                  description: The ObjectId of the case priority to assign. Required.
+                  example: "64b1f0a2c9e77a0987654321"
+                expiryDate:
+                  type: string
+                  format: date
+                  description: Optional case expiry date in YYYY-MM-DD format.
+                  example: "2026-12-31"
+                customFields:
+                  type: object
+                  additionalProperties: true
+                  description: >-
+                    Optional key/value map of custom field values. Keys must match the custom field set defined for the
+                    selected case type; unknown keys are ignored.
+                  example:
+                    referredBy: "Partner A"
+                    region: "EU"
+              required:
+                - number
+                - caseTypeId
+                - statusId
+                - casePriorityId
+            examples:
+              CreateCaseExample:
+                summary: Example request to create a case
+                value:
+                  number: "CASE-2026-0001"
+                  summary: "Onboarding - Acme Ltd"
+                  description: "Corporate onboarding for Acme Ltd and its directors."
+                  caseTypeId: "6298b8c38c66f1b237ab3a1c"
+                  statusId: "64b1f0a2c9e77a1234567890"
+                  casePriorityId: "64b1f0a2c9e77a0987654321"
+                  expiryDate: "2026-12-31"
+                  customFields:
+                    referredBy: "Partner A"
+                    region: "EU"
+      responses:
+        "200":
+          description: Case created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True when the case was created successfully.
+                  data:
+                    type: object
+                    description: Set to 'null' in case of an error.
+                    properties:
+                      id:
+                        type: string
+                        description: The ObjectId of the newly created case.
+                  errors:
+                    type: object
+                    description: Set to 'null' when the request is successful.
+              example:
+                success: true
+                data:
+                  id: "64b1f0a2c9e77aabcd123456"
+                errors: null
+        "400":
+          description: Bad Request - Missing required field or an invalid identifier.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                badRequestExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 400,
+                            "message": "number - Value must not be empty",
+                            "type": "BAD_REQUEST_ERROR",
+                          },
+                        ],
+                    }
+        "401":
+          description: Unauthorized - Missing, invalid or expired token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                unauthorizedExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 401,
+                            "message": "invalid token secret",
+                            "type": "UNAUTHORIZED_ERROR",
+                          },
+                        ],
+                    }
+        "403":
+          description: Forbidden - The authenticated client lacks the required case:operator role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                forbiddenExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 403,
+                            "message": "Insufficient permissions to perform this operation",
+                            "type": "FORBIDDEN_ERROR",
+                          },
+                        ],
+                    }
+
+  /v1/case/persons/{caseid}:
+    post:
+      tags:
+        - cfm
+      summary: Create a person entity in a case (no CFM session).
+      description: |
+        Adds a Person entity to an existing case, **without** running a CFM onboarding session. Use this endpoint
+        for machine-to-machine integrations that populate a case with people directly — no `sessionId` is required,
+        and you do **not** need to supply an entity type id: the service resolves the merchant's Person entity type
+        automatically.
+
+        The target case is identified by the `caseid` path parameter (created beforehand via `/v1/case/cases`).
+        Only `name` and `surname` are mandatory; the remaining fields are optional but, when provided, are validated
+        against the formats and allow-lists described below.
+
+        Requires the **case:operator** role.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: caseid
+          required: true
+          schema:
+            type: string
+          description: The ObjectId of the case the person will be added to.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  enum: [Mr, Mrs, Miss, Ms, Dr, Prof, Mx]
+                  description: The person's title. Optional; when supplied it must be one of the listed values.
+                  example: "Mr"
+                name:
+                  type: string
+                  description: The person's first name. Required.
+                  example: "Abraham"
+                surname:
+                  type: string
+                  description: The person's surname. Required.
+                  example: "Murray"
+                emailAddress:
+                  type: string
+                  format: email
+                  description: The person's email address. Optional; validated when provided.
+                  example: "abraham.murray@example.com"
+                phoneNum:
+                  type: string
+                  description: The person's phone number, including country code. Optional.
+                  example: "+35679000000"
+                gender:
+                  type: string
+                  enum: [Male, Female, Non-Binary, Prefer not to say]
+                  description: The person's gender. Optional; when supplied it must be one of the listed values.
+                  example: "Male"
+                addressLine1:
+                  type: string
+                  description: Primary address line. Optional.
+                  example: "House Name"
+                addressLine2:
+                  type: string
+                  description: Secondary address line. Optional.
+                  example: "New Road"
+                postCode:
+                  type: string
+                  description: Postal code. Optional.
+                  example: "SLM1024"
+                country:
+                  type: string
+                  description: Country of residence as an ISO 3166-1 alpha-2 code. Optional; must be a supported code.
+                  example: "MT"
+                nationality:
+                  type: string
+                  description: Nationality as a demonym (e.g. "Maltese", "British"). Optional; must be a supported value.
+                  example: "Maltese"
+                dob:
+                  type: string
+                  format: date
+                  description: Date of birth in YYYY-MM-DD format. Optional.
+                  example: "1975-06-12"
+                documentNumber:
+                  type: string
+                  description: Identity document number. Optional.
+                  example: "0123456M"
+                uniqueCheck:
+                  type: boolean
+                  description: >-
+                    When true, the service rejects the request with a 409 Conflict if a person with the same
+                    email address already exists for the merchant. Defaults to false.
+                  example: false
+                customFields:
+                  type: object
+                  additionalProperties: true
+                  description: >-
+                    Optional key/value map of custom field values. Keys must match the person custom field set defined
+                    for the case's case type; unknown keys are ignored.
+                  example:
+                    sourceOfWealth: "Employment"
+              required:
+                - name
+                - surname
+            examples:
+              CreatePersonExample:
+                summary: Example request to create a person
+                value:
+                  title: "Mr"
+                  name: "Abraham"
+                  surname: "Murray"
+                  emailAddress: "abraham.murray@example.com"
+                  phoneNum: "+35679000000"
+                  gender: "Male"
+                  addressLine1: "House Name"
+                  addressLine2: "New Road"
+                  postCode: "SLM1024"
+                  country: "MT"
+                  nationality: "Maltese"
+                  dob: "1975-06-12"
+                  documentNumber: "0123456M"
+                  uniqueCheck: false
+                  customFields:
+                    sourceOfWealth: "Employment"
+      responses:
+        "200":
+          description: Person created and linked to the case successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True when the person was created successfully.
+                  data:
+                    type: object
+                    description: Set to 'null' in case of an error.
+                    properties:
+                      id:
+                        type: string
+                        description: The ObjectId of the newly created person.
+                  errors:
+                    type: object
+                    description: Set to 'null' when the request is successful.
+              example:
+                success: true
+                data:
+                  id: "64b1f0a2c9e77aabcd654321"
+                errors: null
+        "400":
+          description: Bad Request - Missing required field, invalid caseid, or a value outside an allowed list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                badRequestExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 400,
+                            "message": "name - Value must not be empty",
+                            "type": "BAD_REQUEST_ERROR",
+                          },
+                        ],
+                    }
+        "401":
+          description: Unauthorized - Missing, invalid or expired token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                unauthorizedExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 401,
+                            "message": "invalid token secret",
+                            "type": "UNAUTHORIZED_ERROR",
+                          },
+                        ],
+                    }
+        "403":
+          description: Forbidden - The authenticated client lacks the required case:operator role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                forbiddenExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 403,
+                            "message": "Insufficient permissions to perform this operation",
+                            "type": "FORBIDDEN_ERROR",
+                          },
+                        ],
+                    }
+        "409":
+          description: Conflict - uniqueCheck was set and a person with the same email address already exists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                conflictExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 409,
+                            "message": "person with email address abraham.murray@example.com already exists",
+                            "type": "CONFLICT_ERROR",
+                          },
+                        ],
+                    }
+
+  /v1/case/companies/{caseid}:
+    post:
+      tags:
+        - cfm
+      summary: Create a company entity in a case (no CFM session).
+      description: |
+        Adds a Company entity to an existing case, **without** running a CFM onboarding session. Use this endpoint
+        for machine-to-machine integrations that populate a case with companies directly — no `sessionId` is required,
+        and you do **not** need to supply an entity type id: the service resolves the merchant's Company entity type
+        automatically.
+
+        The target case is identified by the `caseid` path parameter (created beforehand via `/v1/case/cases`).
+        Only `name` is mandatory; the remaining fields are optional but, when provided, are validated against the
+        formats described below.
+
+        Requires the **case:operator** role.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: caseid
+          required: true
+          schema:
+            type: string
+          description: The ObjectId of the case the company will be added to.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The registered company name. Required.
+                  example: "Acme Ltd"
+                tradeName:
+                  type: string
+                  description: The trading / brand name, if different from the registered name. Optional.
+                  example: "Acme"
+                regNum:
+                  type: string
+                  description: Company registration number. Optional.
+                  example: "C12345"
+                regDate:
+                  type: string
+                  format: date
+                  description: Company registration date in YYYY-MM-DD format. Optional.
+                  example: "2010-03-15"
+                regCountry:
+                  type: string
+                  description: Country of registration as an ISO 3166-1 alpha-2 code. Optional; must be a supported code.
+                  example: "MT"
+                addressLine1:
+                  type: string
+                  description: Primary address line. Optional.
+                  example: "Level 3, Tower Business Centre"
+                addressLine2:
+                  type: string
+                  description: Secondary address line. Optional.
+                  example: "Tower Street"
+                postCode:
+                  type: string
+                  description: Postal code. Optional.
+                  example: "SWTR1234"
+                country:
+                  type: string
+                  description: Country of the company address as an ISO 3166-1 alpha-2 code. Optional; must be a supported code.
+                  example: "MT"
+                businessType:
+                  type: string
+                  description: Free-text description of the company's line of business. Optional.
+                  example: "Financial Services"
+                companyType:
+                  type: string
+                  description: Free-text legal structure of the company. Optional.
+                  example: "Private Limited Company"
+                vatNum:
+                  type: string
+                  description: VAT registration number. Optional.
+                  example: "MT12345678"
+                repName:
+                  type: string
+                  description: Name of the company representative / contact. Optional.
+                  example: "Jane Borg"
+                repEmailAddress:
+                  type: string
+                  format: email
+                  description: Email address of the representative. Optional; validated when provided.
+                  example: "jane.borg@acme.example"
+                repPhoneNum:
+                  type: string
+                  description: Phone number of the representative, including country code. Optional.
+                  example: "+35679111111"
+                compPhoneNum:
+                  type: string
+                  description: Company phone number, including country code. Optional.
+                  example: "+35621222333"
+                compEmailAddress:
+                  type: string
+                  format: email
+                  description: Company email address. Optional; validated when provided.
+                  example: "info@acme.example"
+                compStatus:
+                  type: string
+                  description: Free-text company status (e.g. "Active", "Dissolved"). Optional.
+                  example: "Active"
+                uniqueCheck:
+                  type: boolean
+                  description: >-
+                    When true, the service rejects the request with a 409 Conflict if a company with the same
+                    registration number already exists for the merchant. Defaults to false.
+                  example: false
+                customFields:
+                  type: object
+                  additionalProperties: true
+                  description: >-
+                    Optional key/value map of custom field values. Keys must match the company custom field set defined
+                    for the case's case type; unknown keys are ignored.
+                  example:
+                    industryCode: "K64"
+              required:
+                - name
+            examples:
+              CreateCompanyExample:
+                summary: Example request to create a company
+                value:
+                  name: "Acme Ltd"
+                  tradeName: "Acme"
+                  regNum: "C12345"
+                  regDate: "2010-03-15"
+                  regCountry: "MT"
+                  addressLine1: "Level 3, Tower Business Centre"
+                  addressLine2: "Tower Street"
+                  postCode: "SWTR1234"
+                  country: "MT"
+                  businessType: "Financial Services"
+                  companyType: "Private Limited Company"
+                  vatNum: "MT12345678"
+                  repName: "Jane Borg"
+                  repEmailAddress: "jane.borg@acme.example"
+                  repPhoneNum: "+35679111111"
+                  compPhoneNum: "+35621222333"
+                  compEmailAddress: "info@acme.example"
+                  compStatus: "Active"
+                  uniqueCheck: false
+                  customFields:
+                    industryCode: "K64"
+      responses:
+        "200":
+          description: Company created and linked to the case successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: True when the company was created successfully.
+                  data:
+                    type: object
+                    description: Set to 'null' in case of an error.
+                    properties:
+                      id:
+                        type: string
+                        description: The ObjectId of the newly created company.
+                  errors:
+                    type: object
+                    description: Set to 'null' when the request is successful.
+              example:
+                success: true
+                data:
+                  id: "64b1f0a2c9e77aabcd987654"
+                errors: null
+        "400":
+          description: Bad Request - Missing required field, invalid caseid, or a malformed value.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                badRequestExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 400,
+                            "message": "name - Value must not be empty",
+                            "type": "BAD_REQUEST_ERROR",
+                          },
+                        ],
+                    }
+        "401":
+          description: Unauthorized - Missing, invalid or expired token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                unauthorizedExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 401,
+                            "message": "invalid token secret",
+                            "type": "UNAUTHORIZED_ERROR",
+                          },
+                        ],
+                    }
+        "403":
+          description: Forbidden - The authenticated client lacks the required case:operator role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                forbiddenExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 403,
+                            "message": "Insufficient permissions to perform this operation",
+                            "type": "FORBIDDEN_ERROR",
+                          },
+                        ],
+                    }
+        "409":
+          description: Conflict - uniqueCheck was set and a company with the same registration number already exists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          format: int32
+                        message:
+                          type: string
+                        type:
+                          type: string
+              examples:
+                conflictExample:
+                  value:
+                    {
+                      "success": false,
+                      "data": null,
+                      "errors":
+                        [
+                          {
+                            "code": 409,
+                            "message": "company already exists with registration num: C12345",
+                            "type": "CONFLICT_ERROR",
+                          },
+                        ],
+                    }
