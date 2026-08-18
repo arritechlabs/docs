@@ -1752,7 +1752,7 @@
                         "documents": [
                             {
                                 "documentSide": "Front",
-                                "documentType": "",
+                                "documentType": "AML Screening",
                                 "extension": ".pdf",
                                 "fileName": "unique_id.pdf",
                                 "id": "unique_id",

@@ -89,6 +89,10 @@ components:
           type: string
         name:
           type: string
+        applyOCRDuringFastFail:
+          type: boolean
+          description: >
+            Whether entity details are auto-filled from the document read during a fast-fail check.
 
     CaseType:
       type: object
@@ -99,6 +103,10 @@ components:
           type: string
         group:
           type: string
+        customFieldSetId:
+          type: string
+          nullable: true
+          description: The custom field set bound to this case type, or null when none is configured.
         riskLevel:
           $ref: "#/components/schemas/RiskLevel"
 
@@ -361,8 +369,39 @@ components:
                 description: "Information about the device and browser used."
               documents:
                 type: "array"
+                description: >
+                  One entry per grouped document produced by the step. `id` is the grouped document id — for
+                  AML Screening steps that is the AML grouped document, not the certificate — and `documents[]`
+                  are its files. The AML certificate is `documents[0].documents[0]`, with `documentType`
+                  "AML Screening"; it is absent when no certificate was produced.
                 items:
-                  type: "string"
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      description: "The grouped document id."
+                    documents:
+                      type: "array"
+                      items:
+                        type: "object"
+                        properties:
+                          id:
+                            type: "string"
+                            description: "File id. Use this with GET /v1/case/case/{caseId}/{docId}."
+                          key:
+                            type: "string"
+                          fileName:
+                            type: "string"
+                          documentType:
+                            type: "string"
+                          documentSide:
+                            type: "string"
+                          mimeType:
+                            type: "string"
+                          extension:
+                            type: "string"
+                          size:
+                            type: "number"
               faceLiveness:
                 type: "object"
                 properties:
@@ -413,6 +452,13 @@ components:
     cfm_kyc_completed_event:
       description: >
         Full schema of KYC completed event. [See example here](https://arritechlabs.github.io/docs/examples/cfm_kyc_completed_event.json)
+
+
+        Each step under `payload.steps` carries a `documents[]` array of `{id, documents[]}`. `id` is the step's
+        grouped document id; the files sit one level down. For AML Screening steps the certificate is
+        `documents[0].documents[0]`, with `documentType` "AML Screening" — `documents[0].id` is the grouped document
+        and is not a downloadable file id. Events emitted before AML gained a grouped document carry the
+        certificate's own document id in `documents[0].id` and an empty `documentType` on the file.
       type: "object"
       properties:
         base:
@@ -622,15 +668,18 @@ paths:
             schema:
               type: object
               properties:
-                clientID:
+                clientId:
                   type: string
                   description: ClientID that matches the secret key
                 clientSecret:
                   type: string
                   description: Secret key
+              required:
+                - clientId
+                - clientSecret
 
               example:
-                clientID: client_unique_id
+                clientId: client_unique_id
                 clientSecret: client_secret
       responses:
         "200":
@@ -647,30 +696,30 @@ paths:
                     type: object
                     description: In case of an error, this object will be set to 'null'
                     properties:
-                      access_token:
+                      accessToken:
                         type: string
                         description: The temporary JWT token to use in all subsequent calls
                       expires:
-                        type: integer
+                        type: string
                         format: date-time
                         description: expiry date and time of the token
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Array of error object types. If the request was successful, this object will be set to 'null'
-                    properties:
-                      code:
-                        type: integer
-                        description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
-                      message:
-                        type: string
-                        description: A descriptive message describing the reason for the error
-                      type:
-                        type: string
-                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
+                        message:
+                          type: string
+                          description: A descriptive message describing the reason for the error
               example:
                 success: true
                 data:
-                  access_token: |
+                  accessToken: |
                     eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJjbGFpbXMiOlsiQ29tcGx5IiwiQU1MIl0sImNsaWVudF9pZCI6IjYzZjM4NWI2OTQwY2JmYzYx
                     ZjYxM2Q1NCIsImV4cCI6MTY3NjkxNDg2NywiaXNzIjoiUWdlbkFwaSIsIm1lcmNoYW50X2lkIjoiNWVkZTE3OTUxMTExZmMyNGQ4OWJiYTdiIiwibW
                     VyY2hhbnRfbmFtZSI6Iktub3cgTWUgTm93Iiwib3JpZ19pYXQiOjE2NzY5MDc2NjcsInVzZXJuYW1lIjoiZ29kd2luLnNjaGVt
@@ -692,25 +741,24 @@ paths:
                     type: object
                     description: In case of an error, this object will be set to 'null'
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Array of error object types.
-                    properties:
-                      code:
-                        type: integer
-                        description: Bad request error
-                      message:
-                        type: string
-                        description: A descriptive message describing the reason for the error
-                      type:
-                        type: string
-                        description: "BAD_REQUEST_ERROR"
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Bad request error
+                        message:
+                          type: string
+                          description: A descriptive message describing the reason for the error
               example:
                 success: false
                 data: null
                 errors:
-                  code: 400
-                  message: "invalid character '\\n' in string literal"
-                  type: BAD_REQUEST_ERROR
+                  - code: 400
+                    message: "invalid character '\\n' in string literal"
 
         "401":
           description: Unauthorized, check your token if still valid. It may have expired.
@@ -726,25 +774,24 @@ paths:
                     type: object
                     description: In case of an error, this object will be set to 'null'
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Array of error object types.
-                    properties:
-                      code:
-                        type: integer
-                        description: Bad request error
-                      message:
-                        type: string
-                        description: A descriptive message describing the reason for the error
-                      type:
-                        type: string
-                        description: "UNAUTHORIZED_ERROR"
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Bad request error
+                        message:
+                          type: string
+                          description: A descriptive message describing the reason for the error
               example:
                 success: false
                 data: null
                 errors:
-                  code: 401
-                  message: "invalid token secret"
-                  type: UNAUTHORIZED_ERROR
+                  - code: 401
+                    message: "invalid token secret"
 
   /v1/aml/search:
     post:
@@ -758,6 +805,8 @@ paths:
         return 'potential match' plus a value which is higher than 1 in the totalHits field, you can suspend the 
         onboarding process until you review the hits on qgenonline.com using the returned ID to filter 
         the results. To enable monitoring isMonitored boolean flag should be set explicitly.
+        Supply `caseId` and `entityId` together to link the search to an entity on a case in the same call; the
+        search is created either way, and the link makes it reviewable on the case.
       security:
         - bearerAuth: []
       requestBody:
@@ -776,8 +825,10 @@ paths:
                       type: string
                       description: The type of entity to search for. Can be one of [person, company, vessel, aircraft, organization]
                     birthYear:
-                      type: integer
-                      description: The year of birth of the person if known. Leave empty if the entity is a company
+                      type: string
+                      description: >
+                        The year of birth of the person if known, as a 4-digit string between 1900 and the current
+                        year. Leave empty if the entity is a company.
                     countryCodes:
                       description: |
                         Results are filtered by the entity nationality or 
@@ -854,7 +905,22 @@ paths:
                     type: string
                 isMonitored:
                   type: boolean
-                  description: Flag to enable / disable monitoring of the search
+                  description: >
+                    Flag to enable monitoring of the search. Defaults to `false`, so a search is not monitored
+                    unless you ask for it.
+                caseId:
+                  type: string
+                  description: >
+                    Optional. Supply together with `entityId` to link the resulting search to an entity on a case,
+                    exactly as `POST /v1/case/cases/{caseid}/{entityid}/{complyid}/link` would. Must be a valid
+                    ObjectId, and the case must contain the entity. Supplying one of the pair without the other is
+                    rejected.
+                entityId:
+                  type: string
+                  description: >
+                    Optional. The Person or Company on the case to link the search to. Requires `caseId`. Because
+                    linking writes to the case module, this variant additionally requires the **case:operator**
+                    role on top of **aml:operator**, and is refused without it before the (billable) search runs.
 
               example:
                 searchTerm: Jesse Pinkman
@@ -905,7 +971,7 @@ paths:
                     type: object
                     description: In case of an error, this object will be set to 'null'
                     properties:
-                      ID:
+                      id:
                         type: string
                         description: The unique search ID is generated automatically
                       totalHits:
@@ -915,18 +981,18 @@ paths:
                         type: string
                         description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Array of error object types. If the request was successful, this object will be set to 'null'
-                    properties:
-                      code:
-                        type: integer
-                        description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
-                      message:
-                        type: string
-                        description: A descriptive message describing the reason for the error
-                      type:
-                        type: string
-                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
+                        message:
+                          type: string
+                          description: A descriptive message describing the reason for the error
               example:
                 success: true
                 data:
@@ -948,7 +1014,7 @@ paths:
                   data:
                     type: object
                     properties:
-                      ID:
+                      id:
                         type: string
                         description: The unique search ID is generated automatically
                       totalHits:
@@ -958,25 +1024,23 @@ paths:
                         type: string
                         description: Set to "potential_match" if totalHits value is more than 0. Set to "No_Match" if totalHits is 0
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
-
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Http error code
+                        message:
+                          type: string
+                          description: error message
               example:
                 success: false
                 data: null
                 errors:
-                  code: 400
-                  message: unknown field search term
-                  type: BAD_REQUEST_ERROR
+                  - code: 400
+                    message: unknown field search term
 
         "401":
           description: Unauthorized
@@ -991,7 +1055,7 @@ paths:
                   data:
                     type: object
                     properties:
-                      ID:
+                      id:
                         type: string
                         description: The unique search ID is generated automatically
                       totalHits:
@@ -1001,25 +1065,23 @@ paths:
                         type: string
                         description: Set to "potential_match" if totalHits value is more than 0. Set to "No_Match" if totalHits is 0
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
-
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Http error code
+                        message:
+                          type: string
+                          description: error message
               example:
                 success: false
                 data: null
                 errors:
-                  code: 401
-                  message: unauthorized
-                  type: UNAUTHORiZED
+                  - code: 401
+                    message: unauthorized
 
   /v1/aml/search/{id}:
     post:
@@ -1043,8 +1105,221 @@ paths:
       responses:
         "200":
           description: |
-            Successful response containing the search details and associated hits. The response includes
-            the original search parameters along with the match status and the hits.
+            Successful response containing the stored search, its result and the live AML assessment.
+            The search must have completed; a search still `Pending` (for example because the
+            ComplyAdvantage call failed) returns an error rather than a partial payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      search:
+                        type: object
+                        description: The stored search, as submitted and as it stands now.
+                        properties:
+                          id:
+                            type: string
+                            description: The search ID. The same value you passed in the path.
+                          searchTerm:
+                            type: string
+                          fuzziness:
+                            type: number
+                            format: float
+                          entityType:
+                            type: string
+                          birthYear:
+                            type: string
+                          countryCodes:
+                            type: array
+                            items:
+                              type: string
+                          types:
+                            type: array
+                            description: The ComplyAdvantage list types the search was run against.
+                            items:
+                              type: string
+                          totalHits:
+                            type: integer
+                            description: >
+                              The hit count ComplyAdvantage reported when the search ran. It is a snapshot and does
+                              not move as hits are whitelisted or removed afterwards — use `liveTotalHits` for the
+                              current count.
+                          matchTypeHits:
+                            type: array
+                            items:
+                              type: string
+                          tags:
+                            type: array
+                            items:
+                              type: string
+                          clientReference:
+                            type: string
+                            nullable: true
+                          isMonitored:
+                            type: boolean
+                          hasUpdate:
+                            type: boolean
+                            description: True when a monitored search has updates that have not been reviewed.
+                          status:
+                            type: string
+                            description: >
+                              The raw stored status. Prefer `amlStatus`, which normalises legacy spellings onto the
+                              defined set.
+                          internalStatus:
+                            type: string
+                            description: Processing state of the search, e.g. `Completed` or `Pending`.
+                          complyId:
+                            type: integer
+                          searchResultId:
+                            type: string
+                            nullable: true
+                          audit:
+                            type: object
+                      result:
+                        type: object
+                        description: >
+                          The stored ComplyAdvantage result for the search. `complyResult` is the provider payload
+                          passed through unchanged; individual hits are not included here — page them with
+                          `POST /v1/aml/search/hits/paginate`.
+                        properties:
+                          id:
+                            type: string
+                          complySearchId:
+                            type: string
+                          complyAdvantageId:
+                            type: integer
+                          complyResult:
+                            type: object
+                            additionalProperties: true
+                      updates:
+                        type: object
+                        description: Monitoring updates recorded against the search since it was last reviewed.
+                        properties:
+                          added:
+                            type: array
+                            items:
+                              type: string
+                          updated:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                          deleted:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                      amlStatus:
+                        type: string
+                        enum: [Not set, All clear, Possible hit, Positive hit]
+                        description: >
+                          The compliance verdict recorded on this search, returned as stored and normalised onto this
+                          set. It is never derived from the hits: `Not set` means no operator has adjudicated the
+                          search, whatever `hitStats` reports, so treat it as the decision itself rather than as a
+                          summary of what was found.
+                      categories:
+                        type: array
+                        description: >
+                          Per searchable ComplyAdvantage group, how many of its list types the search covered. A group
+                          that was not searched is still returned, with `covered` set to 0.
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                              enum: [sanctions, peps, adverse-media-v2]
+                              description: Stable group key. Match on this rather than on `label`.
+                            label:
+                              type: string
+                              description: The ComplyAdvantage catalogue name for the group. Display text may change.
+                            covered:
+                              type: integer
+                            total:
+                              type: integer
+                      liveTotalHits:
+                        type: integer
+                        nullable: true
+                        description: >
+                          The current number of hits stored for the search. Omitted when the live count could not be
+                          read; it is deliberately not filled in from `search.totalHits`, which is a snapshot.
+                      hitStats:
+                        type: object
+                        nullable: true
+                        description: >
+                          The live breakdown of the search's hits — what was found, which is a separate question from
+                          `amlStatus`, the decision taken about it. Omitted when unavailable.
+                        properties:
+                          totalHits:
+                            type: integer
+                          nonWhitelistedCount:
+                            type: integer
+                            description: Hits that have not been whitelisted.
+                          exactNonWhitelistedCount:
+                            type: integer
+                            description: Outstanding hits that are exact matches.
+                  errors:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+              example:
+                success: true
+                data:
+                  search:
+                    id: unique_id
+                    searchTerm: Jesse Pinkman
+                    fuzziness: 0.6
+                    entityType: person
+                    birthYear: "1980"
+                    countryCodes: [US, CA]
+                    types: [sanction, warning, fitness-probity, pep]
+                    totalHits: 9
+                    isMonitored: false
+                    hasUpdate: false
+                    status: Not set
+                    internalStatus: Completed
+                  result:
+                    id: unique_id
+                    complySearchId: unique_id
+                    complyAdvantageId: 1234567890
+                    complyResult: {}
+                  updates:
+                    added: []
+                    updated: []
+                    deleted: []
+                  amlStatus: Possible hit
+                  categories:
+                    - key: sanctions
+                      label: Sanctions, Warnings and Fitness And Probity
+                      covered: 3
+                      total: 3
+                    - key: peps
+                      label: PEPs
+                      covered: 1
+                      total: 5
+                    - key: adverse-media-v2
+                      label: All Adverse Media V2
+                      covered: 0
+                      total: 14
+                  liveTotalHits: 9
+                  hitStats:
+                    totalHits: 9
+                    nonWhitelistedCount: 4
+                    exactNonWhitelistedCount: 0
+                errors: null
 
         "400":
           description: Bad request
@@ -1060,25 +1335,23 @@ paths:
                     type: object
                     description: This will be null when there's an error
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Error code
+                        message:
+                          type: string
+                          description: error message
 
               example:
                 success: false
                 data: null
                 errors:
-                  code: 400
-                  message: invalid search ID format
-                  type: BAD_REQUEST_ERROR
+                  - code: 400
+                    message: invalid search ID format
     delete:
       tags:
         - aml
@@ -1115,7 +1388,10 @@ paths:
                   data:
                     type: object
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
               example:
                 success: true
                 data: null
@@ -1132,21 +1408,21 @@ paths:
                   data:
                     type: object
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                      message:
-                        type: string
-                      type:
-                        type: string
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
               example:
                 success: false
                 data: null
                 errors:
-                  code: 400
-                  message: "unable to delete AML search"
-                  type: "BAD_REQUEST_ERROR"
+                  - code: 400
+                    message: "unable to delete AML search"
         "401":
           description: Unauthorized
           content:
@@ -1159,21 +1435,21 @@ paths:
                   data:
                     type: object
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                      message:
-                        type: string
-                      type:
-                        type: string
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
               example:
                 success: false
                 data: null
                 errors:
-                  code: 401
-                  message: "unauthorized"
-                  type: "ACCESS_DENIED"
+                  - code: 401
+                    message: "unauthorized"
 
   /v1/aml/search/hits/paginate:
     post:
@@ -1194,17 +1470,17 @@ paths:
               properties:
                 searchId:
                   type: string
-                  description: The searchResultId for which to retrieve paginated hits
+                  description: >
+                    The AML search ID — the `id` returned by `POST /v1/aml/search` — whose hits to page through.
                 page:
                   type: integer
-                  description: The page number to retrieve (starts at 0)
+                  description: The page number to retrieve (zero-based). Defaults to 0 when omitted.
                 perPage:
                   type: integer
-                  description: The number of hits per page
+                  description: >
+                    The number of hits per page. Omitting it, or sending 0, returns every hit for the search.
               required:
                 - searchId
-                - page
-                - perPage
               example:
                 searchId: 60f1b5b3e6b1f2c8a4d7e8f9
                 page: 0
@@ -1224,10 +1500,22 @@ paths:
                     description: True if the hits were retrieved successfully. False otherwise
                   data:
                     type: object
-                    description: Contains the paginated hits information
+                    properties:
+                      hits:
+                        type: array
+                        description: >
+                          The requested page of hits. Each entry is the ComplyAdvantage hit payload passed through
+                          unchanged, plus `detectionDate` when the hit was picked up by monitoring rather than by
+                          the original search.
+                        items:
+                          type: object
+                          additionalProperties: true
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Will be null when the request is successful
+                    items:
+                      type: object
 
         "400":
           description: Bad request
@@ -1243,25 +1531,23 @@ paths:
                     type: object
                     description: This will be null when there's an error
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
-
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Http error code
+                        message:
+                          type: string
+                          description: error message
               example:
                 success: false
                 data: null
                 errors:
-                  code: 400
-                  message: invalid search ID format
-                  type: BAD_REQUEST_ERROR
+                  - code: 400
+                    message: invalid search ID format
 
         "401":
           description: Unauthorized
@@ -1277,25 +1563,23 @@ paths:
                     type: object
                     description: This will be null when there's an error
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
-
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Http error code
+                        message:
+                          type: string
+                          description: error message
               example:
                 success: false
                 data: null
                 errors:
-                  code: 401
-                  message: unauthorized
-                  type: UNAUTHORIZED
+                  - code: 401
+                    message: unauthorized
 
   /v1/cfm/session/continue:
     post:
@@ -1374,19 +1658,18 @@ paths:
                         nullable: true
                         description: A detailed message about the session status or action taken.
                   errors:
-                    type: object
+                    type: array
                     nullable: true
                     description: Contains error details if the operation failed.
-                    properties:
-                      code:
-                        type: integer
-                        description: The HTTP status code.
-                      message:
-                        type: string
-                        description: A description of the error.
-                      type:
-                        type: string
-                        description: The type of error (e.g., "BAD_REQUEST_ERROR").
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: The HTTP status code.
+                        message:
+                          type: string
+                          description: A description of the error.
               examples:
                 withMessageTrue:
                   summary: Response when withMessage is true
@@ -1427,24 +1710,23 @@ paths:
                     type: boolean
                     description: Always set to `false` for errors.
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Contains error details.
-                    properties:
-                      code:
-                        type: integer
-                        description: HTTP status code.
-                      message:
-                        type: string
-                        description: A description of the error.
-                      type:
-                        type: string
-                        description: The type of error (e.g., "BAD_REQUEST_ERROR").
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: HTTP status code.
+                        message:
+                          type: string
+                          description: A description of the error.
               example:
                 success: false
                 errors:
-                  code: 400
-                  message: "Invalid session ID provided."
-                  type: "BAD_REQUEST_ERROR"
+                  - code: 400
+                    message: "Invalid session ID provided."
         "401":
           description: Unauthorized
           content:
@@ -1456,24 +1738,23 @@ paths:
                     type: boolean
                     description: Always set to `false` for errors.
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Contains error details.
-                    properties:
-                      code:
-                        type: integer
-                        description: HTTP status code.
-                      message:
-                        type: string
-                        description: A description of the error.
-                      type:
-                        type: string
-                        description: The type of error (e.g., "UNAUTHORIZED_ERROR").
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: HTTP status code.
+                        message:
+                          type: string
+                          description: A description of the error.
               example:
                 success: false
                 errors:
-                  code: 401
-                  message: "Unauthorized. Please check your credentials."
-                  type: "UNAUTHORIZED_ERROR"
+                  - code: 401
+                    message: "Unauthorized. Please check your credentials."
 
   /v1/aml/search/monitor:
     post:
@@ -1481,9 +1762,9 @@ paths:
         - aml
       summary: Monitor
       description: |
-        Switch 'ON' or 'OFF' the monitoring on a specific search. By default, all 
-        searches are automatically monitored. This means that you should run this
-        endpoint to switch off a search from continuous monitoring.
+        Switch 'ON' or 'OFF' the monitoring on a specific search. Searches are not
+        monitored unless asked for, either by setting `isMonitored` on the search
+        request or by calling this endpoint afterwards.
       security:
         - bearerAuth: []
       requestBody:
@@ -1514,18 +1795,19 @@ paths:
                     type: boolean
                     description: true if successful, false if unsuccessful
                   data:
-                    type: string
-                    description: the content of the response
-                  errors:
                     type: object
-                    properties:
-                      code:
-                        type: integer
-                      message:
-                        type: string
-                      type:
-                        type: string
-
+                    nullable: true
+                    description: Always null; the call returns no payload.
+                  errors:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
               example:
                 success: true
                 data: null
@@ -1542,25 +1824,35 @@ paths:
                     type: boolean
                     description: true if successful, false if unsuccessful
                   data:
-                    type: string
-                    description: the content of the response
-                  errors:
                     type: object
-                    properties:
-                      code:
-                        type: integer
-                      message:
-                        type: string
-                      type:
-                        type: string
-
-              example:
-                success: false
-                data: null
-                errors:
-                  code: 400
-                  message: id - Value must be a valid bson object ID
-                  type: BAD_REQUEST_ERROR
+                    nullable: true
+                    description: Always null; the call returns no payload.
+                  errors:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                        message:
+                          type: string
+              examples:
+                invalidIdExample:
+                  value:
+                    success: false
+                    data: null
+                    errors:
+                      - code: 400
+                        message: id - Value must be a valid bson object ID
+                notFoundExample:
+                  summary: The search does not exist. Reported as a 400 with error code 1011, not a 404.
+                  value:
+                    success: false
+                    data: null
+                    errors:
+                      - code: 1011
+                        message: unable to set monitor
 
         "401":
           description: Unauthorized
@@ -1575,7 +1867,7 @@ paths:
                   data:
                     type: object
                     properties:
-                      ID:
+                      id:
                         type: string
                         description: The unique search ID is generated automatically
                       totalHits:
@@ -1585,25 +1877,23 @@ paths:
                         type: string
                         description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
-
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Http error code
+                        message:
+                          type: string
+                          description: error message
               example:
                 success: false
                 data: null
                 errors:
-                  code: 401
-                  message: unauthorized
-                  type: ACCESS_DENIED
+                  - code: 401
+                    message: unauthorized
 
   /v1/cfm/case/init:
     post:
@@ -1620,6 +1910,11 @@ paths:
         Person entities remain the default: existing integrations that omit `entityType` continue to work unchanged. To onboard a Company instead, set
         `entityType: "company"` and provide a `company` block (only `company.name` is required; all other company fields are optional).
         The response echoes `entityType` so you can tell which kind of entity a session belongs to.
+
+        `referenceId` is always required, and at least one of `email` or `mobile` must be supplied — when `email`
+        is omitted, `mobile` is mandatory. For a Person the name fields are optional but `firstName` and `lastName`
+        together must not exceed 255 characters, since they form the AML search term; for a Company, `company.name`
+        is required instead.
       security:
         - bearerAuth: []
       requestBody:
@@ -1687,6 +1982,12 @@ paths:
                   type: string
                   description: A valid value as returned from the `/v1/cfm/case/types` endpoint. Case Types are created in QGen Online via the UI.
                   example: "unique_id"
+                riskLevelId:
+                  type: string
+                  description: >
+                    Optional. The risk level to run the session against, overriding the one configured for the case
+                    type. Retrieve valid values from the `riskLevel` returned by `/v1/cfm/case/types`.
+                  example: "unique_id"
                 referenceId:
                   type: string
                   description: A unique reference to your applicant. Make sure this was never submitted before and does not already exist in QGoL.
@@ -1707,7 +2008,7 @@ paths:
                   example: "+35679000000"
                 title:
                   type: string
-                  enum: [Mr, Mrs, Ms, Dr, Miss]
+                  enum: [Mr, Mrs, Miss, Ms, Dr, Prof, Mx]
                   description: The title before an applicant's name, limited to the specified prefixes.
                   example: "Mr"
                 firstName:
@@ -1767,9 +2068,20 @@ paths:
                 nationality:
                   type: string
                   description: The nationality of the applicant.
+                customFields:
+                  type: object
+                  description: >
+                    Optional custom field values, split by the record they belong to. Keys must match the custom
+                    field sets configured for the case type; unknown keys are ignored.
+                  properties:
+                    case:
+                      type: object
+                      additionalProperties: true
+                    person:
+                      type: object
+                      additionalProperties: true
               required:
-                - firstName
-                - lastName
+                - referenceId
 
             examples:
               InitCaseExample:
@@ -1836,36 +2148,36 @@ paths:
                     properties:
                       caseId:
                         type: string
-                        description: The unique search ID is generated automatically
+                        description: The ID of the case the session was created against.
                       entityId:
-                        type: integer
-                        description: total number of hits
+                        type: string
+                        description: The ID of the entity the session was created against.
                       entityType:
                         type: string
                         enum: [person, company]
                         description: Kind of entity the session was opened against. Echoes the request's `entityType` (defaults to `person`).
                       journeyId:
                         type: string
-                        description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
-                      sessionID:
+                        description: The ID of the journey the session runs.
+                      sessionId:
                         type: string
                         description: the unique session id that makes the CFM url unique. This session expires as per setting in QGoL General settings. Should be returned to the frontend to start cfm process.
                       cfmUrl:
                         type: string
                         description: the URL with the unique session id that makes the CFM url unique.
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Array of error object types. If the request was successful, this object will be set to 'null'
-                    properties:
-                      code:
-                        type: integer
-                        description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
-                      message:
-                        type: string
-                        description: A descriptive message describing the reason for the error
-                      type:
-                        type: string
-                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
+                        message:
+                          type: string
+                          description: A descriptive message describing the reason for the error
               example:
                 success: true
                 data:
@@ -1889,24 +2201,23 @@ paths:
                   data:
                     type: object
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Http error code
+                        message:
+                          type: string
+                          description: error message
               example:
                 success: false
                 data: null
                 errors:
-                  code: 400
-                  message: invalid character '\\n' in string literal
-                  type: BAD_REQUEST_ERROR
+                  - code: 400
+                    message: invalid character '\\n' in string literal
 
   /v1/cfm/session/init:
     post:
@@ -1945,7 +2256,6 @@ paths:
                 - caseId
                 - entityId
                 - riskLevelId
-                - locale
             examples:
               InitSessionExample:
                 summary: Example request to initialize a session
@@ -1971,36 +2281,36 @@ paths:
                     properties:
                       caseId:
                         type: string
-                        description: The unique search ID is generated automatically
+                        description: The ID of the case the session was created against.
                       entityId:
-                        type: integer
-                        description: total number of hits
+                        type: string
+                        description: The ID of the entity the session was created against.
                       entityType:
                         type: string
                         enum: [person, company]
                         description: Kind of entity the session belongs to. Reflects the entity type set when the case or entity was first initialised.
                       journeyId:
                         type: string
-                        description: Set to "potential_match" if totalHits value is more than 0. set to "No_Match" if totalHits is 0
-                      sessionID:
+                        description: The ID of the journey the session runs.
+                      sessionId:
                         type: string
                         description: the unique session id that makes the CFM url unique. This session expires as per setting in QGoL General settings. Should be returned to the frontend to start cfm process.
                       cfmUrl:
                         type: string
                         description: the URL with the unique session id that makes the CFM url unique.
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Array of error object types. If the request was successful, this object will be set to 'null'
-                    properties:
-                      code:
-                        type: integer
-                        description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
-                      message:
-                        type: string
-                        description: A descriptive message describing the reason for the error
-                      type:
-                        type: string
-                        description: Error types such as "BAD_REQUEST_ERROR", "UNAUTHORIZED_ERROR"
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: The HTML error reason code. Includes 400 (bad request), 401 (Unauthorized)
+                        message:
+                          type: string
+                          description: A descriptive message describing the reason for the error
               example:
                 success: true
                 data:
@@ -2021,41 +2331,74 @@ paths:
                   success:
                     type: boolean
                     description: Always false for bad requests.
-                  errors:
+                  data:
                     type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: HTTP error code.
-                      message:
-                        type: string
-                        description: A descriptive error message.
-                      type:
-                        type: string
-                        description: Error type.
-                    example:
-                      success: false
-                      errors:
-                        code: 400
-                        message: "Invalid input parameters"
-                        type: "BAD_REQUEST_ERROR"
+                    nullable: true
+                  errors:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: HTTP error code.
+                        message:
+                          type: string
+                          description: A descriptive error message.
+              example:
+                success: false
+                data: null
+                errors:
+                  - code: 400
+                    message: "caseId - Value must be a valid bson object ID"
 
   /v1/cfm/case/types:
     get:
       tags:
         - cfm
       summary: Retrieve available case types.
+      description: >
+        Returns the merchant's case types together with the risk level configured for each, newest first. Only
+        case types that have a risk level relation are returned, since a case type without one cannot start a
+        CFM session.
       security:
         - bearerAuth: []
       responses:
         "200":
-          description: An array of case types with id, name, group, and riskLevel.
+          description: The merchant's case types with their risk levels.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CaseType"
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      caseTypes:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/CaseType"
+                  errors:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+              example:
+                success: true
+                data:
+                  caseTypes:
+                    - id: unique_id
+                      name: Passport Check
+                      group: Onboarding
+                      customFieldSetId: null
+                      riskLevel:
+                        id: unique_id
+                        name: Standard
+                        applyOCRDuringFastFail: true
+                errors: null
   /v1/case/case/{caseID}:
     get:
       tags:
@@ -2066,6 +2409,19 @@ paths:
         uploaded manually against the case (documents that are not part of a CFM flow). Each file entry carries
         `id`, `fileName`, `entityId` (a string when the document was uploaded against a specific entity, or `null`
         when uploaded against the case itself), and the standard `audit` block.
+
+        Every AML search linked to an entity also appears in that entity's `documents[]` array as an entry with
+        `documentType: "AML Screening"`, alongside the identity, selfie and form documents. It carries the search's
+        verification `currentStatus`, the `statuses[]` history and the reviewer's notes, in the same shape as every
+        other reviewable document. This applies to searches linked before the feature shipped too — existing links
+        were backfilled.
+
+        `files[]` on that entry holds the AML certificate when one was produced. Searches created through
+        `POST /v1/aml/search` or linked with `POST /v1/case/cases/{caseid}/{entityid}/{complyid}/link` produce no
+        certificate, so their `files[]` is empty; searches run as part of a CFM journey normally have one. The
+        entity's `searches[]` array remains the place to read the AML search itself (`complySearchId`, `searchTerm`,
+        `hits`); note that the `documents[]` entry does not repeat those fields, so when an entity has more than one
+        linked search the certificate in `files[]` is what ties an entry to a particular search.
       security:
         - bearerAuth: []
       parameters:
@@ -2323,6 +2679,57 @@ paths:
                                         ],
                                       "verificationMethod": "AutomatedReview",
                                     },
+                                    {
+                                      "audit":
+                                        {
+                                          "createdBy":
+                                            {
+                                              "actorId": "Key Name",
+                                              "actorType": "Api",
+                                              "timestamp": "2024-09-12T12:20:04.118Z",
+                                            },
+                                          "deletedBy": null,
+                                          "modifiedBy": null,
+                                          "revisionID": 1,
+                                        },
+                                      "currentStatus": "Awaiting Review",
+                                      "documentType": "AML Screening",
+                                      "files":
+                                        [
+                                          {
+                                            "audit":
+                                              {
+                                                "createdBy":
+                                                  {
+                                                    "actorId": "Key Name",
+                                                    "actorType": "Api",
+                                                    "timestamp": "2024-09-12T12:20:04.118Z",
+                                                  },
+                                                "deletedBy": null,
+                                                "modifiedBy": null,
+                                                "revisionID": 1,
+                                              },
+                                            "fileName": "unique_id.pdf",
+                                            "id": "unique_id",
+                                          },
+                                        ],
+                                      "id": "unique_id",
+                                      "metadata": null,
+                                      "statuses":
+                                        [
+                                          {
+                                            "actor":
+                                              {
+                                                "actorId": "Key Name",
+                                                "actorType": "Api",
+                                                "timestamp": "2024-09-12T12:20:04.118Z",
+                                              },
+                                            "notes": "Initial Default Status",
+                                            "status": "Awaiting Review",
+                                          },
+                                        ],
+                                      "verificationMethod": "None",
+                                    },
                                   ],
                                 "emailAddress": "dianne@gmail.com",
                                 "gender": "",
@@ -2331,7 +2738,29 @@ paths:
                                 "nationality": "American",
                                 "phoneNum": "",
                                 "postCode": "",
-                                "searches": [],
+                                "searches":
+                                  [
+                                    {
+                                      "audit":
+                                        {
+                                          "createdBy":
+                                            {
+                                              "actorId": "Key Name",
+                                              "actorType": "Api",
+                                              "timestamp": "2024-09-12T12:20:04.118Z",
+                                            },
+                                          "deletedBy": null,
+                                          "modifiedBy": null,
+                                          "revisionID": 1,
+                                        },
+                                      "complySearchId": "unique_id",
+                                      "hits": 0,
+                                      "id": "unique_id",
+                                      "searchDate": "2024-09-12T12:20:03.902Z",
+                                      "searchTerm": "Dianne Thompson",
+                                      "status": "Completed",
+                                    },
+                                  ],
                                 "surname": "Thompson",
                                 "title": "",
                               },
@@ -2362,8 +2791,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 badRequestExample:
                   value:
@@ -2375,7 +2802,6 @@ paths:
                           {
                             "code": 400,
                             "message": "caseId - Value must be a valid bson object ID",
-                            "type": "BAD_REQUEST_ERROR",
                           },
                         ],
                     }
@@ -2492,6 +2918,12 @@ paths:
       tags:
         - cfm
       summary: Link an AML search to an entity within a case.
+      description: >
+        Links an existing AML search to a Person or Company on the case. Linking also creates the search's
+        `"AML Screening"` grouped document on that entity, which is what makes the search reviewable: it appears in
+        the entity's `documents[]` on `GET /v1/case/case/{caseID}` carrying a verification status, notes and history.
+        The call is idempotent — re-linking the same search reuses the existing grouped document rather than adding
+        a second one. No AML certificate is produced on this path, so the entry's `files[]` is empty.
       security:
         - bearerAuth: []
       parameters:
@@ -2557,8 +2989,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 badRequestExample:
                   value:
@@ -2570,12 +3000,13 @@ paths:
                           {
                             "code": 400,
                             "message": "Invalid request parameters",
-                            "type": "BAD_REQUEST_ERROR",
                           },
                         ],
                     }
-        "403":
-          description: Forbidden - User lacks necessary permissions.
+        "401":
+          description: >
+            Unauthorized - the token is missing, invalid or expired, or it does not hold both **aml:operator** and
+            **case:operator**. A missing role is reported as a 401, not a 403.
           content:
             application/json:
               schema:
@@ -2583,6 +3014,9 @@ paths:
                 properties:
                   success:
                     type: boolean
+                  data:
+                    type: object
+                    nullable: true
                   errors:
                     type: array
                     items:
@@ -2593,10 +3027,17 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
+                  publicError:
+                    type: object
+                    properties:
+                      statusCode:
+                        type: integer
+                      errorCode:
+                        type: integer
+                      message:
+                        type: string
               examples:
-                forbiddenExample:
+                missingRoleExample:
                   value:
                     {
                       "success": false,
@@ -2604,47 +3045,16 @@ paths:
                       "errors":
                         [
                           {
-                            "code": 403,
-                            "message": "Insufficient permissions to perform this operation",
-                            "type": "FORBIDDEN_ERROR",
+                            "code": 401,
+                            "message": "Unauthorized Access - Missing role",
                           },
                         ],
-                    }
-        "404":
-          description: Not Found - Case, entity or AML search not found.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: integer
-                          format: int32
-                        message:
-                          type: string
-                        type:
-                          type: string
-              examples:
-                notFoundExample:
-                  value:
-                    {
-                      "success": false,
-                      "data": null,
-                      "errors":
-                        [
-                          {
-                            "code": 404,
-                            "message": "Resource not found",
-                            "type": "NOT_FOUND_ERROR",
-                          },
-                        ],
+                      "publicError":
+                        {
+                          "statusCode": 401,
+                          "errorCode": 0,
+                          "message": "Unauthorized Access - Missing role",
+                        },
                     }
 
   /v1/case/cases/{caseid}/{entityid}/{complyid}/unlink:
@@ -2652,6 +3062,11 @@ paths:
       tags:
         - cfm
       summary: Unlink an AML search from an entity within a case.
+      description: >
+        Removes the link between an AML search and an entity on the case, and deletes the search's
+        `"AML Screening"` grouped document along with it, so the entity is not left with a reviewable card for a
+        search it is no longer linked to. Unlinking a search that has no grouped document — one linked before AML
+        grouped documents existed and not covered by the backfill — succeeds and removes only the link.
       security:
         - bearerAuth: []
       parameters:
@@ -2717,8 +3132,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 badRequestExample:
                   value:
@@ -2730,12 +3143,13 @@ paths:
                           {
                             "code": 400,
                             "message": "Invalid request parameters",
-                            "type": "BAD_REQUEST_ERROR",
                           },
                         ],
                     }
-        "403":
-          description: Forbidden - User lacks necessary permissions.
+        "401":
+          description: >
+            Unauthorized - the token is missing, invalid or expired, or it does not hold both **aml:operator** and
+            **case:operator**. A missing role is reported as a 401, not a 403.
           content:
             application/json:
               schema:
@@ -2743,6 +3157,9 @@ paths:
                 properties:
                   success:
                     type: boolean
+                  data:
+                    type: object
+                    nullable: true
                   errors:
                     type: array
                     items:
@@ -2753,10 +3170,17 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
+                  publicError:
+                    type: object
+                    properties:
+                      statusCode:
+                        type: integer
+                      errorCode:
+                        type: integer
+                      message:
+                        type: string
               examples:
-                forbiddenExample:
+                missingRoleExample:
                   value:
                     {
                       "success": false,
@@ -2764,47 +3188,16 @@ paths:
                       "errors":
                         [
                           {
-                            "code": 403,
-                            "message": "Insufficient permissions to perform this operation",
-                            "type": "FORBIDDEN_ERROR",
+                            "code": 401,
+                            "message": "Unauthorized Access - Missing role",
                           },
                         ],
-                    }
-        "404":
-          description: Not Found - Case, entity or AML search not found.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: integer
-                          format: int32
-                        message:
-                          type: string
-                        type:
-                          type: string
-              examples:
-                notFoundExample:
-                  value:
-                    {
-                      "success": false,
-                      "data": null,
-                      "errors":
-                        [
-                          {
-                            "code": 404,
-                            "message": "Resource not found",
-                            "type": "NOT_FOUND_ERROR",
-                          },
-                        ],
+                      "publicError":
+                        {
+                          "statusCode": 401,
+                          "errorCode": 0,
+                          "message": "Unauthorized Access - Missing role",
+                        },
                     }
 
   /v1/case/case/{caseId}/{docId}:
@@ -2812,6 +3205,14 @@ paths:
       tags:
         - cfm
       summary: Download a file associated with a document in a specific case.
+      description: >
+        Streams a single stored file. `docId` must be a **file** id, not a grouped document id: take it from
+        `documents[].files[].id` on `GET /v1/case/case/{caseID}`, or from `steps[].outputs[].documents[].id` on
+        `GET /v1/case/case/session/{case_id}/{entity_id}`.
+
+
+        For AML Screening steps in particular, `steps[].documents[]` holds the grouped document id and passing
+        that value here will not resolve a file.
       security:
         - bearerAuth: []
       parameters:
@@ -2826,7 +3227,9 @@ paths:
           required: true
           schema:
             type: string
-          description: The ID of the document containing the file to download.
+          description: >
+            The ID of the file to download, as returned in `documents[].files[].id` or
+            `steps[].outputs[].documents[].id`.
       responses:
         "200":
           description: File stream of the requested document.
@@ -2836,7 +3239,9 @@ paths:
                 type: string
                 format: binary
         "400":
-          description: Bad Request - Invalid input parameters.
+          description: >
+            Bad Request - Invalid input parameters, or no file with that id exists on the case. A file that cannot
+            be found is reported as a 400 with error code 1011, not as a 404.
           content:
             application/json:
               schema:
@@ -2844,6 +3249,9 @@ paths:
                 properties:
                   success:
                     type: boolean
+                  data:
+                    type: object
+                    nullable: true
                   errors:
                     type: array
                     items:
@@ -2853,55 +3261,31 @@ paths:
                           type: integer
                           format: int32
                         message:
-                          type: string
-                        type:
                           type: string
               examples:
                 badRequestExample:
                   value:
                     {
                       "success": false,
+                      "data": null,
                       "errors":
                         [
                           {
                             "code": 400,
-                            "message": "caseId or docId - Invalid or missing",
-                            "type": "BAD_REQUEST_ERROR",
+                            "message": "docId - Value must be a valid bson object ID",
                           },
                         ],
                     }
-        "404":
-          description: Not Found - Document or file not found.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: integer
-                          format: int32
-                        message:
-                          type: string
-                        type:
-                          type: string
-              examples:
                 notFoundExample:
                   value:
                     {
                       "success": false,
+                      "data": null,
                       "errors":
                         [
                           {
-                            "code": 404,
-                            "message": "Document or file not found",
-                            "type": "NOT_FOUND_ERROR",
+                            "code": 1011,
+                            "message": "unable to get document by id",
                           },
                         ],
                     }
@@ -2954,6 +3338,9 @@ paths:
                               type: string
                             entityID:
                               type: string
+                            entityType:
+                              type: string
+                              description: The kind of entity the event relates to, e.g. Person or Company.
                             caseTypeID:
                               type: string
                             webhookID:
@@ -3000,8 +3387,11 @@ paths:
                             modifiedAt:
                               type: string
                               format: date-time
-                      errors:
-                        type: object
+                  errors:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
               examples:
                 webhookLogsExample:
                   value:
@@ -3069,8 +3459,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 invalidSessionIdExample:
                   value:
@@ -3082,7 +3470,6 @@ paths:
                           {
                             "code": 400,
                             "message": "sessionId - Value must be a valid bson object ID",
-                            "type": "BAD_REQUEST_ERROR",
                           },
                         ],
                     }
@@ -3090,7 +3477,24 @@ paths:
   /v1/case/case/session/{case_id}/{entity_id}:
     get:
       summary: Get case session details
-      description: Retrieves session details for a given case and entity.
+      description: >
+        Retrieves session details for a given case and entity.
+
+
+        **AML Screening steps.** `steps[n].documents[]` and `steps[n].outputs[n].id` carry the id of the
+        step's *grouped document* — the reviewable record that holds the AML search's verification status,
+        notes and history — and not the id of a downloadable file. The AML certificate, when one was
+        produced, is one level down in `steps[n].outputs[n].documents[n]`, with `documentType`
+        `"AML Screening"`; its `id` is the value to pass to `GET /v1/case/case/{caseId}/{docId}`. The same
+        applies to the entry in the top-level `documents[]` array, which now carries `groupedDocumentId`
+        for AML Screening (`documentId` is `null`). Sessions recorded before this change hold the
+        certificate's document id in `steps[n].documents[]` and in `documents[].documentId`, with
+        `groupedDocumentId` `null`.
+
+
+        An AML Screening step is recorded even when no certificate was produced — a ComplyAdvantage
+        outage leaves the search `Pending` and returns no binary — in which case
+        `steps[n].outputs[n].documents` is empty but the grouped document id is still present.
       tags:
         - cfm
       security:
@@ -4011,10 +4415,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4241,10 +4652,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4406,10 +4824,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4675,10 +5100,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4736,6 +5168,9 @@ paths:
                                   type: "number"
                           documents:
                             type: "array"
+                            description: >
+                              Flat index of every grouped document produced across the entity's sessions, including
+                              one entry per AML Screening step.
                             items:
                               type: "object"
                               properties:
@@ -4747,8 +5182,24 @@ paths:
                                   type: "string"
                                 documentType:
                                   type: "string"
+                                  nullable: true
+                                  description: >
+                                    Grouped document type. Null for AML Screening entries, whose type is carried on the
+                                    certificate in `outputs[]` instead.
+                                documentId:
+                                  type: "string"
+                                  nullable: true
+                                  description: >
+                                    Legacy field, null for entries recorded today. AML Screening steps recorded before
+                                    AML gained a grouped document hold the certificate's document id here, with
+                                    `groupedDocumentId` null.
                                 groupedDocumentId:
                                   type: "string"
+                                  nullable: true
+                                  description: >
+                                    The grouped document that carries the check's verification status, notes and
+                                    history. Populated for AML Screening from the release that introduced the AML
+                                    grouped document onwards.
                                 outputs:
                                   type: "array"
                                   items:
@@ -5355,8 +5806,10 @@ paths:
                               type: string
                               description: Hosted CFM URL the applicant can be directed to in order to open the session.
                   errors:
-                    type: object
+                    type: array
                     nullable: true
+                    items:
+                      type: object
               example:
                 success: true
                 data:
@@ -5395,15 +5848,12 @@ paths:
                           type: integer
                         message:
                           type: string
-                        type:
-                          type: string
               example:
                 success: false
                 data: null
                 errors:
                   - code: 400
                     message: "caseId - Value must be a valid bson object ID"
-                    type: BAD_REQUEST_ERROR
 
   /v1/case/cases:
     post:
@@ -5511,8 +5961,11 @@ paths:
                         type: string
                         description: The ObjectId of the newly created case.
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Set to 'null' when the request is successful.
+                    items:
+                      type: object
               example:
                 success: true
                 data:
@@ -5539,8 +5992,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 badRequestExample:
                   value:
@@ -5552,12 +6003,13 @@ paths:
                           {
                             "code": 400,
                             "message": "number - Value must not be empty",
-                            "type": "BAD_REQUEST_ERROR",
                           },
                         ],
                     }
         "401":
-          description: Unauthorized - Missing, invalid or expired token.
+          description: >
+            Unauthorized - the token is missing, invalid or expired, or it does not hold the required
+            **case:operator** role. A missing role is reported as a 401, not a 403.
           content:
             application/json:
               schema:
@@ -5567,6 +6019,7 @@ paths:
                     type: boolean
                   data:
                     type: object
+                    nullable: true
                   errors:
                     type: array
                     items:
@@ -5576,8 +6029,6 @@ paths:
                           type: integer
                           format: int32
                         message:
-                          type: string
-                        type:
                           type: string
               examples:
                 unauthorizedExample:
@@ -5590,35 +6041,10 @@ paths:
                           {
                             "code": 401,
                             "message": "invalid token secret",
-                            "type": "UNAUTHORIZED_ERROR",
                           },
                         ],
                     }
-        "403":
-          description: Forbidden - The authenticated client lacks the required case:operator role.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: integer
-                          format: int32
-                        message:
-                          type: string
-                        type:
-                          type: string
-              examples:
-                forbiddenExample:
+                missingRoleExample:
                   value:
                     {
                       "success": false,
@@ -5626,9 +6052,8 @@ paths:
                       "errors":
                         [
                           {
-                            "code": 403,
-                            "message": "Insufficient permissions to perform this operation",
-                            "type": "FORBIDDEN_ERROR",
+                            "code": 401,
+                            "message": "Unauthorized Access - Missing role",
                           },
                         ],
                     }
@@ -5777,8 +6202,11 @@ paths:
                         type: string
                         description: The ObjectId of the newly created person.
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Set to 'null' when the request is successful.
+                    items:
+                      type: object
               example:
                 success: true
                 data:
@@ -5805,8 +6233,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 badRequestExample:
                   value:
@@ -5818,12 +6244,13 @@ paths:
                           {
                             "code": 400,
                             "message": "name - Value must not be empty",
-                            "type": "BAD_REQUEST_ERROR",
                           },
                         ],
                     }
         "401":
-          description: Unauthorized - Missing, invalid or expired token.
+          description: >
+            Unauthorized - the token is missing, invalid or expired, or it does not hold the required
+            **case:operator** role. A missing role is reported as a 401, not a 403.
           content:
             application/json:
               schema:
@@ -5833,6 +6260,7 @@ paths:
                     type: boolean
                   data:
                     type: object
+                    nullable: true
                   errors:
                     type: array
                     items:
@@ -5842,8 +6270,6 @@ paths:
                           type: integer
                           format: int32
                         message:
-                          type: string
-                        type:
                           type: string
               examples:
                 unauthorizedExample:
@@ -5856,35 +6282,10 @@ paths:
                           {
                             "code": 401,
                             "message": "invalid token secret",
-                            "type": "UNAUTHORIZED_ERROR",
                           },
                         ],
                     }
-        "403":
-          description: Forbidden - The authenticated client lacks the required case:operator role.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: integer
-                          format: int32
-                        message:
-                          type: string
-                        type:
-                          type: string
-              examples:
-                forbiddenExample:
+                missingRoleExample:
                   value:
                     {
                       "success": false,
@@ -5892,9 +6293,8 @@ paths:
                       "errors":
                         [
                           {
-                            "code": 403,
-                            "message": "Insufficient permissions to perform this operation",
-                            "type": "FORBIDDEN_ERROR",
+                            "code": 401,
+                            "message": "Unauthorized Access - Missing role",
                           },
                         ],
                     }
@@ -5919,8 +6319,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 conflictExample:
                   value:
@@ -5932,7 +6330,6 @@ paths:
                           {
                             "code": 409,
                             "message": "person with email address abraham.murray@example.com already exists",
-                            "type": "CONFLICT_ERROR",
                           },
                         ],
                     }
@@ -6104,8 +6501,11 @@ paths:
                         type: string
                         description: The ObjectId of the newly created company.
                   errors:
-                    type: object
+                    type: array
+                    nullable: true
                     description: Set to 'null' when the request is successful.
+                    items:
+                      type: object
               example:
                 success: true
                 data:
@@ -6132,8 +6532,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 badRequestExample:
                   value:
@@ -6145,12 +6543,13 @@ paths:
                           {
                             "code": 400,
                             "message": "name - Value must not be empty",
-                            "type": "BAD_REQUEST_ERROR",
                           },
                         ],
                     }
         "401":
-          description: Unauthorized - Missing, invalid or expired token.
+          description: >
+            Unauthorized - the token is missing, invalid or expired, or it does not hold the required
+            **case:operator** role. A missing role is reported as a 401, not a 403.
           content:
             application/json:
               schema:
@@ -6160,6 +6559,7 @@ paths:
                     type: boolean
                   data:
                     type: object
+                    nullable: true
                   errors:
                     type: array
                     items:
@@ -6169,8 +6569,6 @@ paths:
                           type: integer
                           format: int32
                         message:
-                          type: string
-                        type:
                           type: string
               examples:
                 unauthorizedExample:
@@ -6183,35 +6581,10 @@ paths:
                           {
                             "code": 401,
                             "message": "invalid token secret",
-                            "type": "UNAUTHORIZED_ERROR",
                           },
                         ],
                     }
-        "403":
-          description: Forbidden - The authenticated client lacks the required case:operator role.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    type: object
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: integer
-                          format: int32
-                        message:
-                          type: string
-                        type:
-                          type: string
-              examples:
-                forbiddenExample:
+                missingRoleExample:
                   value:
                     {
                       "success": false,
@@ -6219,9 +6592,8 @@ paths:
                       "errors":
                         [
                           {
-                            "code": 403,
-                            "message": "Insufficient permissions to perform this operation",
-                            "type": "FORBIDDEN_ERROR",
+                            "code": 401,
+                            "message": "Unauthorized Access - Missing role",
                           },
                         ],
                     }
@@ -6246,8 +6618,6 @@ paths:
                           format: int32
                         message:
                           type: string
-                        type:
-                          type: string
               examples:
                 conflictExample:
                   value:
@@ -6259,7 +6629,6 @@ paths:
                           {
                             "code": 409,
                             "message": "company already exists with registration num: C12345",
-                            "type": "CONFLICT_ERROR",
                           },
                         ],
                     }
