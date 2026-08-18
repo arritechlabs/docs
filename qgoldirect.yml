@@ -1226,17 +1226,10 @@ paths:
                         type: string
                         enum: [Not set, All clear, Possible hit, Positive hit]
                         description: >
-                          The compliance verdict on this search. When an operator has set a status it is returned as
-                          stored (normalised onto this set); otherwise it is derived from the live hits — no
-                          outstanding hits means `All clear`, an outstanding exact match means `Positive hit`, and
-                          anything else means `Possible hit`.
-                      amlStatusSource:
-                        type: string
-                        enum: [manual, computed]
-                        description: >
-                          Whether `amlStatus` is an operator's decision (`manual`) or derived from the current hits
-                          (`computed`). Without it a compliance decision cannot be told apart from an automatic
-                          summary.
+                          The compliance verdict recorded on this search, returned as stored and normalised onto this
+                          set. It is never derived from the hits: `Not set` means no operator has adjudicated the
+                          search, whatever `hitStats` reports, so treat it as the decision itself rather than as a
+                          summary of what was found.
                       categories:
                         type: array
                         description: >
@@ -1265,7 +1258,9 @@ paths:
                       hitStats:
                         type: object
                         nullable: true
-                        description: The live hit breakdown `amlStatus` is computed from. Omitted when unavailable.
+                        description: >
+                          The live breakdown of the search's hits — what was found, which is a separate question from
+                          `amlStatus`, the decision taken about it. Omitted when unavailable.
                         properties:
                           totalHits:
                             type: integer
@@ -1306,7 +1301,6 @@ paths:
                     updated: []
                     deleted: []
                   amlStatus: Possible hit
-                  amlStatusSource: computed
                   categories:
                     - key: sanctions
                       label: Sanctions, Warnings and Fitness And Probity
