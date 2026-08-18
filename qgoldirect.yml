@@ -361,8 +361,39 @@ components:
                 description: "Information about the device and browser used."
               documents:
                 type: "array"
+                description: >
+                  One entry per grouped document produced by the step. `id` is the grouped document id — for
+                  AML Screening steps that is the AML grouped document, not the certificate — and `documents[]`
+                  are its files. The AML certificate is `documents[0].documents[0]`, with `documentType`
+                  "AML Screening"; it is absent when no certificate was produced.
                 items:
-                  type: "string"
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      description: "The grouped document id."
+                    documents:
+                      type: "array"
+                      items:
+                        type: "object"
+                        properties:
+                          id:
+                            type: "string"
+                            description: "File id. Use this with GET /v1/case/case/{caseId}/{docId}."
+                          key:
+                            type: "string"
+                          fileName:
+                            type: "string"
+                          documentType:
+                            type: "string"
+                          documentSide:
+                            type: "string"
+                          mimeType:
+                            type: "string"
+                          extension:
+                            type: "string"
+                          size:
+                            type: "number"
               faceLiveness:
                 type: "object"
                 properties:
@@ -413,6 +444,13 @@ components:
     cfm_kyc_completed_event:
       description: >
         Full schema of KYC completed event. [See example here](https://arritechlabs.github.io/docs/examples/cfm_kyc_completed_event.json)
+
+
+        Each step under `payload.steps` carries a `documents[]` array of `{id, documents[]}`. `id` is the step's
+        grouped document id; the files sit one level down. For AML Screening steps the certificate is
+        `documents[0].documents[0]`, with `documentType` "AML Screening" — `documents[0].id` is the grouped document
+        and is not a downloadable file id. Events emitted before AML gained a grouped document carry the
+        certificate's own document id in `documents[0].id` and an empty `documentType` on the file.
       type: "object"
       properties:
         base:
@@ -1043,8 +1081,227 @@ paths:
       responses:
         "200":
           description: |
-            Successful response containing the search details and associated hits. The response includes
-            the original search parameters along with the match status and the hits.
+            Successful response containing the stored search, its result and the live AML assessment.
+            The search must have completed; a search still `Pending` (for example because the
+            ComplyAdvantage call failed) returns an error rather than a partial payload.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      search:
+                        type: object
+                        description: The stored search, as submitted and as it stands now.
+                        properties:
+                          id:
+                            type: string
+                            description: The search ID. The same value you passed in the path.
+                          searchTerm:
+                            type: string
+                          fuzziness:
+                            type: number
+                            format: float
+                          entityType:
+                            type: string
+                          birthYear:
+                            type: string
+                          countryCodes:
+                            type: array
+                            items:
+                              type: string
+                          types:
+                            type: array
+                            description: The ComplyAdvantage list types the search was run against.
+                            items:
+                              type: string
+                          totalHits:
+                            type: integer
+                            description: >
+                              The hit count ComplyAdvantage reported when the search ran. It is a snapshot and does
+                              not move as hits are whitelisted or removed afterwards — use `liveTotalHits` for the
+                              current count.
+                          matchTypeHits:
+                            type: array
+                            items:
+                              type: string
+                          tags:
+                            type: array
+                            items:
+                              type: string
+                          clientReference:
+                            type: string
+                            nullable: true
+                          isMonitored:
+                            type: boolean
+                          hasUpdate:
+                            type: boolean
+                            description: True when a monitored search has updates that have not been reviewed.
+                          status:
+                            type: string
+                            description: >
+                              The raw stored status. Prefer `amlStatus`, which normalises legacy spellings onto the
+                              defined set.
+                          internalStatus:
+                            type: string
+                            description: Processing state of the search, e.g. `Completed` or `Pending`.
+                          complyId:
+                            type: integer
+                          searchResultId:
+                            type: string
+                            nullable: true
+                          audit:
+                            type: object
+                      result:
+                        type: object
+                        description: >
+                          The stored ComplyAdvantage result for the search. `complyResult` is the provider payload
+                          passed through unchanged; individual hits are not included here — page them with
+                          `POST /v1/aml/search/hits/paginate`.
+                        properties:
+                          id:
+                            type: string
+                          complySearchId:
+                            type: string
+                          complyAdvantageId:
+                            type: integer
+                          complyResult:
+                            type: object
+                            additionalProperties: true
+                      updates:
+                        type: object
+                        description: Monitoring updates recorded against the search since it was last reviewed.
+                        properties:
+                          added:
+                            type: array
+                            items:
+                              type: string
+                          updated:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                          deleted:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                      amlStatus:
+                        type: string
+                        enum: [Not set, All clear, Possible hit, Positive hit]
+                        description: >
+                          The compliance verdict on this search. When an operator has set a status it is returned as
+                          stored (normalised onto this set); otherwise it is derived from the live hits — no
+                          outstanding hits means `All clear`, an outstanding exact match means `Positive hit`, and
+                          anything else means `Possible hit`.
+                      amlStatusSource:
+                        type: string
+                        enum: [manual, computed]
+                        description: >
+                          Whether `amlStatus` is an operator's decision (`manual`) or derived from the current hits
+                          (`computed`). Without it a compliance decision cannot be told apart from an automatic
+                          summary.
+                      categories:
+                        type: array
+                        description: >
+                          Per searchable ComplyAdvantage group, how many of its list types the search covered. A group
+                          that was not searched is still returned, with `covered` set to 0.
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                              enum: [sanctions, peps, adverse-media-v2]
+                              description: Stable group key. Match on this rather than on `label`.
+                            label:
+                              type: string
+                              description: The ComplyAdvantage catalogue name for the group. Display text may change.
+                            covered:
+                              type: integer
+                            total:
+                              type: integer
+                      liveTotalHits:
+                        type: integer
+                        nullable: true
+                        description: >
+                          The current number of hits stored for the search. Omitted when the live count could not be
+                          read; it is deliberately not filled in from `search.totalHits`, which is a snapshot.
+                      hitStats:
+                        type: object
+                        nullable: true
+                        description: The live hit breakdown `amlStatus` is computed from. Omitted when unavailable.
+                        properties:
+                          totalHits:
+                            type: integer
+                          nonWhitelistedCount:
+                            type: integer
+                            description: Hits that have not been whitelisted.
+                          exactNonWhitelistedCount:
+                            type: integer
+                            description: Outstanding hits that are exact matches.
+                  errors:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+              example:
+                success: true
+                data:
+                  search:
+                    id: unique_id
+                    searchTerm: Jesse Pinkman
+                    fuzziness: 0.6
+                    entityType: person
+                    birthYear: "1980"
+                    countryCodes: [US, CA]
+                    types: [sanction, warning, fitness-probity, pep]
+                    totalHits: 9
+                    isMonitored: false
+                    hasUpdate: false
+                    status: Not set
+                    internalStatus: Completed
+                  result:
+                    id: unique_id
+                    complySearchId: unique_id
+                    complyAdvantageId: 1234567890
+                    complyResult: {}
+                  updates:
+                    added: []
+                    updated: []
+                    deleted: []
+                  amlStatus: Possible hit
+                  amlStatusSource: computed
+                  categories:
+                    - key: sanctions
+                      label: Sanctions, Warnings and Fitness And Probity
+                      covered: 3
+                      total: 3
+                    - key: peps
+                      label: PEPs
+                      covered: 1
+                      total: 5
+                    - key: adverse-media-v2
+                      label: All Adverse Media V2
+                      covered: 0
+                      total: 14
+                  liveTotalHits: 9
+                  hitStats:
+                    totalHits: 9
+                    nonWhitelistedCount: 4
+                    exactNonWhitelistedCount: 0
+                errors: null
 
         "400":
           description: Bad request
@@ -1060,25 +1317,23 @@ paths:
                     type: object
                     description: This will be null when there's an error
                   errors:
-                    type: object
-                    properties:
-                      code:
-                        type: integer
-                        description: Http error code
-                      message:
-                        type: string
-                        description: error message
-                      type:
-                        type: string
-                        description: http status code
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: integer
+                          description: Error code
+                        message:
+                          type: string
+                          description: error message
 
               example:
                 success: false
                 data: null
                 errors:
-                  code: 400
-                  message: invalid search ID format
-                  type: BAD_REQUEST_ERROR
+                  - code: 400
+                    message: invalid search ID format
     delete:
       tags:
         - aml
@@ -2066,6 +2321,19 @@ paths:
         uploaded manually against the case (documents that are not part of a CFM flow). Each file entry carries
         `id`, `fileName`, `entityId` (a string when the document was uploaded against a specific entity, or `null`
         when uploaded against the case itself), and the standard `audit` block.
+
+        Every AML search linked to an entity also appears in that entity's `documents[]` array as an entry with
+        `documentType: "AML Screening"`, alongside the identity, selfie and form documents. It carries the search's
+        verification `currentStatus`, the `statuses[]` history and the reviewer's notes, in the same shape as every
+        other reviewable document. This applies to searches linked before the feature shipped too — existing links
+        were backfilled.
+
+        `files[]` on that entry holds the AML certificate when one was produced. Searches created through
+        `POST /v1/aml/search` or linked with `POST /v1/case/cases/{caseid}/{entityid}/{complyid}/link` produce no
+        certificate, so their `files[]` is empty; searches run as part of a CFM journey normally have one. The
+        entity's `searches[]` array remains the place to read the AML search itself (`complySearchId`, `searchTerm`,
+        `hits`); note that the `documents[]` entry does not repeat those fields, so when an entity has more than one
+        linked search the certificate in `files[]` is what ties an entry to a particular search.
       security:
         - bearerAuth: []
       parameters:
@@ -2323,6 +2591,57 @@ paths:
                                         ],
                                       "verificationMethod": "AutomatedReview",
                                     },
+                                    {
+                                      "audit":
+                                        {
+                                          "createdBy":
+                                            {
+                                              "actorId": "Key Name",
+                                              "actorType": "Api",
+                                              "timestamp": "2024-09-12T12:20:04.118Z",
+                                            },
+                                          "deletedBy": null,
+                                          "modifiedBy": null,
+                                          "revisionID": 1,
+                                        },
+                                      "currentStatus": "Awaiting Review",
+                                      "documentType": "AML Screening",
+                                      "files":
+                                        [
+                                          {
+                                            "audit":
+                                              {
+                                                "createdBy":
+                                                  {
+                                                    "actorId": "Key Name",
+                                                    "actorType": "Api",
+                                                    "timestamp": "2024-09-12T12:20:04.118Z",
+                                                  },
+                                                "deletedBy": null,
+                                                "modifiedBy": null,
+                                                "revisionID": 1,
+                                              },
+                                            "fileName": "unique_id.pdf",
+                                            "id": "unique_id",
+                                          },
+                                        ],
+                                      "id": "unique_id",
+                                      "metadata": null,
+                                      "statuses":
+                                        [
+                                          {
+                                            "actor":
+                                              {
+                                                "actorId": "Key Name",
+                                                "actorType": "Api",
+                                                "timestamp": "2024-09-12T12:20:04.118Z",
+                                              },
+                                            "notes": "Initial Default Status",
+                                            "status": "Awaiting Review",
+                                          },
+                                        ],
+                                      "verificationMethod": "None",
+                                    },
                                   ],
                                 "emailAddress": "dianne@gmail.com",
                                 "gender": "",
@@ -2331,7 +2650,29 @@ paths:
                                 "nationality": "American",
                                 "phoneNum": "",
                                 "postCode": "",
-                                "searches": [],
+                                "searches":
+                                  [
+                                    {
+                                      "audit":
+                                        {
+                                          "createdBy":
+                                            {
+                                              "actorId": "Key Name",
+                                              "actorType": "Api",
+                                              "timestamp": "2024-09-12T12:20:04.118Z",
+                                            },
+                                          "deletedBy": null,
+                                          "modifiedBy": null,
+                                          "revisionID": 1,
+                                        },
+                                      "complySearchId": "unique_id",
+                                      "hits": 0,
+                                      "id": "unique_id",
+                                      "searchDate": "2024-09-12T12:20:03.902Z",
+                                      "searchTerm": "Dianne Thompson",
+                                      "status": "Completed",
+                                    },
+                                  ],
                                 "surname": "Thompson",
                                 "title": "",
                               },
@@ -2492,6 +2833,12 @@ paths:
       tags:
         - cfm
       summary: Link an AML search to an entity within a case.
+      description: >
+        Links an existing AML search to a Person or Company on the case. Linking also creates the search's
+        `"AML Screening"` grouped document on that entity, which is what makes the search reviewable: it appears in
+        the entity's `documents[]` on `GET /v1/case/case/{caseID}` carrying a verification status, notes and history.
+        The call is idempotent — re-linking the same search reuses the existing grouped document rather than adding
+        a second one. No AML certificate is produced on this path, so the entry's `files[]` is empty.
       security:
         - bearerAuth: []
       parameters:
@@ -2652,6 +2999,11 @@ paths:
       tags:
         - cfm
       summary: Unlink an AML search from an entity within a case.
+      description: >
+        Removes the link between an AML search and an entity on the case, and deletes the search's
+        `"AML Screening"` grouped document along with it, so the entity is not left with a reviewable card for a
+        search it is no longer linked to. Unlinking a search that has no grouped document — one linked before AML
+        grouped documents existed and not covered by the backfill — succeeds and removes only the link.
       security:
         - bearerAuth: []
       parameters:
@@ -2812,6 +3164,14 @@ paths:
       tags:
         - cfm
       summary: Download a file associated with a document in a specific case.
+      description: >
+        Streams a single stored file. `docId` must be a **file** id, not a grouped document id: take it from
+        `documents[].files[].id` on `GET /v1/case/case/{caseID}`, or from `steps[].outputs[].documents[].id` on
+        `GET /v1/case/case/session/{case_id}/{entity_id}`.
+
+
+        For AML Screening steps in particular, `steps[].documents[]` holds the grouped document id and passing
+        that value here will not resolve a file.
       security:
         - bearerAuth: []
       parameters:
@@ -2826,7 +3186,9 @@ paths:
           required: true
           schema:
             type: string
-          description: The ID of the document containing the file to download.
+          description: >
+            The ID of the file to download, as returned in `documents[].files[].id` or
+            `steps[].outputs[].documents[].id`.
       responses:
         "200":
           description: File stream of the requested document.
@@ -3090,7 +3452,24 @@ paths:
   /v1/case/case/session/{case_id}/{entity_id}:
     get:
       summary: Get case session details
-      description: Retrieves session details for a given case and entity.
+      description: >
+        Retrieves session details for a given case and entity.
+
+
+        **AML Screening steps.** `steps[n].documents[]` and `steps[n].outputs[n].id` carry the id of the
+        step's *grouped document* — the reviewable record that holds the AML search's verification status,
+        notes and history — and not the id of a downloadable file. The AML certificate, when one was
+        produced, is one level down in `steps[n].outputs[n].documents[n]`, with `documentType`
+        `"AML Screening"`; its `id` is the value to pass to `GET /v1/case/case/{caseId}/{docId}`. The same
+        applies to the entry in the top-level `documents[]` array, which now carries `groupedDocumentId`
+        for AML Screening (`documentId` is `null`). Sessions recorded before this change hold the
+        certificate's document id in `steps[n].documents[]` and in `documents[].documentId`, with
+        `groupedDocumentId` `null`.
+
+
+        An AML Screening step is recorded even when no certificate was produced — a ComplyAdvantage
+        outage leaves the search `Pending` and returns no binary — in which case
+        `steps[n].outputs[n].documents` is empty but the grouped document id is still present.
       tags:
         - cfm
       security:
@@ -4011,10 +4390,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4241,10 +4627,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4406,10 +4799,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4675,10 +5075,17 @@ paths:
                                           type: "object"
                                         documents:
                                           type: "array"
+                                          description: >
+                                            Grouped document ids recorded against the step. For AML Screening steps this
+                                            is the AML grouped document id, not the certificate's file id.
                                           items:
                                             type: "string"
                                         outputs:
                                           type: "array"
+                                          description: >
+                                            One entry per grouped document produced by the step. `id` is the grouped
+                                            document id and `documents[]` are its files; for AML Screening the single
+                                            file is the certificate, and it is empty when none was produced.
                                           items:
                                             type: "object"
                                             properties:
@@ -4736,6 +5143,9 @@ paths:
                                   type: "number"
                           documents:
                             type: "array"
+                            description: >
+                              Flat index of every grouped document produced across the entity's sessions, including
+                              one entry per AML Screening step.
                             items:
                               type: "object"
                               properties:
@@ -4747,8 +5157,24 @@ paths:
                                   type: "string"
                                 documentType:
                                   type: "string"
+                                  nullable: true
+                                  description: >
+                                    Grouped document type. Null for AML Screening entries, whose type is carried on the
+                                    certificate in `outputs[]` instead.
+                                documentId:
+                                  type: "string"
+                                  nullable: true
+                                  description: >
+                                    Legacy field, null for entries recorded today. AML Screening steps recorded before
+                                    AML gained a grouped document hold the certificate's document id here, with
+                                    `groupedDocumentId` null.
                                 groupedDocumentId:
                                   type: "string"
+                                  nullable: true
+                                  description: >
+                                    The grouped document that carries the check's verification status, notes and
+                                    history. Populated for AML Screening from the release that introduced the AML
+                                    grouped document onwards.
                                 outputs:
                                   type: "array"
                                   items:
