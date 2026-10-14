@@ -607,7 +607,10 @@ components:
           type: object
           nullable: true
           additionalProperties: true
-          description: Step-specific data; its shape depends on `checkType`.
+          description: >
+            Step-specific data; its shape depends on `checkType`. For Identity Documents it carries `capturePath`
+            (`automated`, `manual` or `forced_manual`), the path the document took during capture — see `capturePath`
+            on cfm_journey_completed_event. It is absent on sessions completed before the field existed.
         settings:
           type: object
           nullable: true
@@ -1271,7 +1274,11 @@ components:
                     description: "Total size of all documents in bytes."
                   fastFail:
                     type: "boolean"
-                    description: "Whether the step had fast fail logic implemented."
+                    description: "True if the document passed the automated verdict during capture; false if it took the manual path. See capturePath."
+                  capturePath:
+                    type: "string"
+                    enum: ["automated", "manual", "forced_manual"]
+                    description: "The path the document took during capture. automated: the automated verdict ran and the document passed it. manual: the check skips the automated verdict (onOutcome always_refer). forced_manual: the automated attempts were exhausted and the applicant fell back to the manual path (onOutcome refer_on_fail). In every case the document is still processed and evaluated afterwards."
                   numberOfDocuments:
                     type: "integer"
                     description: "Number of documents involved in the step."
