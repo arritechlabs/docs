@@ -6,7 +6,7 @@ variables:
 
 include:
   - project: "${GITLAB_CI_PROJECT_PATH}"
-    ref: jira/dsd-3644-add-cicd
+    ref: master
     file:
       - repo-ci/api-docs.yml
       - brands/qgen.yml
