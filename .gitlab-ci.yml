@@ -1,6 +1,6 @@
 ---
 variables:
-  APP_NAME: "thanos-openapi"
+  APP_NAME: "openapi"
   DOCKERFILES_PATH: "openapi/static-docs.Dockerfile"
   LISTEN_PORT: "8080"
 
