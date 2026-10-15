@@ -1,0 +1,6 @@
+---
+include:
+  - project: "${GITLAB_CI_PROJECT_PATH}"
+    ref: jira/dsd-3644-add-cicd
+    file:
+      - repo-ci/qgen-docs.yml
