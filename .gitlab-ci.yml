@@ -1,6 +1,12 @@
 ---
+variables:
+  APP_NAME: "thanos-openapi"
+  DOCKERFILES_PATH: "openapi/static-docs.Dockerfile"
+  LISTEN_PORT: "8080"
+
 include:
   - project: "${GITLAB_CI_PROJECT_PATH}"
     ref: jira/dsd-3644-add-cicd
     file:
-      - repo-ci/qgen-docs.yml
+      - repo-ci/api-docs.yml
+      - brands/qgen.yml
