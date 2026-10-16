@@ -1275,6 +1275,7 @@
                         }
                     ],
                     "fastFail": true,
+                    "capturePath": "automated",
                     "metadata": {
                         "address": null,
                         "addressCountry": null,
